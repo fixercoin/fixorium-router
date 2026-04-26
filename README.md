@@ -1,14 +1,20 @@
 
-FIXORIUM SOLANA DEX ROUTER - COMPLETE DOCUMENTATION
-LIVE API ENDPOINTS
-text
+# FIXORIUM SOLANA DEX ROUTER - COMPLETE DOCUMENTATION
+# LIVE API ENDPOINTS
+===============================================
 Base URL: https://fixorium.com.pk/api/sol-router
 Endpoint	Method	Description	Example
+===============================================
 /quote	GET	Get best swap quote	?from=SOL&to=USDC&amount=1
 /tokens	GET	List all supported tokens	-
 /health	GET	API status	-
+
+===================================
+
 QUICK START (COPY-PASTE THIS CODE)
 javascript
+===================================
+
 // Get quote for 1 SOL to USDC
 const response = await fetch('https://fixorium.com.pk/api/sol-router/quote?from=SOL&to=USDC&amount=1');
 const data = await response.json();
@@ -35,10 +41,12 @@ json
     {"dex": "meteora", "output": 1.021}
   ]
 }
-WALLET INTEGRATION EXAMPLES
-Phantom Wallet
+=========================================
+# WALLET INTEGRATION EXAMPLES
+# Phantom Wallet
 javascript
 // Connect Phantom
+-----------------------------------------
 const provider = window.solana;
 const wallet = new PhantomWallet(provider);
 
@@ -101,7 +109,10 @@ export default function FixoriumSwap() {
     </div>
   );
 }
+=====================================
+
 TELEGRAM BOT INTEGRATION
+---------------------------------
 javascript
 bot.onText(/\/swap (.+) (.+) (.+)/, async (msg, match) => {
   const [_, from, to, amount] = match;
@@ -118,6 +129,7 @@ Fee: 0.01%
   `);
 });
 DISCORD BOT INTEGRATION
+====================================
 javascript
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
@@ -139,7 +151,9 @@ client.on('interactionCreate', async interaction => {
     }]
   });
 });
+=================================
 NPM PACKAGE
+----------------------------------
 bash
 npm install @fixorium/router-sdk
 javascript
@@ -178,6 +192,7 @@ SUPPORTED DEXES
 🔄 PumpSwap (Coming soon)
 
 FEE COMPARISON
+----------------------------------
 Router	Fee	On $1000 Swap
 Jupiter	0.1%	$1.00
 Fixorium	0.01%	$0.10
