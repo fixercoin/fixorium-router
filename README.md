@@ -1,5 +1,6 @@
 🦊 FIXORIUM SOLANA DEX ROUTER
-Complete Documentation - The Cheapest DEX Aggregator on Solana
+
+The Cheapest DEX Aggregator on Solana
 
 💰 Only 0.01% Fee
 10x cheaper than Jupiter | Save 90% on every swap
@@ -47,7 +48,9 @@ Response:
     {"dex": "meteora", "output": 1.021}
   ]
 }
+
 👛 WALLET INTEGRATION EXAMPLES
+
 Phantom Wallet
 // Connect Phantom
 const provider = window.solana;
@@ -74,7 +77,9 @@ const quote = await fetch(
 ).then(r => r.json());
 
 console.log(`Output: ${quote.best_route.output} SOL`);
+
 ⚛️ REACT/NEXT.JS COMPONENT
+
 import { useState } from 'react';
 
 export default function FixoriumSwap() {
@@ -108,7 +113,9 @@ export default function FixoriumSwap() {
     </div>
   );
 }
+
 🤖 TELEGRAM BOT INTEGRATION
+
 bot.onText(/\/swap (.+) (.+) (.+)/, async (msg, match) => {
   const [_, from, to, amount] = match;
   
@@ -116,14 +123,18 @@ bot.onText(/\/swap (.+) (.+) (.+)/, async (msg, match) => {
     `https://fixorium.com.pk/api/sol-router/quote?from=${from}&to=${to}&amount=${amount}`
   ).then(r => r.json());
   
-  bot.sendMessage(msg.chat.id, `
+  bot.sendMessage(msg.chat.id, 
+  `
 🦊 FIXORIUM QUOTE
+
 ${amount} ${from} = ${quote.best_route.output} ${to}
 Route: ${quote.best_route.dex}
 Fee: 0.01%
   `);
 });
+
 🎮 DISCORD BOT INTEGRATION
+
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
   
@@ -144,7 +155,9 @@ client.on('interactionCreate', async interaction => {
     }]
   });
 });
+
 📦 NPM PACKAGE
+
 npm install @fixorium/router-sdk
 import { FixoriumRouter } from '@fixorium/router-sdk';
 
