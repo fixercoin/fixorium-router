@@ -20,32 +20,30 @@
             border: 1px solid #00ffcc;
             border-radius: 16px;
             padding: 40px;
+            width: 100%;
             max-width: 450px;
-            width: 100%;
         }
-        h1 { color: #00ffcc; text-align: center; margin-bottom: 10px; }
+        h1 { color: #00ffcc; text-align: center; margin-bottom: 10px; font-size: 24px; }
         h2 { color: #00ffcc; text-align: center; font-size: 14px; margin-bottom: 20px; }
-        input {
+        input, button {
             width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        input {
             background: #0a0a0a;
             border: 1px solid #00ffcc;
-            padding: 12px;
             color: #00ffcc;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-family: monospace;
         }
         button {
-            width: 100%;
             background: #00ffcc;
             border: none;
-            padding: 12px;
             color: #000;
             font-weight: bold;
-            border-radius: 8px;
             cursor: pointer;
-            margin: 10px 0;
-            font-family: monospace;
         }
         button:hover { opacity: 0.8; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -59,21 +57,34 @@
         .key {
             color: #00ffcc;
             word-break: break-all;
-            font-size: 11px;
+            font-size: 10px;
             margin: 5px 0;
         }
         .label { color: #ff3366; font-size: 10px; margin-top: 10px; }
-        a { color: #00ffcc; text-decoration: none; display: block; text-align: center; margin-top: 15px; font-size: 12px; }
-        .error { color: #ff3366; text-align: center; margin-top: 10px; font-size: 11px; display: none; }
+        a {
+            color: #00ffcc;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 11px;
+        }
+        .error {
+            color: #ff3366;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 11px;
+            display: none;
+        }
         .loading {
             display: inline-block;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border: 2px solid #000;
             border-top-color: #00ffcc;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-right: 8px;
+            margin-right: 6px;
             vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -95,21 +106,22 @@
             <div class="key" id="apiKey"></div>
             <div class="label">SECRET KEY</div>
             <div class="key" id="secretKey"></div>
-            <div class="label">SAVE YOUR SECRET KEY</div>
-            <button id="copyBtn">COPY KEYS</button>
-            <a href="/dashboard">GO TO DASHBOARD</a>
+            <div class="label">⚠️ SAVE YOUR SECRET KEY</div>
+            <button id="copyBtn" style="margin-top: 10px;">COPY KEYS</button>
+            <a href="/dashboard">→ GO TO DASHBOARD</a>
         </div>
         
-        <a href="/dashboard">BACK TO DASHBOARD</a>
+        <a href="/dashboard">← BACK TO DASHBOARD</a>
     </div>
 
     <script>
-        // Wait for DOM to load
         document.addEventListener('DOMContentLoaded', function() {
             const registerBtn = document.getElementById('registerBtn');
             const copyBtn = document.getElementById('copyBtn');
             
-            registerBtn.addEventListener('click', register);
+            if (registerBtn) {
+                registerBtn.addEventListener('click', register);
+            }
             if (copyBtn) {
                 copyBtn.addEventListener('click', copyKeys);
             }
