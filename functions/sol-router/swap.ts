@@ -41,6 +41,8 @@ export const onRequest: PagesFunction = async (context) => {
 
     return new Response(JSON.stringify({
         success: true,
+        router: 'MAX ROUTER',
+        domain: 'https://fixorium.com.pk',
         signature: signature,
         dex_used: bestDex.dex,
         amount_in: amount,
