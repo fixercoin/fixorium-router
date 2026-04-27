@@ -87,23 +87,34 @@
         <input type="email" id="email" placeholder="EMAIL" autocomplete="off">
         <input type="text" id="project" placeholder="PROJECT NAME" autocomplete="off">
         
-        <button id="registerBtn" onclick="register()">REGISTER</button>
+        <button id="registerBtn">REGISTER</button>
         
         <div id="error" class="error"></div>
         <div id="result" class="result">
-            <div class="label">🔑 API KEY</div>
+            <div class="label">API KEY</div>
             <div class="key" id="apiKey"></div>
-            <div class="label">🔒 SECRET KEY</div>
+            <div class="label">SECRET KEY</div>
             <div class="key" id="secretKey"></div>
-            <div class="label">⚠️ SAVE YOUR SECRET KEY</div>
-            <button onclick="copyKeys()" style="margin-top: 10px; background: #00ffcc20; color:#00ffcc">COPY KEYS</button>
-            <a href="/dashboard">→ GO TO DASHBOARD</a>
+            <div class="label">SAVE YOUR SECRET KEY</div>
+            <button id="copyBtn">COPY KEYS</button>
+            <a href="/dashboard">GO TO DASHBOARD</a>
         </div>
         
-        <a href="/dashboard">← BACK TO DASHBOARD</a>
+        <a href="/dashboard">BACK TO DASHBOARD</a>
     </div>
 
     <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerBtn = document.getElementById('registerBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            registerBtn.addEventListener('click', register);
+            if (copyBtn) {
+                copyBtn.addEventListener('click', copyKeys);
+            }
+        });
+
         let registeredApiKey = null;
         let registeredSecretKey = null;
 
@@ -129,7 +140,7 @@
                 const response = await fetch('/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, projectName: project })
+                    body: JSON.stringify({ email: email, projectName: project })
                 });
 
                 const data = await response.json();
@@ -142,19 +153,15 @@
                     document.getElementById('secretKey').innerText = data.secretKey;
                     resultDiv.style.display = 'block';
                     
-                    // Clear form
                     document.getElementById('email').value = '';
                     document.getElementById('project').value = '';
                     
                     registerBtn.innerHTML = 'REGISTERED!';
                     
-                    // Save to localStorage
                     localStorage.setItem('max_api_key', data.apiKey);
                     
-                    // Auto copy to clipboard
-                    await navigator.clipboard.writeText(`API KEY: ${data.apiKey}\nSECRET KEY: ${data.secretKey}`);
+                    await navigator.clipboard.writeText('API KEY: ' + data.apiKey + '\nSECRET KEY: ' + data.secretKey);
                     
-                    // Redirect after 2 seconds
                     setTimeout(() => {
                         window.location.href = '/dashboard';
                     }, 3000);
@@ -180,13 +187,12 @@
 
         function copyKeys() {
             if (registeredApiKey && registeredSecretKey) {
-                const text = `API KEY: ${registeredApiKey}\nSECRET KEY: ${registeredSecretKey}`;
+                const text = 'API KEY: ' + registeredApiKey + '\nSECRET KEY: ' + registeredSecretKey;
                 navigator.clipboard.writeText(text);
                 alert('KEYS COPIED TO CLIPBOARD!');
             }
         }
 
-        // Check if already has API key
         const savedKey = localStorage.getItem('max_api_key');
         if (savedKey) {
             document.getElementById('apiKey').innerText = savedKey;
