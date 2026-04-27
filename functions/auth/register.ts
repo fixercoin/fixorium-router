@@ -20,6 +20,16 @@ export const onRequest: PagesFunction = async (context) => {
     return new Response(JSON.stringify({
         success: true,
         apiKey, secretKey,
-        message: 'STORE YOUR SECRET KEY SAFELY'
+        message: 'STORE YOUR SECRET KEY SAFELY',
+        endpoints: {
+            quote: 'https://fixorium.com.pk/api/sol-router/quote',
+            swap: 'https://fixorium.com.pk/api/sol-router/swap',
+            limit: 'https://fixorium.com.pk/api/sol-router/limit',
+            dca: 'https://fixorium.com.pk/api/sol-router/dca',
+            perp: 'https://fixorium.com.pk/api/sol-router/perp',
+            pool: 'https://fixorium.com.pk/api/sol-router/pool',
+            tokens: 'https://fixorium.com.pk/api/sol-router/tokens',
+            routes: 'https://fixorium.com.pk/api/sol-router/routes'
+        }
     }), { headers });
 };
