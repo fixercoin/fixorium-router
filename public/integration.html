@@ -64,12 +64,14 @@
         .method { display: inline-block; padding: 2px 8px; margin-right: 10px; }
         .get { background: #00ffcc; color: #000; }
         .post { background: #ff3366; color: #fff; }
+        .domain { color: #ff3366; font-size: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="header">
         <div style="font-size: 14px; font-weight: bold;">MAX ROUTER</div>
         <div style="font-size: 8px;">0.01% FEE • 30+ DEXES • LIMIT • DCA • PERPS</div>
+        <div class="domain">https://fixorium.com.pk</div>
     </div>
 
     <div class="container">
@@ -77,6 +79,7 @@
             <div class="badge">⚡ 10X CHEAPER THAN JUPITER ⚡</div>
             <h1 style="font-size: 20px; letter-spacing: 4px;">MAX ROUTER API</h1>
             <p style="font-size: 9px;">INTEGRATE THE MOST ADVANCED DEX AGGREGATOR INTO YOUR APP</p>
+            <p style="font-size: 8px; color: #666;">BASE URL: https://fixorium.com.pk</p>
         </div>
 
         <!-- STEP 1: GET API KEY -->
@@ -103,14 +106,14 @@
         <!-- STEP 2: API ENDPOINTS -->
         <div class="api-card">
             <h2>STEP 2: API ENDPOINTS</h2>
-            <div class="endpoint"><span class="method get">GET</span> /api/sol-router/quote?from=SOL&to=USDC&amount=1</div>
-            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/swap</div>
-            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/limit</div>
-            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/dca</div>
-            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/perp</div>
-            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/pool</div>
-            <div class="endpoint"><span class="method get">GET</span> /api/sol-router/tokens</div>
-            <div class="endpoint"><span class="method get">GET</span> /api/sol-router/routes</div>
+            <div class="endpoint"><span class="method get">GET</span> https://fixorium.com.pk/api/sol-router/quote?from=SOL&to=USDC&amount=1</div>
+            <div class="endpoint"><span class="method post">POST</span> https://fixorium.com.pk/api/sol-router/swap</div>
+            <div class="endpoint"><span class="method post">POST</span> https://fixorium.com.pk/api/sol-router/limit</div>
+            <div class="endpoint"><span class="method post">POST</span> https://fixorium.com.pk/api/sol-router/dca</div>
+            <div class="endpoint"><span class="method post">POST</span> https://fixorium.com.pk/api/sol-router/perp</div>
+            <div class="endpoint"><span class="method post">POST</span> https://fixorium.com.pk/api/sol-router/pool</div>
+            <div class="endpoint"><span class="method get">GET</span> https://fixorium.com.pk/api/sol-router/tokens</div>
+            <div class="endpoint"><span class="method get">GET</span> https://fixorium.com.pk/api/sol-router/routes</div>
         </div>
 
         <!-- STEP 3: JAVASCRIPT INTEGRATION -->
@@ -118,9 +121,10 @@
             <h2>STEP 3: JAVASCRIPT INTEGRATION</h2>
             <div class="code-block">
                 <pre>const MAX_API_KEY = 'your_api_key_here';
+const BASE_URL = 'https://fixorium.com.pk';
 
 // GET QUOTE
-const quote = await fetch('https://max-router.com/api/sol-router/quote?from=SOL&to=USDC&amount=1', {
+const quote = await fetch(`${BASE_URL}/api/sol-router/quote?from=SOL&to=USDC&amount=1`, {
     headers: { 'X-API-Key': MAX_API_KEY }
 });
 const data = await quote.json();
@@ -136,12 +140,15 @@ console.log(`FEE: 0.01%`);</pre>
             <div class="code-block">
                 <pre>import { useState } from 'react';
 
+const BASE_URL = 'https://fixorium.com.pk';
+const API_KEY = process.env.REACT_APP_MAX_API_KEY;
+
 export default function SwapWidget() {
     const [quote, setQuote] = useState(null);
 
     const getQuote = async () => {
-        const res = await fetch('/api/sol-router/quote?from=SOL&to=USDC&amount=1', {
-            headers: { 'X-API-Key': process.env.MAX_API_KEY }
+        const res = await fetch(`${BASE_URL}/api/sol-router/quote?from=SOL&to=USDC&amount=1`, {
+            headers: { 'X-API-Key': API_KEY }
         });
         const data = await res.json();
         setQuote(data);
@@ -191,7 +198,10 @@ export default function SwapWidget() {
             const from = document.getElementById('testFrom').value;
             const to = document.getElementById('testTo').value;
             const amount = document.getElementById('testAmount').value;
-            const response = await fetch(`/api/sol-router/quote?from=${from}&to=${to}&amount=${amount}`);
+            const apiKey = document.getElementById('apiKeyDisplay')?.textContent || 'test';
+            const response = await fetch(`https://fixorium.com.pk/api/sol-router/quote?from=${from}&to=${to}&amount=${amount}`, {
+                headers: { 'X-API-Key': apiKey }
+            });
             const data = await response.json();
             document.getElementById('testResult').style.display = 'block';
             document.getElementById('testResultContent').textContent = JSON.stringify(data, null, 2);
