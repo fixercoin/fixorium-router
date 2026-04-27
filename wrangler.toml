@@ -3,12 +3,12 @@ main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
 kv_namespaces = [
-    { binding = "MAX_KV", id = "your-kv-id" }
+    { binding = "MAX_KV", id = "f0b0401040414c6bb4915f76fa7c4ce8" }
 ]
 
 [[env.production]]
 kv_namespaces = [
-    { binding = "MAX_KV", id = "your-production-kv-id" }
+    { binding = "MAX_KV", id = "f0b0401040414c6bb4915f76fa7c4ce8" }
 ]
 
 [env.production.vars]
