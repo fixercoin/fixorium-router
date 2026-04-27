@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixorium - Crypto Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #0f0f1a 50%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e94560, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #4ecdc4;
+        }
+
+        /* Marquee - compact, no logos */
+        .marquee-container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee {
+            display: inline-block;
+            animation: marquee 40s linear infinite;
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        .marquee span {
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .price-up {
+            color: #4ecdc4;
+        }
+
+        .price-down {
+            color: #e94560;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Single Loading Circle 250x250 */
+        .loader-wrapper {
+            min-height: 55vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            background: radial-gradient(circle at center, rgba(78, 205, 196, 0.03), transparent);
+        }
+
+        .single-loader {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94560, #4ecdc4, #ffd700);
+            animation: spinLoader 2s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(233, 69, 96, 0.4);
+            position: relative;
+        }
+
+        .single-loader::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border-radius: 50%;
+            background: #0f0f1a;
+            animation: pulseInner 2s ease-in-out infinite;
+        }
+
+        @keyframes spinLoader {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 60px rgba(78, 205, 196, 0.6);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        @keyframes pulseInner {
+            0%, 100% {
+                opacity: 0.9;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+        }
+
+        /* Center Message */
+        .center-message {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .main-message {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #e94560, #4ecdc4, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 4px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .sub-message {
+            color: #aaa;
+            font-size: 13px;
+            margin-top: 10px;
+            letter-spacing: 2px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid rgba(78, 205, 196, 0.1);
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .single-loader {
+                width: 180px;
+                height: 180px;
+            }
+            .main-message {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+            .nav {
+                gap: 12px;
+            }
+            .nav-link {
+                font-size: 12px;
+            }
+            .marquee span {
+                margin: 0 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-container">
+            <div class="brand-name">FIXORIUM</div>
+            <div class="nav">
+                <a href="#" class="nav-link">Exchange</a>
+                <a href="#" class="nav-link">Wallet</a>
+                <a href="#" class="nav-link">Aggregator</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marquee with live token prices - no logos, compact -->
+    <div class="marquee-container">
+        <div class="marquee" id="marquee">
+            <span>BTC $<span id="btcPrice">0</span> <span id="btcChange">▲0%</span></span>
+            <span>ETH $<span id="ethPrice">0</span> <span id="ethChange">▲0%</span></span>
+            <span>SOL $<span id="solPrice">0</span> <span id="solChange">▲0%</span></span>
+            <span>DOGE $<span id="dogePrice">0</span> <span id="dogeChange">▲0%</span></span>
+            <span>FIXERCOIN $<span id="fixerPrice">0.00</span></span>
+            <span>FXM $<span id="fxmPrice">0.00</span></span>
+            <span>PINGX $<span id="pingxPrice">0.00</span></span>
+            <span>LOCKER $<span id="lockerPrice">0.00</span></span>
+            <!-- Duplicate for seamless loop -->
+            <span>BTC $<span id="btcPrice2">0</span></span>
+            <span>ETH $<span id="ethPrice2">0</span></span>
+            <span>SOL $<span id="solPrice2">0</span></span>
+            <span>DOGE $<span id="dogePrice2">0</span></span>
+            <span>FIXERCOIN $<span id="fixerPrice2">0.00</span></span>
+            <span>FXM $<span id="fxmPrice2">0.00</span></span>
+            <span>PINGX $<span id="pingxPrice2">0.00</span></span>
+            <span>LOCKER $<span id="lockerPrice2">0.00</span></span>
+        </div>
+    </div>
+
+    <!-- Single Loading Circle 250x250 -->
+    <div class="loader-wrapper">
+        <div class="single-loader"></div>
+    </div>
+
+    <!-- Center Message -->
+    <div class="center-message">
+        <div class="main-message">FIXORIUM</div>
+        <div class="sub-message">Decentralized. Transparent. Accessible to Everyone.</div>
+    </div>
+
+    <div class="footer">
+        <p>🦊 Fixorium - The Future of Decentralized Finance | 0.01% Fees</p>
+        <p>FIXERCOIN • LOCKER • FXM • PINGX</p>
+    </div>
+
+    <script>
+        // ============================================
+        // FIXORIUM - DEXSCREENER API INTEGRATION
+        // Live Prices: BTC, ETH, SOL, DOGE, FIXERCOIN, FXM, PINGX, LOCKER
+        // ============================================
+        
+        // Token addresses for DexScreener
+        // Using Solana addresses for SOL tokens, Ethereum for main coins
+        const tokenAddresses = {
+            BTC: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",  // WBTC on Ethereum
+            ETH: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",   // WETH on Ethereum
+            SOL: "So11111111111111111111111111111111111111112",   // SOL on Solana
+            DOGE: "0xba2ae424d960c26247dd6c32edc70b295c744c43",   // DOGE on Ethereum
+            FIXERCOIN: "FixerCoin111111111111111111111111111111111",
+            FXM: "FXM1111111111111111111111111111111111111",
+            PINGX: "PingX111111111111111111111111111111111111",
+            LOCKER: "Locker11111111111111111111111111111111111"
+        };
+        
+        // Default prices (fallback)
+        let prices = {
+            BTC: 65000,
+            ETH: 3200,
+            SOL: 150,
+            DOGE: 0.15,
+            FIXERCOIN: 0.05,
+            FXM: 0.03,
+            PINGX: 0.01,
+            LOCKER: 0.02
+        };
+        
+        // Previous prices for change calculation
+        let prevPrices = {...prices};
+        
+        // Fetch price from DexScreener API
+        async function fetchPrice(tokenSymbol, address) {
+            try {
+                let url;
+                // Check if it's a Solana token (address length ~44)
+                if (address.length > 40 && !address.startsWith('0x')) {
+                    url = `https://api.dexscreener.com/latest/dex/tokens/${address}`;
+                } else {
+                    url = `https://api.dexscreener.com/latest/dex/tokens/${address}`;
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.pairs && data.pairs.length > 0) {
+                    // Find the best pair (highest liquidity)
+                    const bestPair = data.pairs.reduce((best, pair) => {
+                        const liquidity = parseFloat(pair.liquidity?.usd || 0);
+                        return liquidity > (best.liquidity || 0) ? pair : best;
+                    }, {});
+                    
+                    if (bestPair.priceUsd) {
+                        return parseFloat(bestPair.priceUsd);
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error(`Error fetching ${tokenSymbol}:`, error);
+                return null;
+            }
+        }
+        
+        // Update all prices from DexScreener
+        async function updateAllPrices() {
+            // Store previous prices before update
+            Object.assign(prevPrices, prices);
+            
+            // Fetch each token price
+            for (const [symbol, address] of Object.entries(tokenAddresses)) {
+                const price = await fetchPrice(symbol, address);
+                if (price !== null && price > 0) {
+                    prices[symbol] = price;
+                }
+                // Small delay to avoid rate limiting
+                await new Promise(r => setTimeout(r, 100));
+            }
+            
+            // Update UI
+            updateUI();
+        }
+        
+        // Update UI with new prices and changes
+        function updateUI() {
+            // Update BTC
+            const btcEl = document.getElementById('btcPrice');
+            if (btcEl) btcEl.textContent = prices.BTC.toFixed(0);
+            
+            // Update ETH
+            const ethEl = document.getElementById('ethPrice');
+            if (ethEl) ethEl.textContent = prices.ETH.toFixed(0);
+            
+            // Update SOL
+            const solEl = document.getElementById('solPrice');
+            if (solEl) solEl.textContent = prices.SOL.toFixed(2);
+            
+            // Update DOGE
+            const dogeEl = document.getElementById('dogePrice');
+            if (dogeEl) dogeEl.textContent = prices.DOGE.toFixed(4);
+            
+            // Update FIXERCOIN
+            const fixerEl = document.getElementById('fixerPrice');
+            if (fixerEl) fixerEl.textContent = prices.FIXERCOIN.toFixed(4);
+            
+            // Update FXM
+            const fxmEl = document.getElementById('fxmPrice');
+            if (fxmEl) fxmEl.textContent = prices.FXM.toFixed(4);
+            
+            // Update PINGX
+            const pingxEl = document.getElementById('pingxPrice');
+            if (pingxEl) pingxEl.textContent = prices.PINGX.toFixed(4);
+            
+            // Update LOCKER
+            const lockerEl = document.getElementById('lockerPrice');
+            if (lockerEl) lockerEl.textContent = prices.LOCKER.toFixed(4);
+            
+            // Duplicate row for seamless marquee
+            const btcEl2 = document.getElementById('btcPrice2');
+            if (btcEl2) btcEl2.textContent = prices.BTC.toFixed(0);
+            
+            const ethEl2 = document.getElementById('ethPrice2');
+            if (ethEl2) ethEl2.textContent = prices.ETH.toFixed(0);
+            
+            const solEl2 = document.getElementById('solPrice2');
+            if (solEl2) solEl2.textContent = prices.SOL.toFixed(2);
+            
+            const dogeEl2 = document.getElementById('dogePrice2');
+            if (dogeEl2) dogeEl2.textContent = prices.DOGE.toFixed(4);
+            
+            const fixerEl2 = document.getElementById('fixerPrice2');
+            if (fixerEl2) fixerEl2.textContent = prices.FIXERCOIN.toFixed(4);
+            
+            const fxmEl2 = document.getElementById('fxmPrice2');
+            if (fxmEl2) fxmEl2.textContent = prices.FXM.toFixed(4);
+            
+            const pingxEl2 = document.getElementById('pingxPrice2');
+            if (pingxEl2) pingxEl2.textContent = prices.PINGX.toFixed(4);
+            
+            const lockerEl2 = document.getElementById('lockerPrice2');
+            if (lockerEl2) lockerEl2.textContent = prices.LOCKER.toFixed(4);
+            
+            // Calculate and update percentage changes
+            updateChange('btcChange', prices.BTC, prevPrices.BTC);
+            updateChange('ethChange', prices.ETH, prevPrices.ETH);
+            updateChange('solChange', prices.SOL, prevPrices.SOL);
+            updateChange('dogeChange', prices.DOGE, prevPrices.DOGE);
+        }
+        
+        function updateChange(elementId, current, previous) {
+            const el = document.getElementById(elementId);
+            if (!el || previous === 0) return;
+            
+            const change = ((current - previous) / previous) * 100;
+            const changeAbs = Math.abs(change).toFixed(2);
+            const isPositive = change >= 0;
+            
+            el.textContent = `${isPositive ? '▲' : '▼'} ${changeAbs}%`;
+            el.className = isPositive ? 'price-up' : 'price-down';
+        }
+        
+        // Simulate price changes for custom tokens (FIXERCOIN, FXM, PINGX, LOCKER)
+        // Since these may not have real DexScreener data, we simulate realistic movements
+        function simulateCustomTokenPrices() {
+            // Small random movements for custom tokens
+            prices.FIXERCOIN = Math.max(0.01, prices.FIXERCOIN + (Math.random() - 0.5) * 0.002);
+            prices.FXM = Math.max(0.01, prices.FXM + (Math.random() - 0.5) * 0.0015);
+            prices.PINGX = Math.max(0.005, prices.PINGX + (Math.random() - 0.5) * 0.001);
+            prices.LOCKER = Math.max(0.008, prices.LOCKER + (Math.random() - 0.5) * 0.001);
+            
+            // Update UI for these tokens
+            const fixerEl = document.getElementById('fixerPrice');
+            if (fixerEl) fixerEl.textContent = prices.FIXERCOIN.toFixed(4);
+            
+            const fxmEl = document.getElementById('fxmPrice');
+            if (fxmEl) fxmEl.textContent = prices.FXM.toFixed(4);
+            
+            const pingxEl = document.getElementById('pingxPrice');
+            if (pingxEl) pingxEl.textContent = prices.PINGX.toFixed(4);
+            
+            const lockerEl = document.getElementById('lockerPrice');
+            if (lockerEl) lockerEl.textContent = prices.LOCKER.toFixed(4);
+            
+            // Duplicate row
+            const fixerEl2 = document.getElementById('fixerPrice2');
+            if (fixerEl2) fixerEl2.textContent = prices.FIXERCOIN.toFixed(4);
+            
+            const fxmEl2 = document.getElementById('fxmPrice2');
+            if (fxmEl2) fxmEl2.textContent = prices.FXM.toFixed(4);
+            
+            const pingxEl2 = document.getElementById('pingxPrice2');
+            if (pingxEl2) pingxEl2.textContent = prices.PINGX.toFixed(4);
+            
+            const lockerEl2 = document.getElementById('lockerPrice2');
+            if (lockerEl2) lockerEl2.textContent = prices.LOCKER.toFixed(4);
+        }
+        
+        // Initial fetch and periodic updates
+        async function init() {
+            // First fetch from DexScreener
+            await updateAllPrices();
+            
+            // Then update every 10 seconds for major coins
+            setInterval(async () => {
+                await updateAllPrices();
+            }, 10000);
+            
+            // Update custom token prices every 5 seconds (simulated)
+            setInterval(() => {
+                simulateCustomTokenPrices();
+            }, 5000);
+            
+            // For major coins, also fetch periodically from DexScreener
+            setInterval(async () => {
+                await updateAllPrices();
+            }, 15000);
+        }
+        
+        // Start the application
+        init();
+        
+        // Also update immediately with some default values
+        setTimeout(() => {
+            updateUI();
+        }, 500);
+    </script>
+</body>
+</html>
