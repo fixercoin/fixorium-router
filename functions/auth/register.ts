@@ -1,35 +1,395 @@
-export const onRequest: PagesFunction = async (context) => {
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-    };
-
-    const { email, projectName } = await context.request.json();
-
-    const apiKey = 'max_' + crypto.randomUUID().replace(/-/g, '');
-    const secretKey = 'sk_' + crypto.randomUUID().replace(/-/g, '');
-
-    await context.env.MAX_KV.put(`user:${apiKey}`, JSON.stringify({
-        email, projectName, apiKey, secretKey,
-        createdAt: Date.now(),
-        requests: 0,
-        limit: 10000,
-        volume: 0
-    }));
-
-    return new Response(JSON.stringify({
-        success: true,
-        apiKey, secretKey,
-        message: 'STORE YOUR SECRET KEY SAFELY',
-        endpoints: {
-            quote: 'https://fixorium.com.pk/api/sol-router/quote',
-            swap: 'https://fixorium.com.pk/api/sol-router/swap',
-            limit: 'https://fixorium.com.pk/api/sol-router/limit',
-            dca: 'https://fixorium.com.pk/api/sol-router/dca',
-            perp: 'https://fixorium.com.pk/api/sol-router/perp',
-            pool: 'https://fixorium.com.pk/api/sol-router/pool',
-            tokens: 'https://fixorium.com.pk/api/sol-router/tokens',
-            routes: 'https://fixorium.com.pk/api/sol-router/routes'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAX ROUTER - REGISTER</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }), { headers });
-};
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #0f0f1a 50%, #1a1a2e 100%);
+            font-family: 'Courier New', 'SF Mono', 'Fira Code', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid #00ffcc;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 0 40px rgba(0, 255, 204, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #00ffcc;
+            font-size: 28px;
+            letter-spacing: 4px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #ff3366;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #00ffcc;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: #001a1a;
+            border: 1px solid #00ffcc33;
+            padding: 12px 16px;
+            color: #00ffcc;
+            font-size: 10px;
+            font-family: monospace;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .input-group input::placeholder {
+            color: #00ffcc33;
+            text-transform: none;
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #00ffcc, #00997a);
+            border: none;
+            padding: 14px;
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: monospace;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 204, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #001a1a;
+            border-left: 3px solid #00ffcc;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result h3 {
+            color: #00ffcc;
+            font-size: 10px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .key-box {
+            background: #0a0a0a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+
+        .key-label {
+            color: #ff3366;
+            font-size: 9px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .key-value {
+            color: #00ffcc;
+            font-size: 10px;
+            font-family: monospace;
+        }
+
+        .warning {
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid #ff3366;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning p {
+            color: #ff3366;
+            font-size: 9px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .endpoints {
+            margin-top: 15px;
+        }
+
+        .endpoint-item {
+            font-size: 8px;
+            padding: 4px 0;
+            color: #888;
+            font-family: monospace;
+            text-transform: uppercase;
+        }
+
+        .copy-btn {
+            background: #00ffcc20;
+            border: 1px solid #00ffcc;
+            padding: 4px 10px;
+            font-size: 8px;
+            margin-top: 8px;
+            width: auto;
+            display: inline-block;
+        }
+
+        .copy-btn:hover {
+            background: #00ffcc;
+            color: #000;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 8px;
+            color: #444;
+            text-transform: uppercase;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #000;
+            border-top-color: #00ffcc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 25px;
+            }
+            .logo h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>MAX ROUTER</h1>
+                <p>GET YOUR API KEY</p>
+            </div>
+
+            <form id="registerForm">
+                <div class="input-group">
+                    <label>EMAIL ADDRESS</label>
+                    <input type="email" id="email" placeholder="DEVELOPER@EXAMPLE.COM" required>
+                </div>
+
+                <div class="input-group">
+                    <label>PROJECT NAME</label>
+                    <input type="text" id="projectName" placeholder="MY AWESOME WALLET" required>
+                </div>
+
+                <button type="submit" id="registerBtn">
+                    <span id="btnText">REGISTER & GET API KEY</span>
+                </button>
+            </form>
+
+            <div id="result" class="result">
+                <h3>REGISTRATION SUCCESSFUL</h3>
+                <div class="key-box">
+                    <div class="key-label">API KEY</div>
+                    <div class="key-value" id="apiKey"></div>
+                    <button class="copy-btn" onclick="copyToClipboard('apiKey')">COPY</button>
+                </div>
+                <div class="key-box">
+                    <div class="key-label">SECRET KEY</div>
+                    <div class="key-value" id="secretKey"></div>
+                    <button class="copy-btn" onclick="copyToClipboard('secretKey')">COPY</button>
+                </div>
+                <div class="warning">
+                    <p>STORE YOUR SECRET KEY SAFELY</p>
+                    <p>YOU WILL NOT SEE IT AGAIN</p>
+                </div>
+                <div class="endpoints">
+                    <div class="key-label">API ENDPOINTS</div>
+                    <div class="endpoint-item">GET /sol-router/quote</div>
+                    <div class="endpoint-item">POST /sol-router/swap</div>
+                    <div class="endpoint-item">POST /sol-router/limit</div>
+                    <div class="endpoint-item">POST /sol-router/dca</div>
+                    <div class="endpoint-item">POST /sol-router/perp</div>
+                    <div class="endpoint-item">POST /sol-router/pool</div>
+                    <div class="endpoint-item">GET /sol-router/tokens</div>
+                    <div class="endpoint-item">GET /sol-router/routes</div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>MAX ROUTER - ADVANCED DEX AGGREGATOR</p>
+                <p>30+ DEXES • 0.01% FEE • LIMIT ORDERS • DCA • PERPS</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const btnText = document.getElementById('btnText');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const projectName = document.getElementById('projectName').value.trim();
+
+            if (!email || !projectName) {
+                alert('PLEASE FILL ALL FIELDS');
+                return;
+            }
+
+            registerBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading"></span> REGISTERING...';
+
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, projectName })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('apiKey').textContent = data.apiKey;
+                    document.getElementById('secretKey').textContent = data.secretKey;
+                    resultDiv.classList.add('show');
+                    
+                    document.getElementById('email').value = '';
+                    document.getElementById('projectName').value = '';
+                    
+                    btnText.innerHTML = 'REGISTERED';
+                    
+                    await navigator.clipboard.writeText(`API KEY: ${data.apiKey}\nSECRET KEY: ${data.secretKey}`);
+                } else {
+                    alert('REGISTRATION FAILED: ' + (data.error || 'UNKNOWN ERROR'));
+                    btnText.innerHTML = 'REGISTER & GET API KEY';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('REGISTRATION FAILED. PLEASE TRY AGAIN.');
+                btnText.innerHTML = 'REGISTER & GET API KEY';
+            } finally {
+                registerBtn.disabled = false;
+                setTimeout(() => {
+                    if (btnText.innerHTML !== 'REGISTER & GET API KEY') {
+                        btnText.innerHTML = 'REGISTER & GET API KEY';
+                    }
+                }, 3000);
+            }
+        });
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            if (text && text !== 'Loading...') {
+                navigator.clipboard.writeText(text);
+                
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'COPIED';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 1500);
+            }
+        }
+
+        const savedApiKey = localStorage.getItem('max_api_key');
+        if (savedApiKey) {
+            const useExisting = confirm('YOU HAVE AN EXISTING API KEY. USE IT?');
+            if (useExisting) {
+                document.getElementById('apiKey').textContent = savedApiKey;
+                resultDiv.classList.add('show');
+            } else {
+                localStorage.removeItem('max_api_key');
+            }
+        }
+    </script>
+</body>
+</html>
