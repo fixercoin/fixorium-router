@@ -127,3 +127,75 @@ const data = await quote.json();
 
 console.log(`BEST: ${data.best_route.output} USDC ON ${data.best_route.dex}`);
 console.log(`FEE: 0.01%`);</pre>
+            </div>
+        </div>
+
+        <!-- STEP 4: REACT INTEGRATION -->
+        <div class="api-card">
+            <h2>STEP 4: REACT INTEGRATION</h2>
+            <div class="code-block">
+                <pre>import { useState } from 'react';
+
+export default function SwapWidget() {
+    const [quote, setQuote] = useState(null);
+
+    const getQuote = async () => {
+        const res = await fetch('/api/sol-router/quote?from=SOL&to=USDC&amount=1', {
+            headers: { 'X-API-Key': process.env.MAX_API_KEY }
+        });
+        const data = await res.json();
+        setQuote(data);
+    };
+
+    return (
+        &lt;button onClick={getQuote}&gt;GET QUOTE&lt;/button&gt;
+        {quote && &lt;div&gt;{quote.best_route.output} USDC&lt;/div&gt;}
+    );
+}</pre>
+            </div>
+        </div>
+
+        <!-- STEP 5: TEST LIVE -->
+        <div class="api-card">
+            <h2>STEP 5: TEST LIVE</h2>
+            <div class="row">
+                <div class="col"><select id="testFrom"><option value="So11111111111111111111111111111111111111112">SOL</option><option value="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v">USDC</option></select></div>
+                <div class="col"><select id="testTo"><option value="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v">USDC</option><option value="So11111111111111111111111111111111111111112">SOL</option></select></div>
+                <div class="col"><input type="number" id="testAmount" placeholder="AMOUNT" value="1"></div>
+                <div class="col"><button onclick="testQuote()">GET QUOTE</button></div>
+            </div>
+            <div id="testResult" style="display: none; margin-top: 15px; background: #000; padding: 15px;">
+                <pre id="testResultContent" style="font-size: 8px;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function registerUser() {
+            const email = document.getElementById('email').value;
+            const projectName = document.getElementById('projectName').value;
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, projectName })
+            });
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('apiKeyResult').style.display = 'block';
+                document.getElementById('apiKeyDisplay').textContent = data.apiKey;
+                document.getElementById('secretKeyDisplay').textContent = data.secretKey;
+            }
+        }
+
+        async function testQuote() {
+            const from = document.getElementById('testFrom').value;
+            const to = document.getElementById('testTo').value;
+            const amount = document.getElementById('testAmount').value;
+            const response = await fetch(`/api/sol-router/quote?from=${from}&to=${to}&amount=${amount}`);
+            const data = await response.json();
+            document.getElementById('testResult').style.display = 'block';
+            document.getElementById('testResultContent').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>
