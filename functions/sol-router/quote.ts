@@ -43,6 +43,7 @@ export const onRequest: PagesFunction = async (context) => {
     return new Response(JSON.stringify({
         success: true,
         router: 'MAX ROUTER',
+        domain: 'https://fixorium.com.pk',
         from, to, amount,
         total_dexes: validQuotes.length,
         best_route: bestRoute,
