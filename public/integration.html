@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAX ROUTER - INTEGRATION</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        .header {
+            border-bottom: 1px solid #00ffcc;
+            padding: 15px 20px;
+            background: #0a0a0a;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        .api-card {
+            border: 1px solid #00ffcc;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .code-block {
+            background: #000;
+            border-left: 3px solid #00ffcc;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 9px;
+        }
+        input, select {
+            background: #001a1a;
+            border: 1px solid #00ffcc;
+            padding: 8px;
+            color: #00ffcc;
+            font-size: 9px;
+            width: 100%;
+            margin: 5px 0;
+        }
+        button {
+            background: #00ffcc;
+            border: none;
+            padding: 8px 16px;
+            color: #000;
+            font-size: 9px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #ff3366; color: #fff; }
+        .row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .col { flex: 1; min-width: 200px; }
+        .badge { background: #ff3366; color: #fff; display: inline-block; padding: 4px 12px; font-size: 8px; margin-bottom: 15px; }
+        h2 { font-size: 12px; margin-bottom: 15px; border-bottom: 1px solid #00ffcc; display: inline-block; }
+        .endpoint { background: #001a1a; padding: 8px 12px; margin: 8px 0; border-left: 3px solid #00ffcc; font-size: 9px; }
+        .method { display: inline-block; padding: 2px 8px; margin-right: 10px; }
+        .get { background: #00ffcc; color: #000; }
+        .post { background: #ff3366; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="font-size: 14px; font-weight: bold;">MAX ROUTER</div>
+        <div style="font-size: 8px;">0.01% FEE • 30+ DEXES • LIMIT • DCA • PERPS</div>
+    </div>
+
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div class="badge">⚡ 10X CHEAPER THAN JUPITER ⚡</div>
+            <h1 style="font-size: 20px; letter-spacing: 4px;">MAX ROUTER API</h1>
+            <p style="font-size: 9px;">INTEGRATE THE MOST ADVANCED DEX AGGREGATOR INTO YOUR APP</p>
+        </div>
+
+        <!-- STEP 1: GET API KEY -->
+        <div class="api-card">
+            <h2>STEP 1: GET API KEY</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="email" id="email" placeholder="EMAIL" value="dev@example.com">
+                    <input type="text" id="projectName" placeholder="PROJECT NAME" value="MY WALLET">
+                    <button onclick="registerUser()">GENERATE API KEY</button>
+                </div>
+                <div class="col">
+                    <div id="apiKeyResult" style="display: none; background: #000; padding: 15px;">
+                        <p>API KEY:</p>
+                        <code id="apiKeyDisplay" style="word-break: break-all;"></code>
+                        <p style="margin-top: 10px;">SECRET KEY:</p>
+                        <code id="secretKeyDisplay" style="word-break: break-all;"></code>
+                        <p style="margin-top: 10px; font-size: 8px;">⚠️ SAVE YOUR SECRET KEY</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: API ENDPOINTS -->
+        <div class="api-card">
+            <h2>STEP 2: API ENDPOINTS</h2>
+            <div class="endpoint"><span class="method get">GET</span> /api/sol-router/quote?from=SOL&to=USDC&amount=1</div>
+            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/swap</div>
+            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/limit</div>
+            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/dca</div>
+            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/perp</div>
+            <div class="endpoint"><span class="method post">POST</span> /api/sol-router/pool</div>
+            <div class="endpoint"><span class="method get">GET</span> /api/sol-router/tokens</div>
+            <div class="endpoint"><span class="method get">GET</span> /api/sol-router/routes</div>
+        </div>
+
+        <!-- STEP 3: JAVASCRIPT INTEGRATION -->
+        <div class="api-card">
+            <h2>STEP 3: JAVASCRIPT INTEGRATION</h2>
+            <div class="code-block">
+                <pre>const MAX_API_KEY = 'your_api_key_here';
+
+// GET QUOTE
+const quote = await fetch('https://max-router.com/api/sol-router/quote?from=SOL&to=USDC&amount=1', {
+    headers: { 'X-API-Key': MAX_API_KEY }
+});
+const data = await quote.json();
+
+console.log(`BEST: ${data.best_route.output} USDC ON ${data.best_route.dex}`);
+console.log(`FEE: 0.01%`);</pre>
