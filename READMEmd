@@ -1,0 +1,4 @@
+https://fixorium.com.pk/max/v1/developers	POST	Get API key
+https://fixorium.com.pk/max/v1/quote	GET	Get swap quote
+https://fixorium.com.pk/max/v1/swap	POST	Execute swap
+https://fixorium.com.pk/max/v1/keys	GET	List API keys
