@@ -20,28 +20,23 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const [mintMeApiKey, setMintMeApiKey] = useState('');
     const [mintMeApiSecret, setMintMeApiSecret] = useState('');
     const [copied, setCopied] = useState(false);
-    const [marqueePrices, setMarqueePrices] = useState<any[]>([]);
     const [registeredEmail, setRegisteredEmail] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
     
-    // Registration form states
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [registerError, setRegisterError] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     
-    // MintMe registration form states
     const [mintMeEmail, setMintMeEmail] = useState('');
     const [mintMePassword, setMintMePassword] = useState('');
     const [mintMeConfirmPassword, setMintMeConfirmPassword] = useState('');
     const [mintMeRegisterError, setMintMeRegisterError] = useState('');
     const [isMintMeRegistering, setIsMintMeRegistering] = useState(false);
 
-    // MintMe contract address
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
 
-    // Check registration status on load
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
         const userRegistered = localStorage.getItem('user_registered');
@@ -49,47 +44,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             setRegisteredEmail(userEmail);
             setIsRegistered(true);
         }
-    }, []);
-
-    // Fetch live prices for marquee from DexScreener
-    useEffect(() => {
-        const fetchMarqueePrices = async () => {
-            const symbols = [
-                { name: 'BTC', address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599' },
-                { name: 'ETH', address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' },
-                { name: 'BNB', address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' },
-                { name: 'SOL', address: 'So11111111111111111111111111111111111111112' },
-                { name: 'FIXERCOIN', address: 'H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump' },
-                { name: 'LOCKER', address: 'EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump' },
-                { name: 'PINGX', address: '7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump' },
-                { name: 'FXM', address: '7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump' },
-            ];
-            const prices = [];
-            
-            for (const symbol of symbols) {
-                try {
-                    const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${symbol.address}`);
-                    const data = await response.json();
-                    if (data.pairs && data.pairs[0] && data.pairs[0].priceUsd) {
-                        const price = parseFloat(data.pairs[0].priceUsd);
-                        prices.push({
-                            symbol: symbol.name,
-                            price: price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })
-                        });
-                    } else {
-                        prices.push({ symbol: symbol.name, price: '0.00' });
-                    }
-                } catch (e) {
-                    console.log(`Failed to fetch ${symbol.name}`);
-                    prices.push({ symbol: symbol.name, price: '0.00' });
-                }
-            }
-            setMarqueePrices(prices);
-        };
-
-        fetchMarqueePrices();
-        const interval = setInterval(fetchMarqueePrices, 30000);
-        return () => clearInterval(interval);
     }, []);
 
     const handleMaxRegister = async () => {
@@ -178,8 +132,18 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // Double the marquee items for seamless scroll
-    const marqueeItems = [...marqueePrices, ...marqueePrices];
+    // Inject Cryptorank widget script only once
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = 'https://cryptorank.io/widget/marquee.js';
+        script.async = true;
+        document.body.appendChild(script);
+        return () => {
+            // Cleanup
+            const widget = document.getElementById('cr-widget-marquee');
+            if (widget) widget.remove();
+        };
+    }, []);
 
     return (
         <div className="min-h-screen bg-dark">
@@ -187,12 +151,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-12 md:h-14">
-                        {/* Left side - DEFI PLATFORM text */}
                         <div className="text-[10px] md:text-xs font-semibold text-primary uppercase tracking-wider">
                             DEFI PLATFORM
                         </div>
 
-                        {/* 3-Line Dropdown Menu with Icons */}
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
                                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,31 +233,31 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Marquee - Live Prices from DexScreener */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/5 border-y border-primary/20 overflow-hidden whitespace-nowrap py-1.5 z-40">
-                <div className="inline-block animate-marquee whitespace-nowrap">
-                    {marqueeItems.map((item, idx) => (
-                        <span key={idx} className="mx-3 inline-flex items-center gap-2">
-                            <span className="text-white text-[9px] md:text-xs uppercase tracking-wider font-semibold">{item.symbol}</span>
-                            <span className="text-primary text-[9px] md:text-xs font-mono">${typeof item.price === 'number' ? item.price.toLocaleString() : item.price}</span>
-                        </span>
-                    ))}
+            {/* ONLY Cryptorank Widget - No other marquee */}
+            <div className="fixed top-12 md:top-14 left-0 right-0 z-40 w-full overflow-hidden">
+                <div 
+                    id="cr-widget-marquee" 
+                    data-coins="bitcoin,ethereum,bitcoin-ai,ripple,bnb,dogecoin,tether"
+                    data-theme="dark"
+                    data-show-symbol="false"
+                    data-show-icon="true"
+                    data-show-period-change="false"
+                    data-period-change="24H"
+                    data-api-url="https://api.cryptorank.io/v0"
+                >
+                    <a href="https://cryptorank.io" className="text-gray-500 text-xs hidden">Coins by Cryptorank</a>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="min-h-screen flex flex-col items-center justify-center pt-28 md:pt-32 pb-12">
+            <div className="min-h-screen flex flex-col items-center justify-center pt-20 md:pt-24 pb-12">
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Animated Circle Logo with Logo Image */}
                     <div className="flex flex-col items-center justify-center">
-                        {/* Animation Container */}
                         <div className="relative flex items-center justify-center">
-                            {/* Outer animated rings */}
                             <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
                             <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-primary/20 animate-spin-slow"></div>
                             <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
                             
-                            {/* Center Logo - Image */}
                             <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-primary/30 overflow-hidden">
                                 <img 
                                     src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
@@ -542,13 +504,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             )}
 
             <style>{`
-                @keyframes marquee {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
-                }
-                .animate-marquee {
-                    animation: marquee 25s linear infinite;
-                }
                 @keyframes spin-slow {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
