@@ -1,5 +1,5 @@
 interface Env {
-  API_KEYS_KV: KVNamespace;
+  DEVELOPERS_KV: KVNamespace;  // Changed from API_KEYS_KV
 }
 
 export async function onRequestPost(request: Request, context: { env: Env }) {
@@ -10,7 +10,8 @@ export async function onRequestPost(request: Request, context: { env: Env }) {
     return Response.json({ error: 'API key required' }, { status: 401 });
   }
   
-  const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
+  // Changed to use DEVELOPERS_KV
+  const keyData = await env.DEVELOPERS_KV.get(`key:${apiKey}`, 'json');
   if (!keyData || (keyData as any).status !== 'active') {
     return Response.json({ error: 'Invalid API key' }, { status: 401 });
   }
@@ -59,7 +60,8 @@ export async function onRequestGet(request: Request, context: { env: Env }) {
     return Response.json({ error: 'API key required' }, { status: 401 });
   }
   
-  const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
+  // Changed to use DEVELOPERS_KV
+  const keyData = await env.DEVELOPERS_KV.get(`key:${apiKey}`, 'json');
   if (!keyData || (keyData as any).status !== 'active') {
     return Response.json({ error: 'Invalid API key' }, { status: 401 });
   }
