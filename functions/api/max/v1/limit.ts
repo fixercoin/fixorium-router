@@ -1,4 +1,9 @@
-export async function onRequestPost(request: Request, env: Env) {
+interface Env {
+  API_KEYS_KV: KVNamespace;
+}
+
+export async function onRequestPost(request: Request, context: { env: Env }) {
+  const env = context.env;
   const apiKey = request.headers.get('X-API-Key');
   
   if (!apiKey) {
@@ -6,7 +11,7 @@ export async function onRequestPost(request: Request, env: Env) {
   }
   
   const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
-  if (!keyData || keyData.status !== 'active') {
+  if (!keyData || (keyData as any).status !== 'active') {
     return Response.json({ error: 'Invalid API key' }, { status: 401 });
   }
   
@@ -46,7 +51,8 @@ export async function onRequestPost(request: Request, env: Env) {
   });
 }
 
-export async function onRequestGet(request: Request, env: Env) {
+export async function onRequestGet(request: Request, context: { env: Env }) {
+  const env = context.env;
   const apiKey = request.headers.get('X-API-Key');
   
   if (!apiKey) {
@@ -54,7 +60,7 @@ export async function onRequestGet(request: Request, env: Env) {
   }
   
   const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
-  if (!keyData || keyData.status !== 'active') {
+  if (!keyData || (keyData as any).status !== 'active') {
     return Response.json({ error: 'Invalid API key' }, { status: 401 });
   }
   
