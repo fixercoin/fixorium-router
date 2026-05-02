@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Home from './pages/Home';
 import Products from './pages/Products';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/UserDashboard';
 import ApiKeys from './pages/ApiKeys';
 
-type Page = 'home' | 'products' | 'dashboard' | 'apikeys';
+type Page = 'home' | 'products' | 'userdashboard' | 'apikeys';
 
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -47,12 +47,12 @@ const App: React.FC = () => {
                     />
                 )}
                 {currentPage === 'products' && <Products />}
-                {currentPage === 'dashboard' && isLoggedIn && <Dashboard walletAddress={userEmail} />}
+                {currentPage === 'userdashboard' && isLoggedIn && <UserDashboard walletAddress={userEmail} />}
                 {currentPage === 'apikeys' && isLoggedIn && <ApiKeys walletAddress={userEmail} />}
                 
                 {currentPage === 'dashboard' && !isLoggedIn && (
                     <div className="max-w-md mx-auto mt-20 p-8 bg-card border border-border rounded-xl text-center">
-                        <p className="text-gray-400 mb-4">Please login to access the dashboard</p>
+                        <p className="text-gray-400 mb-4">Please login to access the Userdashboard</p>
                         <button 
                             onClick={() => setCurrentPage('home')} 
                             className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-[#e8d58a] transition"
