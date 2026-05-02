@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// Remove the react-router-dom import - not needed anymore
-// import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     setCurrentPage: (page: 'dashboard' | 'products') => void;
@@ -11,9 +9,6 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = false, walletAddress = '', onLogout }) => {
-    // Remove the navigate line
-    // const navigate = useNavigate();
-    
     const [showAggregatorDialog, setShowAggregatorDialog] = useState(false);
     const [showMaxRegisterDialog, setShowMaxRegisterDialog] = useState(false);
     const [showMintMeRegisterDialog, setShowMintMeRegisterDialog] = useState(false);
@@ -48,7 +43,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
     const MAX_PROGRAM_ID = "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
-    // Load user data from localStorage on mount
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
         const userRegistered = localStorage.getItem('user_registered');
@@ -192,7 +186,11 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setApiKey('');
         setApiSecret('');
         setShowUserMenu(false);
-        setShowLoginDialog(true);
+        if (onLogout) {
+            onLogout();
+        } else {
+            window.location.reload();
+        }
     };
 
     const copyToClipboard = (text: string) => {
@@ -201,9 +199,18 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // FIXED: Use setCurrentPage prop instead of navigate
     const handleDexService = () => {
         setCurrentPage('dashboard');
+    };
+
+    const handleLoginClick = () => {
+        setShowLoginDialog(true);
+        setShowUserMenu(false);
+    };
+
+    const handleRegisterClick = () => {
+        setShowLoginDialog(false);
+        setShowMaxRegisterDialog(true);
     };
 
     return (
@@ -232,7 +239,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             </a>
                         </nav>
 
-                        {/* User Profile Dropdown - Icon + Text */}
+                        {/* User Profile Dropdown */}
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 text-gray-400 hover:text-primary transition p-2">
                                 <svg className="w-5 h-5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,7 +294,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                             </>
                                         ) : (
                                             <button
-                                                onClick={() => { setShowLoginDialog(true); setShowUserMenu(false); }}
+                                                onClick={handleLoginClick}
                                                 className="w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
                                             >
                                                 LOGIN
@@ -301,7 +308,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Custom Marquee - Information Text */}
+            {/* Custom Marquee */}
             <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     <span className="mx-4 inline-flex items-center gap-2">
@@ -327,11 +334,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </div>
 
-            {/* Main Content - Only Image, No Animation */}
+            {/* Main Content */}
             <div className="min-h-screen flex flex-col items-center justify-center pt-32 md:pt-40 pb-20 md:pb-12">
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center justify-center">
-                        {/* Simple Logo Image - No Animation */}
                         <div className="flex items-center justify-center">
                             <img 
                                 src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
@@ -372,6 +378,60 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     </a>
                 </div>
             </div>
+
+            {/* Login Dialog */}
+            {showLoginDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">LOGIN</h2>
+                            <button onClick={() => setShowLoginDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-3">
+                            {loginError && (
+                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
+                                    <p className="text-[10px] text-red-400">{loginError}</p>
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
+                                <input
+                                    type="email"
+                                    value={loginEmail}
+                                    onChange={(e) => setLoginEmail(e.target.value)}
+                                    placeholder="your@email.com"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={loginPassword}
+                                    onChange={(e) => setLoginPassword(e.target.value)}
+                                    placeholder="PASSWORD"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <button
+                                onClick={handleLogin}
+                                disabled={isLoggingIn}
+                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                            >
+                                {isLoggingIn ? 'LOGGING IN...' : 'LOGIN'}
+                            </button>
+                            <div className="text-center mt-2">
+                                <button
+                                    onClick={handleRegisterClick}
+                                    className="text-[10px] text-primary hover:underline"
+                                >
+                                    Don't have an account? Register here
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* MAX Registration Dialog */}
             {showMaxRegisterDialog && (
