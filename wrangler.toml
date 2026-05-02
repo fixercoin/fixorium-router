@@ -1,30 +1,11 @@
 name = "fixorium-router"
 compatibility_date = "2024-01-01"
-type = "webpack"
 account_id = ""
-workers_dev = true
+pages_build_output_dir = "public"
 
 [build]
 command = "npm run build"
 cwd = "./"
-
-[build.upload]
-format = "modules"
-main = "./public/index.js"
-rules = [
-  { type = "CompiledContentType", globs = ["**/*.wasm"], fallthrough = true },
-  { type = "Text", globs = ["**/*.txt", "**/*.html"], fallthrough = true },
-  { type = "Data", globs = ["**/*"], fallthrough = false }
-]
-
-# API Routes
-[[routes]]
-pattern = "*/api/*"
-zone_name = "example.com"
-
-# Asset serving
-[[env.production.triggers.crons]]
-crons = ["0 2 * * *"]
 
 # KV Namespace Bindings
 [[kv_namespaces]]
