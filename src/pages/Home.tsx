@@ -36,6 +36,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const [isMintMeRegistering, setIsMintMeRegistering] = useState(false);
 
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
+    const MAX_PROGRAM_ID = "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
@@ -154,79 +155,75 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             DEFI PLATFORM
                         </div>
 
+                        {/* Desktop Navigation - Hidden on mobile */}
+                        <nav className="hidden md:flex items-center gap-6">
+                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                EXCHANGE
+                            </a>
+                            <button onClick={() => setShowAggregatorDialog(true)} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                AGGREGATOR
+                            </button>
+                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                WALLET
+                            </a>
+                            <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                TEAM
+                            </a>
+                            <a href="/max/docs" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                DOCS
+                            </a>
+                        </nav>
+
+                        {/* User Profile Dropdown */}
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
                                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </button>
                             
                             {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50">
+                                <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg z-50">
                                     <div className="py-1">
-                                        <button
-                                            onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
-                                            className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                            </svg>
-                                            MAX API KEY
-                                        </button>
-                                        <button
-                                            onClick={() => { setShowMintMeRegisterDialog(true); setShowUserMenu(false); }}
-                                            className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                            </svg>
-                                            MINTME API KEY
-                                        </button>
-                                        <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
-                                            </svg>
-                                            EXCHANGE
-                                        </a>
-                                        <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
-                                            </svg>
-                                            WALLET
-                                        </a>
-                                        <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                            TEAM
-                                        </a>
-                                        
                                         {isRegistered ? (
                                             <>
-                                                <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2 flex items-center gap-2">
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                    {registeredEmail}
+                                                <div className="px-4 py-3 border-b border-border">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">ACCOUNT</div>
+                                                    <div className="text-xs text-white break-all">{registeredEmail}</div>
+                                                </div>
+                                                <div className="px-4 py-2">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">MAX API KEY</div>
+                                                    <div className="flex items-center gap-2">
+                                                        <code className="flex-1 text-[10px] text-primary break-all">{apiKey || 'Not registered'}</code>
+                                                        {apiKey && (
+                                                            <button onClick={() => copyToClipboard(apiKey)} className="text-gray-400 hover:text-white">
+                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                                </svg>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="px-4 py-2">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">MAX PROGRAM ID</div>
+                                                    <code className="text-[9px] text-green-400 break-all block">{MAX_PROGRAM_ID}</code>
+                                                </div>
+                                                <div className="px-4 py-2">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">MINTME CONTRACT</div>
+                                                    <code className="text-[9px] text-green-400 break-all block">{MINTME_CONTRACT}</code>
                                                 </div>
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
+                                                    className="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
                                                 >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                                    </svg>
                                                     LOGOUT
                                                 </button>
                                             </>
                                         ) : (
                                             <button
                                                 onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
-                                                className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider border-t border-border mt-1 pt-2"
+                                                className="w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
                                             >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                                                </svg>
                                                 REGISTER
                                             </button>
                                         )}
@@ -238,7 +235,43 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Cryptorank Widget - No background, no border */}
+            {/* Bottom Navigation Bar - Mobile Only */}
+            <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
+                <div className="flex items-center justify-around py-2">
+                    <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">EXCHANGE</span>
+                    </a>
+                    <button onClick={() => setShowAggregatorDialog(true)} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">AGGREGATOR</span>
+                    </a>
+                    <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">WALLET</span>
+                    </a>
+                    <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">TEAM</span>
+                    </a>
+                    <a href="/max/docs" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">DOCS</span>
+                    </a>
+                </div>
+            </div>
+
+            {/* Cryptorank Widget */}
             <div className="fixed top-12 md:top-14 left-0 right-0 z-40 w-full">
                 <div 
                     id="cr-widget-marquee" 
@@ -254,18 +287,16 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </div>
 
-            {/* Main Content - Added gap between marquee and animation */}
-            <div className="min-h-screen flex flex-col items-center justify-center pt-32 md:pt-40 pb-12">
+            {/* Main Content */}
+            <div className="min-h-screen flex flex-col items-center justify-center pt-32 md:pt-40 pb-20 md:pb-12">
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center justify-center">
-                        {/* Animated Circles - Yellow color */}
+                        {/* Animated Circles */}
                         <div className="relative flex items-center justify-center">
-                            {/* Outer animated rings - Yellow colors */}
                             <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-yellow-400/50 animate-pulse-slow"></div>
                             <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-yellow-400/30 animate-spin-slow"></div>
                             <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-yellow-500/10 via-yellow-400/10 to-yellow-500/10 animate-ping-slow"></div>
                             
-                            {/* Center Logo - No background color, only transparent */}
                             <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                                 <img 
                                     src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
