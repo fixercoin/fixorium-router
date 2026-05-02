@@ -1,14 +1,20 @@
-name = "fixorium-router"
+name = "max"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
 # KV Namespace Bindings
 [[kv_namespaces]]
 binding = "API_KEYS_KV"
-id = "api-keys-kv"
-preview_id = "api-keys-kv-preview"
+id = "21e449919ee04486bd1b6456a6684ff0"
+preview_id = "21e449919ee04486bd1b6456a6684ff0"
 
 [[kv_namespaces]]
 binding = "DEVELOPERS_KV"
-id = "developers-kv"
-preview_id = "developers-kv-preview"
+id = "e6e221ee390d461bbe2dc737752da27f"
+preview_id = "e6e221ee390d461bbe2dc737752da27f"
+
+# Optional: Usage KV for rate limiting
+[[kv_namespaces]]
+binding = "USAGE_KV"
+id = "079a1cc4c4934884b25b9c8a3f3c674d"
+preview_id = "079a1cc4c4934884b25b9c8a3f3c674d"
