@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// Remove Header and Footer imports - we don't need them anymore
-// import Header from './components/Header';
-// import Footer from './components/Footer';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Dashboard from './pages/Dashboard';
@@ -12,58 +9,59 @@ type Page = 'home' | 'products' | 'dashboard' | 'apikeys';
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('home');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [walletAddress, setWalletAddress] = useState<string | null>(null);
+    const [userEmail, setUserEmail] = useState<string>('');
 
+    // Check for email login on mount
     useEffect(() => {
-        const savedWallet = localStorage.getItem('max_wallet');
-        if (savedWallet) {
-            setWalletAddress(savedWallet);
+        const savedEmail = localStorage.getItem('user_email');
+        const isRegistered = localStorage.getItem('user_registered');
+        
+        if (savedEmail && isRegistered === 'true') {
+            setUserEmail(savedEmail);
             setIsLoggedIn(true);
         }
     }, []);
 
-    // This function is kept for compatibility but not used
-    const handleConnectWallet = async () => {
-        // Connect wallet is disabled - this function does nothing
-        console.log('Connect wallet is disabled');
-    };
-
-    const handleDisconnect = () => {
-        localStorage.removeItem('max_wallet');
-        setWalletAddress(null);
+    const handleLogout = () => {
+        localStorage.removeItem('user_email');
+        localStorage.removeItem('user_registered');
+        localStorage.removeItem('max_api_key');
+        localStorage.removeItem('max_api_secret');
+        localStorage.removeItem('mintme_contract');
+        localStorage.removeItem('max_program_id');
+        setUserEmail('');
         setIsLoggedIn(false);
         setCurrentPage('home');
     };
 
     return (
         <div className="min-h-screen bg-dark">
-            {/* No Header - completely removed */}
-            
             <main className="pt-0">
                 {currentPage === 'home' && (
                     <Home 
                         setCurrentPage={setCurrentPage} 
-                        onConnect={handleConnectWallet}
+                        onConnect={() => {}} // Not used anymore
                         isLoggedIn={isLoggedIn}
-                        walletAddress={walletAddress || ''}
-                        onLogout={handleDisconnect}
+                        walletAddress={userEmail} // Pass email as walletAddress for compatibility
+                        onLogout={handleLogout}
                     />
                 )}
                 {currentPage === 'products' && <Products />}
-                {currentPage === 'dashboard' && isLoggedIn && <Dashboard walletAddress={walletAddress!} />}
-                {currentPage === 'apikeys' && isLoggedIn && <ApiKeys walletAddress={walletAddress!} />}
+                {currentPage === 'dashboard' && isLoggedIn && <Dashboard walletAddress={userEmail} />}
+                {currentPage === 'apikeys' && isLoggedIn && <ApiKeys walletAddress={userEmail} />}
                 
                 {currentPage === 'dashboard' && !isLoggedIn && (
                     <div className="max-w-md mx-auto mt-20 p-8 bg-card border border-border rounded-xl text-center">
-                        <p className="text-gray-400 mb-4">Please connect your wallet to access the dashboard</p>
-                        <button onClick={handleConnectWallet} className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-[#e8d58a] transition">
-                            Connect Wallet
+                        <p className="text-gray-400 mb-4">Please login to access the dashboard</p>
+                        <button 
+                            onClick={() => setCurrentPage('home')} 
+                            className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-[#e8d58a] transition"
+                        >
+                            Go to Login
                         </button>
                     </div>
                 )}
             </main>
-            
-            {/* No Footer - completely removed */}
         </div>
     );
 };
