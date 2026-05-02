@@ -200,7 +200,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     };
 
     const handleDexService = () => {
-        setCurrentPage('dashboard');
+        setCurrentPage('userdashboard');
     };
 
     const handleLoginClick = () => {
