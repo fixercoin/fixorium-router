@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 interface HomeProps {
-    setCurrentPage: (page: 'dashboard' | 'products') => void;
+    setCurrentPage: (page: 'userdashboard' | 'products') => void;
     onConnect: () => void;
     isLoggedIn?: boolean;
     walletAddress?: string;
