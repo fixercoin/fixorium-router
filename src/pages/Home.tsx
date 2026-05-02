@@ -38,12 +38,24 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
     const MAX_PROGRAM_ID = "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
+    // Load user data from localStorage on mount
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
         const userRegistered = localStorage.getItem('user_registered');
+        const savedApiKey = localStorage.getItem('max_api_key');
+        const savedMintMeContract = localStorage.getItem('mintme_contract');
+        
         if (userEmail && userRegistered === 'true') {
             setRegisteredEmail(userEmail);
             setIsRegistered(true);
+            if (savedApiKey) {
+                setApiKey(savedApiKey);
+            }
+            if (savedMintMeContract) {
+                // MintMe contract is already set
+            } else {
+                localStorage.setItem('mintme_contract', MINTME_CONTRACT);
+            }
         }
     }, []);
 
@@ -68,6 +80,9 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 setApiSecret(data.apiSecret);
                 localStorage.setItem('user_email', email);
                 localStorage.setItem('user_registered', 'true');
+                localStorage.setItem('max_api_key', data.apiKey);
+                localStorage.setItem('max_api_secret', data.apiSecret);
+                localStorage.setItem('mintme_contract', MINTME_CONTRACT);
                 setRegisteredEmail(email);
                 setIsRegistered(true);
                 setShowMaxRegisterDialog(false);
@@ -122,8 +137,12 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const handleLogout = () => {
         localStorage.removeItem('user_email');
         localStorage.removeItem('user_registered');
+        localStorage.removeItem('max_api_key');
+        localStorage.removeItem('max_api_secret');
         setIsRegistered(false);
         setRegisteredEmail('');
+        setApiKey('');
+        setApiSecret('');
         setShowUserMenu(false);
     };
 
@@ -149,7 +168,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                 EXCHANGE
                             </a>
                             <button onClick={() => setShowAggregatorDialog(true)} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                AGGREGATOR
+                                DEX+
                             </button>
                             <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 WALLET
@@ -157,17 +176,15 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 TEAM
                             </a>
-                            <a href="/max/docs" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                DOCS
-                            </a>
                         </nav>
 
-                        {/* User Profile Dropdown */}
+                        {/* User Profile Dropdown - Icon + Text */}
                         <div className="relative">
-                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
-                                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 text-gray-400 hover:text-primary transition p-2">
+                                <svg className="w-5 h-5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
+                                <span className="text-[10px] md:text-xs font-medium hidden sm:inline uppercase tracking-wider">PROFILE</span>
                             </button>
                             
                             {showUserMenu && (
@@ -179,12 +196,14 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                                     <div className="text-[10px] text-gray-400 uppercase mb-1">ACCOUNT</div>
                                                     <div className="text-xs text-white break-all">{registeredEmail}</div>
                                                 </div>
-                                                <div className="px-4 py-2">
+                                                <div className="px-4 py-3">
                                                     <div className="text-[10px] text-gray-400 uppercase mb-1">MAX API KEY</div>
-                                                    <div className="flex items-center gap-2">
-                                                        <code className="flex-1 text-[10px] text-primary break-all">{apiKey || 'Not registered'}</code>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <code className="flex-1 text-[10px] text-primary break-all bg-darker p-1.5 rounded">
+                                                            {apiKey || 'Not registered'}
+                                                        </code>
                                                         {apiKey && (
-                                                            <button onClick={() => copyToClipboard(apiKey)} className="text-gray-400 hover:text-white">
+                                                            <button onClick={() => copyToClipboard(apiKey)} className="text-gray-400 hover:text-white p-1">
                                                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
                                                                 </svg>
@@ -192,13 +211,18 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="px-4 py-2">
-                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">MAX PROGRAM ID</div>
-                                                    <code className="text-[9px] text-green-400 break-all block">{MAX_PROGRAM_ID}</code>
-                                                </div>
-                                                <div className="px-4 py-2">
+                                                <div className="px-4 py-3">
                                                     <div className="text-[10px] text-gray-400 uppercase mb-1">MINTME CONTRACT</div>
-                                                    <code className="text-[9px] text-green-400 break-all block">{MINTME_CONTRACT}</code>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <code className="flex-1 text-[10px] text-green-400 break-all bg-darker p-1.5 rounded">
+                                                            {MINTME_CONTRACT}
+                                                        </code>
+                                                        <button onClick={() => copyToClipboard(MINTME_CONTRACT)} className="text-gray-400 hover:text-white p-1">
+                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <button
                                                     onClick={handleLogout}
@@ -223,27 +247,27 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Custom Marquee - Information Text */}
+            {/* Custom Marquee - Information Text with Simple Icons */}
             <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     <span className="mx-4 inline-flex items-center gap-2">
-                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">⚡ NEW</span>
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">NEW</span>
                         <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">FIXORIUM EXCHANGE — MULTICHAIN DEX AGGREGATOR WITH NEW CRYPTO TRADE IDEAS</span>
                     </span>
                     <span className="mx-4 inline-flex items-center gap-2">
-                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">🔐 WALLET</span>
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">WALLET</span>
                         <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">FIXORIUM WALLET — MULTICHAIN WALLET SUPPORTING SOLANA, EVM, MINTME BLOCKCHAIN WITH POOL CREATION SYSTEM</span>
                     </span>
                     <span className="mx-4 inline-flex items-center gap-2">
-                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">🔄 ROUTER</span>
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">ROUTER</span>
                         <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">MINTME FIXORIUM ROUTER — FREE TO USE FIXORIUM DEX ROUTER AVAILABLE AFTER REGISTRATION</span>
                     </span>
                     <span className="mx-4 inline-flex items-center gap-2">
-                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">⚡ MAX</span>
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">MAX</span>
                         <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">MAX AGGREGATOR — SUPER FAST • VERY LOW FEES • MULTICHAIN AGGREGATOR</span>
                     </span>
                     <span className="mx-4 inline-flex items-center gap-2">
-                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">🔑 API</span>
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">API</span>
                         <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">GET MAX API KEY & SECRET KEY AFTER REGISTRATION — EASY TO INTEGRATE WITH SIMPLE ICONS</span>
                     </span>
                 </div>
@@ -284,7 +308,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <span className="text-[8px] uppercase tracking-wider">AGGREGATOR</span>
+                        <span className="text-[8px] uppercase tracking-wider">DEX+</span>
                     </button>
                     <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -298,21 +322,15 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                         </svg>
                         <span className="text-[8px] uppercase tracking-wider">TEAM</span>
                     </a>
-                    <a href="/max/docs" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                        <span className="text-[8px] uppercase tracking-wider">DOCS</span>
-                    </a>
                 </div>
             </div>
 
-            {/* MAX Aggregator Dialog */}
+            {/* DEX+ Dialog (Aggregator Dialog) */}
             {showAggregatorDialog && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX AGGREGATOR</h2>
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX DEX+ AGGREGATOR</h2>
                             <button onClick={() => setShowAggregatorDialog(false)} className="text-gray-400 hover:text-white">✕</button>
                         </div>
                         <div className="text-center py-4">
