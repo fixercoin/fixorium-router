@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// Remove the react-router-dom import - not needed anymore
+// import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     setCurrentPage: (page: 'dashboard' | 'products') => void;
@@ -10,7 +11,9 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = false, walletAddress = '', onLogout }) => {
-    const navigate = useNavigate();
+    // Remove the navigate line
+    // const navigate = useNavigate();
+    
     const [showAggregatorDialog, setShowAggregatorDialog] = useState(false);
     const [showMaxRegisterDialog, setShowMaxRegisterDialog] = useState(false);
     const [showMintMeRegisterDialog, setShowMintMeRegisterDialog] = useState(false);
@@ -198,8 +201,9 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
+    // FIXED: Use setCurrentPage prop instead of navigate
     const handleDexService = () => {
-        navigate('/dashboard');
+        setCurrentPage('dashboard');
     };
 
     return (
@@ -296,52 +300,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     </div>
                 </div>
             </header>
-
-            {/* Login Dialog */}
-            {showLoginDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">LOGIN</h2>
-                            <button onClick={() => setShowLoginDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="space-y-3">
-                            {loginError && (
-                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
-                                    <p className="text-[10px] text-red-400">{loginError}</p>
-                                </div>
-                            )}
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
-                                <input
-                                    type="email"
-                                    value={loginEmail}
-                                    onChange={(e) => setLoginEmail(e.target.value)}
-                                    placeholder="your@email.com"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
-                                <input
-                                    type="password"
-                                    value={loginPassword}
-                                    onChange={(e) => setLoginPassword(e.target.value)}
-                                    placeholder="PASSWORD"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <button
-                                onClick={handleLogin}
-                                disabled={isLoggingIn}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
-                            >
-                                {isLoggingIn ? 'LOGGING IN...' : 'LOGIN'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Custom Marquee - Information Text */}
             <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
