@@ -8,24 +8,24 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = false, walletAddress = '' }) => {
-    const [showExchangeDialog, setShowExchangeDialog] = useState(false);
     const [showAggregatorDialog, setShowAggregatorDialog] = useState(false);
-    const [showWalletDialog, setShowWalletDialog] = useState(false);
-    const [showMaxApiDialog, setShowMaxApiDialog] = useState(false);
-    const [showMintMeApiDialog, setShowMintMeApiDialog] = useState(false);
+    const [showApiDialog, setShowApiDialog] = useState(false);
     const [apiKey, setApiKey] = useState('');
     const [apiSecret, setApiSecret] = useState('');
     const [copied, setCopied] = useState(false);
-    const [mintMeCopied, setMintMeCopied] = useState(false);
+    const [isRegistering, setIsRegistering] = useState(false);
     const [trendingTokens, setTrendingTokens] = useState([
-        { symbol: 'SOL', price: '$185.42', change: '+5.2%', positive: true, logo: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png' },
-        { symbol: 'BTC', price: '$69,420', change: '+2.3%', positive: true, logo: 'https://i.postimg.cc/qq9yW6k5/btc.png' },
-        { symbol: 'ETH', price: '$3,850', change: '+1.8%', positive: true, logo: 'https://i.postimg.cc/zXpPqL4K/eth.png' },
-        { symbol: 'BNB', price: '$620', change: '-0.5%', positive: false, logo: 'https://i.postimg.cc/TwQV3nJc/bnb.png' },
-        { symbol: 'MATIC', price: '$0.95', change: '+3.2%', positive: true, logo: 'https://i.postimg.cc/HkYJc2Vd/matic.png' },
-        { symbol: 'FIXERCOIN', price: '$0.0000558', change: '+12%', positive: true, logo: 'https://i.postimg.cc/c4nxmQGk/fixercoin.png' },
-        { symbol: 'FXM', price: '$0.00001457', change: '+8.5%', positive: true, logo: 'https://i.postimg.cc/k4cbyVpC/fxm.png' },
-        { symbol: 'PINGX', price: '$0.00000395', change: '-2.1%', positive: false, logo: 'https://i.postimg.cc/JzvcyB9q/cropped-circle-image.png' },
+        { symbol: 'SOL', price: '$185.42', change: '+5.2%', positive: true },
+        { symbol: 'BTC', price: '$69,420', change: '+2.3%', positive: true },
+        { symbol: 'ETH', price: '$3,850', change: '+1.8%', positive: true },
+        { symbol: 'BNB', price: '$620', change: '-0.5%', positive: false },
+        { symbol: 'MATIC', price: '$0.95', change: '+3.2%', positive: true },
+        { symbol: 'FIXERCOIN', price: '$0.0000558', change: '+12%', positive: true },
+        { symbol: 'FXM', price: '$0.00001457', change: '+8.5%', positive: true },
+        { symbol: 'PINGX', price: '$0.00000395', change: '-2.1%', positive: false },
+        { symbol: 'USDC', price: '$1.00', change: '+0.01%', positive: true },
+        { symbol: 'USDT', price: '$1.00', change: '-0.02%', positive: false },
+        { symbol: 'LOCKER', price: '$0.00000875', change: '+15%', positive: true },
     ]);
 
     const networks = [
@@ -36,61 +36,79 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         { name: 'Polygon', status: 'Coming Soon', fee: '0.03%' },
     ];
 
-    const handleRegisterMaxApi = async () => {
+    // Fetch real token prices from DexScreener
+    useEffect(() => {
+        const fetchPrices = async () => {
+            try {
+                const symbols = ['SOL', 'BTC', 'ETH', 'BNB', 'MATIC'];
+                const updates = [...trendingTokens];
+                
+                for (const symbol of symbols) {
+                    const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${symbol}`);
+                    const data = await response.json();
+                    if (data.pairs && data.pairs[0]) {
+                        const price = parseFloat(data.pairs[0].priceUsd);
+                        const change = parseFloat(data.pairs[0].priceChange?.h24 || 0);
+                        const index = updates.findIndex(t => t.symbol === symbol);
+                        if (index !== -1) {
+                            updates[index] = {
+                                ...updates[index],
+                                price: `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                                change: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
+                                positive: change >= 0
+                            };
+                        }
+                    }
+                }
+                setTrendingTokens(updates);
+            } catch (error) {
+                console.error('Failed to fetch prices:', error);
+            }
+        };
+        
+        fetchPrices();
+        const interval = setInterval(fetchPrices, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleRegisterApiKey = async () => {
         if (!isLoggedIn || !walletAddress) {
             onConnect();
             return;
         }
         
+        setIsRegistering(true);
         try {
             const response = await fetch('/api/max/v1/developers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletAddress, email: '', companyName: 'Fixorium User' })
+                body: JSON.stringify({ 
+                    walletAddress, 
+                    email: '', 
+                    companyName: 'Fixorium User' 
+                })
             });
             const data = await response.json();
             if (data.success) {
                 setApiKey(data.apiKey);
                 setApiSecret(data.apiSecret);
-                setShowMaxApiDialog(true);
+                setShowApiDialog(true);
             }
         } catch (error) {
             console.error('Failed to register:', error);
+        } finally {
+            setIsRegistering(false);
         }
     };
 
-    const handleRegisterMintMeApi = async () => {
-        if (!isLoggedIn || !walletAddress) {
-            onConnect();
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/mintme/v1/developers', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletAddress, email: '', companyName: 'Fixorium User' })
-            });
-            const data = await response.json();
-            if (data.success) {
-                setApiKey(data.apiKey);
-                setApiSecret(data.apiSecret);
-                setShowMintMeApiDialog(true);
-            }
-        } catch (error) {
-            console.error('Failed to register:', error);
-        }
-    };
-
-    const copyToClipboard = (text: string, type: 'key' | 'secret') => {
+    const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        if (type === 'key') setCopied(true);
-        else setMintMeCopied(true);
-        setTimeout(() => {
-            setCopied(false);
-            setMintMeCopied(false);
-        }, 2000);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
+
+    // Double the tokens for seamless marquee
+    const marqueeTokens = [...trendingTokens, ...trendingTokens];
 
     return (
         <div className="min-h-screen bg-dark">
@@ -105,15 +123,15 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
 
                         {/* Navigation */}
                         <nav className="hidden md:flex items-center gap-6">
-                            <button onClick={() => setShowExchangeDialog(true)} className="text-sm text-gray-400 hover:text-primary transition">
+                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition">
                                 Exchange
-                            </button>
+                            </a>
                             <button onClick={() => setShowAggregatorDialog(true)} className="text-sm text-gray-400 hover:text-primary transition">
                                 Aggregator
                             </button>
-                            <button onClick={() => setShowWalletDialog(true)} className="text-sm text-gray-400 hover:text-primary transition">
+                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition">
                                 Wallet
-                            </button>
+                            </a>
                         </nav>
 
                         {/* Connect Button */}
@@ -124,44 +142,59 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Main Content with padding for fixed header */}
-            <div className="pt-16">
+            {/* Marquee - Trending Tokens */}
+            <div className="fixed top-16 left-0 right-0 bg-card border-y border-border overflow-hidden whitespace-nowrap py-2 z-40">
+                <div className="inline-block animate-marquee whitespace-nowrap">
+                    {marqueeTokens.map((token, idx) => (
+                        <span key={idx} className="mx-4 inline-flex items-center gap-2">
+                            <span className="text-xs font-semibold text-white">{token.symbol}</span>
+                            <span className="text-xs text-gray-400">{token.price}</span>
+                            <span className={`text-xs ${token.positive ? 'text-green-400' : 'text-red-400'}`}>
+                                {token.change}
+                            </span>
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Main Content with padding for fixed header and marquee */}
+            <div className="pt-32">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex flex-col lg:flex-row gap-8">
-                        {/* Left Column - Trending Tokens */}
-                        <div className="lg:w-1/3">
-                            <div className="bg-card border border-border rounded-xl p-6 sticky top-24">
-                                <h2 className="text-lg font-semibold text-primary mb-4">Trending Tokens</h2>
-                                <div className="space-y-3">
-                                    {trendingTokens.map((token, idx) => (
-                                        <div key={idx} className="flex items-center justify-between p-3 bg-darker rounded-lg hover:bg-darker/80 transition">
-                                            <div className="flex items-center gap-3">
-                                                <img src={token.logo} alt={token.symbol} className="w-8 h-8 rounded-full" />
-                                                <div>
-                                                    <div className="font-semibold text-white">{token.symbol}</div>
-                                                    <div className="text-xs text-gray-500">{token.price}</div>
-                                                </div>
-                                            </div>
-                                            <div className={`text-sm font-semibold ${token.positive ? 'text-green-400' : 'text-red-400'}`}>
-                                                {token.change}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                        {/* Left Column - User Capital & Info */}
+                        <div className="lg:w-1/2">
+                            <div className="bg-gradient-to-br from-primary/10 to-transparent border border-primary/30 rounded-xl p-8 mb-8">
+                                <div className="text-sm text-gray-400 mb-2">Total Value Locked</div>
+                                <div className="text-4xl font-bold text-white mb-2">$12,345,678</div>
+                                <div className="text-xs text-green-400">+8.2% (24h)</div>
+                            </div>
+
+                            <div className="bg-card border border-border rounded-xl p-6">
+                                <h2 className="text-lg font-semibold text-primary mb-4">Get API Key</h2>
+                                <p className="text-sm text-gray-400 mb-4">
+                                    Integrate Fixorium aggregator into your application with our simple REST API.
+                                    Only 0.01% platform fee.
+                                </p>
+                                <button
+                                    onClick={handleRegisterApiKey}
+                                    disabled={isRegistering}
+                                    className="w-full px-6 py-3 bg-primary text-black font-bold rounded-xl hover:bg-[#e8d58a] transition disabled:opacity-50"
+                                >
+                                    {isRegistering ? 'REGISTERING...' : 'GET API KEY'}
+                                </button>
                             </div>
                         </div>
 
                         {/* Right Column - Platform Information */}
-                        <div className="lg:w-2/3">
+                        <div className="lg:w-1/2">
                             {/* Hero Section */}
-                            <div className="text-center lg:text-left mb-12">
+                            <div className="text-center lg:text-left mb-8">
                                 <h1 className="text-4xl md:text-5xl font-bold mb-4">
                                     <span className="text-primary">Fixorium</span>
                                     <br />
-                                    <span className="text-white">Multi-Chain DEX Router</span>
+                                    <span className="text-white">Multi-Chain Aggregator</span>
                                 </h1>
-                                <p className="text-gray-400 text-lg max-w-2xl lg:max-w-full">
-                                    Aggregate liquidity across Solana, MintMe, and EVM chains.
+                                <p className="text-gray-400 text-lg">
                                     The lowest fees in DeFi — only <span className="text-primary font-bold">0.01%</span>
                                 </p>
                             </div>
@@ -182,24 +215,8 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                 </div>
                             </div>
 
-                            {/* API Key Buttons */}
-                            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                                <button
-                                    onClick={handleRegisterMaxApi}
-                                    className="flex-1 px-6 py-3 bg-primary text-black font-bold rounded-xl hover:bg-[#e8d58a] transition text-center"
-                                >
-                                    Get MAX API Key
-                                </button>
-                                <button
-                                    onClick={handleRegisterMintMeApi}
-                                    className="flex-1 px-6 py-3 border border-primary text-primary font-bold rounded-xl hover:bg-primary/10 transition text-center"
-                                >
-                                    Get MintMe API Key
-                                </button>
-                            </div>
-
                             {/* Networks Section */}
-                            <div className="bg-card border border-border rounded-xl p-6 mb-8">
+                            <div className="bg-card border border-border rounded-xl p-6">
                                 <h2 className="text-lg font-semibold text-primary mb-4">Supported Networks</h2>
                                 <div className="space-y-3">
                                     {networks.map((network, idx) => (
@@ -215,39 +232,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                     ))}
                                 </div>
                             </div>
-
-                            {/* Info Box */}
-                            <div className="bg-gradient-to-r from-primary/5 to-transparent border border-primary/30 rounded-xl p-6">
-                                <h3 className="text-md font-semibold text-primary mb-2">Why Fixorium?</h3>
-                                <p className="text-sm text-gray-400">
-                                    The only multi-chain DEX aggregator with 0.01% fees across all networks.
-                                    Get started in minutes with our simple REST API.
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* Exchange Dialog */}
-            {showExchangeDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-primary">Fixorium Exchange</h2>
-                            <button onClick={() => setShowExchangeDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="text-center py-8">
-                            <div className="text-6xl mb-4 animate-pulse">⚡</div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Coming Soon</h3>
-                            <p className="text-gray-400 mb-6">Fixorium Exchange is under development</p>
-                            <button className="px-6 py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition">
-                                Download App
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Aggregator Dialog */}
             {showAggregatorDialog && (
@@ -261,41 +249,24 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             <div className="text-6xl mb-4 animate-bounce">🔄</div>
                             <h3 className="text-2xl font-bold text-white mb-2">MAX Aggregator</h3>
                             <p className="text-gray-400 mb-6">The fastest Solana DEX aggregator with 0.01% fee</p>
-                            <button className="px-6 py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition">
-                                Download App
+                            <button
+                                onClick={handleRegisterApiKey}
+                                className="px-6 py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition"
+                            >
+                                Get API Key
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Wallet Dialog */}
-            {showWalletDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-primary">Fixorium Wallet</h2>
-                            <button onClick={() => setShowWalletDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="text-center py-8">
-                            <div className="text-6xl mb-4 animate-spin-slow">👛</div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Web3 Wallet</h3>
-                            <p className="text-gray-400 mb-6">Non-custodial multi-chain wallet</p>
-                            <button className="px-6 py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition">
-                                Download App
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* MAX API Key Dialog */}
-            {showMaxApiDialog && (
+            {/* API Key Dialog */}
+            {showApiDialog && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-card border border-border rounded-xl max-w-md w-full p-6">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold text-primary">MAX API Key</h2>
-                            <button onClick={() => setShowMaxApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                            <button onClick={() => setShowApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
                         </div>
                         <div className="space-y-4">
                             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
@@ -305,7 +276,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                 <label className="block text-xs text-gray-400 mb-1">API Key</label>
                                 <div className="flex items-center gap-2">
                                     <code className="flex-1 p-2 bg-darker rounded-lg text-xs text-primary break-all">{apiKey}</code>
-                                    <button onClick={() => copyToClipboard(apiKey, 'key')} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
+                                    <button onClick={() => copyToClipboard(apiKey)} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
                                         {copied ? '✓' : 'Copy'}
                                     </button>
                                 </div>
@@ -314,7 +285,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                 <label className="block text-xs text-gray-400 mb-1">API Secret</label>
                                 <div className="flex items-center gap-2">
                                     <code className="flex-1 p-2 bg-darker rounded-lg text-xs text-yellow-400 break-all">{apiSecret}</code>
-                                    <button onClick={() => copyToClipboard(apiSecret, 'secret')} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
+                                    <button onClick={() => copyToClipboard(apiSecret)} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
                                         Copy
                                     </button>
                                 </div>
@@ -325,7 +296,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                     curl -X GET "https://fixorium.com.pk/max/v1/quote?inputMint=So111...&outputMint=EPjFW...&amount=1000000" -H "X-API-Key: {apiKey}"
                                 </code>
                             </div>
-                            <button onClick={() => setShowMaxApiDialog(false)} className="w-full py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition">
+                            <button onClick={() => setShowApiDialog(false)} className="w-full py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition">
                                 Done
                             </button>
                         </div>
@@ -333,52 +304,16 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             )}
 
-            {/* MintMe API Key Dialog */}
-            {showMintMeApiDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-primary">MintMe API Key</h2>
-                            <button onClick={() => setShowMintMeApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
-                                <p className="text-xs text-yellow-400">⚠️ Save these credentials securely. You won't see them again!</p>
-                            </div>
-                            <div>
-                                <label className="block text-xs text-gray-400 mb-1">API Key</label>
-                                <div className="flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-xs text-primary break-all">{apiKey}</code>
-                                    <button onClick={() => copyToClipboard(apiKey, 'key')} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
-                                        {copied ? '✓' : 'Copy'}
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-xs text-gray-400 mb-1">API Secret</label>
-                                <div className="flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-xs text-yellow-400 break-all">{apiSecret}</code>
-                                    <button onClick={() => copyToClipboard(apiSecret, 'secret')} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
-                                        Copy
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
-                                <p className="text-xs text-green-400">MintMe DEX Router</p>
-                                <div className="mt-2 flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-xs text-gray-300 break-all">mintme-router-program-id</code>
-                                    <button onClick={() => copyToClipboard('mintme-router-program-id', 'mintme')} className="px-3 py-2 bg-darker border border-border rounded-lg text-xs text-gray-400 hover:text-white">
-                                        {mintMeCopied ? '✓' : 'Copy'}
-                                    </button>
-                                </div>
-                            </div>
-                            <button onClick={() => setShowMintMeApiDialog(false)} className="w-full py-2 bg-primary text-black font-semibold rounded-lg hover:bg-[#e8d58a] transition">
-                                Done
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Marquee Animation CSS */}
+            <style>{`
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                    animation: marquee 30s linear infinite;
+                }
+            `}</style>
         </div>
     );
 };
