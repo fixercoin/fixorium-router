@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-interface HomeProps {
-    setCurrentPage: (page: 'dashboard' | 'products') => void;
-    onConnect: () => void;
-    isLoggedIn?: boolean;
+interface DashboardProps {
     walletAddress?: string;
-    onLogout?: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = false, walletAddress = '', onLogout }) => {
-    const [showAggregatorDialog, setShowAggregatorDialog] = useState(false);
-    const [showMaxRegisterDialog, setShowMaxRegisterDialog] = useState(false);
-    const [showMintMeRegisterDialog, setShowMintMeRegisterDialog] = useState(false);
-    const [showMaxApiDialog, setShowMaxApiDialog] = useState(false);
-    const [showMintMeApiDialog, setShowMintMeApiDialog] = useState(false);
+const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [apiKey, setApiKey] = useState('');
     const [apiSecret, setApiSecret] = useState('');
@@ -23,111 +14,63 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const [registeredEmail, setRegisteredEmail] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
     
-    // Registration form states
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [registerError, setRegisterError] = useState('');
-    const [isRegistering, setIsRegistering] = useState(false);
+    // API testing states
+    const [maxEndpoint, setMaxEndpoint] = useState('quote');
+    const [maxParams, setMaxParams] = useState('{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}');
+    const [maxResponse, setMaxResponse] = useState('');
+    const [maxLoading, setMaxLoading] = useState(false);
     
-    // MintMe registration form states
-    const [mintMeEmail, setMintMeEmail] = useState('');
-    const [mintMePassword, setMintMePassword] = useState('');
-    const [mintMeConfirmPassword, setMintMeConfirmPassword] = useState('');
-    const [mintMeRegisterError, setMintMeRegisterError] = useState('');
-    const [isMintMeRegistering, setIsMintMeRegistering] = useState(false);
+    const [mintMeEndpoint, setMintMeEndpoint] = useState('quote');
+    const [mintMeParams, setMintMeParams] = useState('{\n  "tokenIn": "0x...",\n  "tokenOut": "0x...",\n  "amountIn": "1000000000000000000"\n}');
+    const [mintMeResponse, setMintMeResponse] = useState('');
+    const [mintMeLoading, setMintMeLoading] = useState(false);
+    
+    const [apiUsage, setApiUsage] = useState({
+        maxCalls: 0,
+        maxLimit: 10000,
+        mintMeCalls: 0,
+        mintMeLimit: 5000
+    });
 
-    // MintMe contract address
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
+    const MAX_PROGRAM_ID = "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
-    // Check registration status on load
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
         const userRegistered = localStorage.getItem('user_registered');
+        const savedApiKey = localStorage.getItem('max_api_key');
+        const savedApiSecret = localStorage.getItem('max_api_secret');
+        const savedMintMeKey = localStorage.getItem('mintme_api_key');
+        const savedMintMeSecret = localStorage.getItem('mintme_api_secret');
+        
         if (userEmail && userRegistered === 'true') {
             setRegisteredEmail(userEmail);
             setIsRegistered(true);
+            if (savedApiKey) setApiKey(savedApiKey);
+            if (savedApiSecret) setApiSecret(savedApiSecret);
+            if (savedMintMeKey) setMintMeApiKey(savedMintMeKey);
+            if (savedMintMeSecret) setMintMeApiSecret(savedMintMeSecret);
+        }
+        
+        // Load API usage from localStorage
+        const savedUsage = localStorage.getItem('api_usage');
+        if (savedUsage) {
+            setApiUsage(JSON.parse(savedUsage));
         }
     }, []);
-
-    const handleMaxRegister = async () => {
-        if (!email || !password || password !== confirmPassword) {
-            setRegisterError('PLEASE FILL ALL FIELDS CORRECTLY');
-            return;
-        }
-        
-        setIsRegistering(true);
-        setRegisterError('');
-        
-        try {
-            const response = await fetch('/api/max/v1/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await response.json();
-            if (data.success) {
-                setApiKey(data.apiKey);
-                setApiSecret(data.apiSecret);
-                localStorage.setItem('user_email', email);
-                localStorage.setItem('user_registered', 'true');
-                setRegisteredEmail(email);
-                setIsRegistered(true);
-                setShowMaxRegisterDialog(false);
-                setShowMaxApiDialog(true);
-                setEmail('');
-                setPassword('');
-                setConfirmPassword('');
-            } else {
-                setRegisterError(data.error || 'REGISTRATION FAILED');
-            }
-        } catch (error) {
-            setRegisterError('NETWORK ERROR');
-        } finally {
-            setIsRegistering(false);
-        }
-    };
-
-    const handleMintMeRegister = async () => {
-        if (!mintMeEmail || !mintMePassword || mintMePassword !== mintMeConfirmPassword) {
-            setMintMeRegisterError('PLEASE FILL ALL FIELDS CORRECTLY');
-            return;
-        }
-        
-        setIsMintMeRegistering(true);
-        setMintMeRegisterError('');
-        
-        try {
-            const response = await fetch('/api/mintme/v1/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: mintMeEmail, password: mintMePassword })
-            });
-            const data = await response.json();
-            if (data.success) {
-                setMintMeApiKey(data.apiKey);
-                setMintMeApiSecret(data.apiSecret);
-                setShowMintMeRegisterDialog(false);
-                setShowMintMeApiDialog(true);
-                setMintMeEmail('');
-                setMintMePassword('');
-                setMintMeConfirmPassword('');
-            } else {
-                setMintMeRegisterError(data.error || 'REGISTRATION FAILED');
-            }
-        } catch (error) {
-            setMintMeRegisterError('NETWORK ERROR');
-        } finally {
-            setIsMintMeRegistering(false);
-        }
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('user_email');
         localStorage.removeItem('user_registered');
+        localStorage.removeItem('max_api_key');
+        localStorage.removeItem('max_api_secret');
+        localStorage.removeItem('mintme_api_key');
+        localStorage.removeItem('mintme_api_secret');
         setIsRegistered(false);
         setRegisteredEmail('');
-        setShowUserMenu(false);
+        setApiKey('');
+        setApiSecret('');
+        window.location.href = '/';
     };
 
     const copyToClipboard = (text: string) => {
@@ -136,87 +79,161 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const testMaxEndpoint = async () => {
+        setMaxLoading(true);
+        setMaxResponse('');
+        
+        try {
+            let url = `/api/max/v1/${maxEndpoint}`;
+            let options: RequestInit = {
+                method: 'GET',
+                headers: {
+                    'X-API-Key': apiKey,
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (maxEndpoint === 'quote') {
+                const params = JSON.parse(maxParams);
+                const queryParams = new URLSearchParams(params).toString();
+                url += `?${queryParams}`;
+            } else if (maxEndpoint === 'swap') {
+                options.method = 'POST';
+                options.body = maxParams;
+            }
+            
+            const response = await fetch(url, options);
+            const data = await response.json();
+            setMaxResponse(JSON.stringify(data, null, 2));
+            
+            // Update API usage
+            const newUsage = { ...apiUsage, maxCalls: apiUsage.maxCalls + 1 };
+            setApiUsage(newUsage);
+            localStorage.setItem('api_usage', JSON.stringify(newUsage));
+        } catch (error) {
+            setMaxResponse(`Error: ${error.message}`);
+        } finally {
+            setMaxLoading(false);
+        }
+    };
+
+    const testMintMeEndpoint = async () => {
+        setMintMeLoading(true);
+        setMintMeResponse('');
+        
+        try {
+            let url = `/api/mintme/v1/${mintMeEndpoint}`;
+            let options: RequestInit = {
+                method: 'GET',
+                headers: {
+                    'X-API-Key': mintMeApiKey,
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (mintMeEndpoint === 'quote') {
+                const params = JSON.parse(mintMeParams);
+                const queryParams = new URLSearchParams(params).toString();
+                url += `?${queryParams}`;
+            } else if (mintMeEndpoint === 'swap') {
+                options.method = 'POST';
+                options.body = mintMeParams;
+            }
+            
+            const response = await fetch(url, options);
+            const data = await response.json();
+            setMintMeResponse(JSON.stringify(data, null, 2));
+            
+            // Update API usage
+            const newUsage = { ...apiUsage, mintMeCalls: apiUsage.mintMeCalls + 1 };
+            setApiUsage(newUsage);
+            localStorage.setItem('api_usage', JSON.stringify(newUsage));
+        } catch (error) {
+            setMintMeResponse(`Error: ${error.message}`);
+        } finally {
+            setMintMeLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-dark">
-            {/* Fixed Header */}
+            {/* Fixed Header - Same as Home.tsx */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-12 md:h-14">
-                        {/* Left side - DEFI PLATFORM text */}
                         <div className="text-[10px] md:text-xs font-semibold text-primary uppercase tracking-wider">
                             DEFI PLATFORM
                         </div>
 
-                        {/* 3-Line Dropdown Menu with Icons */}
+                        {/* Desktop Navigation */}
+                        <nav className="hidden md:flex items-center gap-6">
+                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                EXCHANGE
+                            </a>
+                            <button onClick={() => window.location.href = '/'} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                HOME
+                            </button>
+                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                WALLET
+                            </a>
+                            <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                TEAM
+                            </a>
+                        </nav>
+
+                        {/* User Profile Dropdown */}
                         <div className="relative">
-                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
-                                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 text-gray-400 hover:text-primary transition p-2">
+                                <svg className="w-5 h-5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
+                                <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider">PROFILE</span>
                             </button>
                             
                             {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50">
+                                <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg z-50">
                                     <div className="py-1">
-                                        <button
-                                            onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
-                                            className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                            </svg>
-                                            MAX API KEY
-                                        </button>
-                                        <button
-                                            onClick={() => { setShowMintMeRegisterDialog(true); setShowUserMenu(false); }}
-                                            className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                            </svg>
-                                            MINTME API KEY
-                                        </button>
-                                        <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
-                                            </svg>
-                                            EXCHANGE
-                                        </a>
-                                        <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
-                                            </svg>
-                                            WALLET
-                                        </a>
-                                        
-                                        {isRegistered ? (
+                                        {isRegistered && (
                                             <>
-                                                <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2 flex items-center gap-2">
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                    {registeredEmail}
+                                                <div className="px-4 py-3 border-b border-border">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">ACCOUNT</div>
+                                                    <div className="text-xs text-white break-all">{registeredEmail}</div>
+                                                </div>
+                                                <div className="px-4 py-3">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">MAX API KEY</div>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <code className="flex-1 text-[10px] text-primary break-all bg-darker p-1.5 rounded">
+                                                            {apiKey || 'Not available'}
+                                                        </code>
+                                                        {apiKey && (
+                                                            <button onClick={() => copyToClipboard(apiKey)} className="text-gray-400 hover:text-white p-1">
+                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                                </svg>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="px-4 py-3">
+                                                    <div className="text-[10px] text-gray-400 uppercase mb-1">MINTME CONTRACT</div>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <code className="flex-1 text-[10px] text-green-400 break-all bg-darker p-1.5 rounded">
+                                                            {MINTME_CONTRACT}
+                                                        </code>
+                                                        <button onClick={() => copyToClipboard(MINTME_CONTRACT)} className="text-gray-400 hover:text-white p-1">
+                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
+                                                    className="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
                                                 >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                                    </svg>
                                                     LOGOUT
                                                 </button>
                                             </>
-                                        ) : (
-                                            <button
-                                                onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
-                                                className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider border-t border-border mt-1 pt-2"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                                                </svg>
-                                                REGISTER
-                                            </button>
                                         )}
                                     </div>
                                 </div>
@@ -226,317 +243,255 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Cryptorank Marquee Widget - Only Marquee */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 z-40 bg-dark">
-                <div 
-                    id="cr-widget-marquee" 
-                    data-coins="bitcoin,ethereum,bitcoin-ai,ripple,bnb,dogecoin,tether"
-                    data-theme="dark"
-                    data-show-symbol="false"
-                    data-show-icon="true"
-                    data-show-period-change="false"
-                    data-period-change="24H"
-                    data-api-url="https://api.cryptorank.io/v0"
-                    className="w-full"
-                >
-                    <a href="https://cryptorank.io" className="text-gray-500 text-xs">Coins by Cryptorank</a>
+            {/* Custom Marquee - Same as Home.tsx */}
+            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
+                <div className="inline-block animate-marquee whitespace-nowrap">
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">NEW</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">FIXORIUM EXCHANGE — MULTICHAIN DEX AGGREGATOR WITH NEW CRYPTO TRADE IDEAS</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">WALLET</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">FIXORIUM WALLET — MULTICHAIN WALLET SUPPORTING SOLANA, EVM, MINTME BLOCKCHAIN WITH POOL CREATION SYSTEM</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">ROUTER</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">MINTME FIXORIUM ROUTER — FREE TO USE FIXORIUM DEX ROUTER AVAILABLE AFTER REGISTRATION</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">MAX</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">MAX AGGREGATOR — SUPER FAST • VERY LOW FEES • MULTICHAIN AGGREGATOR</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">API</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">TEST YOUR API ENDPOINTS DIRECTLY FROM DASHBOARD</span>
+                    </span>
                 </div>
             </div>
 
-            {/* Cryptorank Widget Script */}
-            <script src="https://cryptorank.io/widget/marquee.js" async></script>
+            {/* Main Content - API Testing Dashboard */}
+            <div className="pt-28 md:pt-32 pb-20 md:pb-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    {/* Welcome Section */}
+                    <div className="mb-8 text-center">
+                        <h1 className="text-2xl md:text-3xl font-bold text-primary uppercase tracking-wider mb-2">
+                            API DASHBOARD
+                        </h1>
+                        <p className="text-gray-400 text-xs md:text-sm">
+                            Welcome back, <span className="text-primary">{registeredEmail}</span>
+                        </p>
+                    </div>
 
-            {/* Main Content */}
-            <div className="min-h-screen flex flex-col items-center justify-center pt-20 md:pt-24 pb-12">
-                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Animated Circle Logo with Logo Image */}
-                    <div className="flex flex-col items-center justify-center">
-                        {/* Animation Container */}
-                        <div className="relative flex items-center justify-center">
-                            {/* Outer animated rings */}
-                            <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
-                            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-primary/20 animate-spin-slow"></div>
-                            <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
-                            
-                            {/* Center Logo - Image */}
-                            <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-primary/30 overflow-hidden">
-                                <img 
-                                    src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
-                                    alt="Fixorium Logo" 
-                                    className="w-32 h-32 md:w-48 md:h-48 object-contain"
+                    {/* API Usage Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div className="bg-card border border-border rounded-xl p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider">MAX API USAGE</h3>
+                                <div className="px-2 py-1 bg-primary/10 rounded-lg">
+                                    <span className="text-[10px] text-primary uppercase">Solana</span>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] text-gray-400">API Calls Today</span>
+                                    <span className="text-xs text-white font-bold">{apiUsage.maxCalls} / {apiUsage.maxLimit}</span>
+                                </div>
+                                <div className="w-full bg-darker rounded-full h-2">
+                                    <div 
+                                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${(apiUsage.maxCalls / apiUsage.maxLimit) * 100}%` }}
+                                    ></div>
+                                </div>
+                                <div className="flex justify-between items-center pt-2">
+                                    <span className="text-[10px] text-gray-400">Program ID</span>
+                                    <code className="text-[9px] text-primary break-all text-right ml-2">{MAX_PROGRAM_ID.slice(0, 20)}...</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-card border border-border rounded-xl p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider">MINTME API USAGE</h3>
+                                <div className="px-2 py-1 bg-green-500/10 rounded-lg">
+                                    <span className="text-[10px] text-green-400 uppercase">EVM</span>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] text-gray-400">API Calls Today</span>
+                                    <span className="text-xs text-white font-bold">{apiUsage.mintMeCalls} / {apiUsage.mintMeLimit}</span>
+                                </div>
+                                <div className="w-full bg-darker rounded-full h-2">
+                                    <div 
+                                        className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${(apiUsage.mintMeCalls / apiUsage.mintMeLimit) * 100}%` }}
+                                    ></div>
+                                </div>
+                                <div className="flex justify-between items-center pt-2">
+                                    <span className="text-[10px] text-gray-400">Contract Address</span>
+                                    <code className="text-[9px] text-green-400 break-all text-right ml-2">{MINTME_CONTRACT.slice(0, 20)}...</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* MAX API Tester */}
+                    <div className="bg-card border border-border rounded-xl p-6 mb-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX API TESTER</h2>
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setMaxEndpoint('quote')}
+                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${maxEndpoint === 'quote' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
+                                >
+                                    QUOTE
+                                </button>
+                                <button 
+                                    onClick={() => setMaxEndpoint('swap')}
+                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${maxEndpoint === 'swap' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
+                                >
+                                    SWAP
+                                </button>
+                                <button 
+                                    onClick={() => setMaxEndpoint('pools')}
+                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${maxEndpoint === 'pools' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
+                                >
+                                    POOLS
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-2">REQUEST PARAMETERS (JSON)</label>
+                                <textarea
+                                    value={maxParams}
+                                    onChange={(e) => setMaxParams(e.target.value)}
+                                    className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none"
+                                    placeholder="Enter JSON parameters..."
                                 />
+                                <div className="flex items-center justify-between mt-3">
+                                    <div className="text-[10px] text-gray-400">
+                                        API Key: {apiKey ? `${apiKey.slice(0, 15)}...` : 'Not available'}
+                                    </div>
+                                    <button
+                                        onClick={testMaxEndpoint}
+                                        disabled={maxLoading || !apiKey}
+                                        className="px-4 py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                                    >
+                                        {maxLoading ? 'TESTING...' : 'TEST ENDPOINT'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-2">RESPONSE</label>
+                                <pre className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto resize-none">
+                                    {maxResponse || 'Click "TEST ENDPOINT" to see response...'}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* MintMe API Tester */}
+                    <div className="bg-card border border-border rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MINTME API TESTER</h2>
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setMintMeEndpoint('quote')}
+                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${mintMeEndpoint === 'quote' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
+                                >
+                                    QUOTE
+                                </button>
+                                <button 
+                                    onClick={() => setMintMeEndpoint('swap')}
+                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${mintMeEndpoint === 'swap' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
+                                >
+                                    SWAP
+                                </button>
+                                <button 
+                                    onClick={() => setMintMeEndpoint('liquidity')}
+                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${mintMeEndpoint === 'liquidity' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
+                                >
+                                    LIQUIDITY
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-2">REQUEST PARAMETERS (JSON)</label>
+                                <textarea
+                                    value={mintMeParams}
+                                    onChange={(e) => setMintMeParams(e.target.value)}
+                                    className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none"
+                                    placeholder="Enter JSON parameters..."
+                                />
+                                <div className="flex items-center justify-between mt-3">
+                                    <div className="text-[10px] text-gray-400">
+                                        Contract: {MINTME_CONTRACT.slice(0, 15)}...
+                                    </div>
+                                    <button
+                                        onClick={testMintMeEndpoint}
+                                        disabled={mintMeLoading || !mintMeApiKey}
+                                        className="px-4 py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                                    >
+                                        {mintMeLoading ? 'TESTING...' : 'TEST ENDPOINT'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-2">RESPONSE</label>
+                                <pre className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto resize-none">
+                                    {mintMeResponse || 'Click "TEST ENDPOINT" to see response...'}
+                                </pre>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* MAX Aggregator Dialog */}
-            {showAggregatorDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX AGGREGATOR</h2>
-                            <button onClick={() => setShowAggregatorDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="text-center py-4">
-                            <div className="text-5xl mb-3 animate-bounce">⚡</div>
-                            <h3 className="text-base font-bold text-white mb-2 uppercase">SOLANA DEX AGGREGATOR</h3>
-                            <p className="text-gray-400 text-[11px] mb-4 uppercase">0.01% FEE • MULTI-DEX ROUTING • BEST PRICES</p>
-                            <div className="space-y-2 text-left mb-4">
-                                <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
-                                    <span className="text-[10px] text-gray-400">PROGRAM ID</span>
-                                    <code className="text-[10px] text-primary break-all text-right ml-2">EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM</code>
-                                </div>
-                                <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
-                                    <span className="text-[10px] text-gray-400">BASE URL</span>
-                                    <code className="text-[10px] text-primary">https://fixorium.com.pk/max/v1</code>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { setShowAggregatorDialog(false); setShowMaxRegisterDialog(true); }}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider"
-                            >
-                                GET API KEY
-                            </button>
-                        </div>
-                    </div>
+            {/* Bottom Navigation Bar - Mobile Only - Same as Home.tsx */}
+            <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
+                <div className="flex items-center justify-around py-2">
+                    <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">EXCHANGE</span>
+                    </a>
+                    <button onClick={() => window.location.href = '/'} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">HOME</span>
+                    </button>
+                    <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">WALLET</span>
+                    </a>
+                    <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">TEAM</span>
+                    </a>
                 </div>
-            )}
-
-            {/* MAX Registration Dialog */}
-            {showMaxRegisterDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">REGISTER FOR MAX API</h2>
-                            <button onClick={() => setShowMaxRegisterDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="space-y-3">
-                            {registerError && (
-                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
-                                    <p className="text-[10px] text-red-400">{registerError}</p>
-                                </div>
-                            )}
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="your@email.com"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="CREATE PASSWORD"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">CONFIRM PASSWORD</label>
-                                <input
-                                    type="password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="CONFIRM PASSWORD"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <button
-                                onClick={handleMaxRegister}
-                                disabled={isRegistering}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
-                            >
-                                {isRegistering ? 'REGISTERING...' : 'REGISTER'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* MAX API Key Display Dialog */}
-            {showMaxApiDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX API KEY</h2>
-                            <button onClick={() => setShowMaxApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2">
-                                <p className="text-[10px] text-yellow-400 uppercase">⚠️ SAVE THESE CREDENTIALS SECURELY!</p>
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API KEY</label>
-                                <div className="flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-primary break-all">{apiKey}</code>
-                                    <button onClick={() => copyToClipboard(apiKey)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
-                                        {copied ? '✓' : 'COPY'}
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API SECRET</label>
-                                <div className="flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-yellow-400 break-all">{apiSecret}</code>
-                                    <button onClick={() => copyToClipboard(apiSecret)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
-                                        COPY
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-2">
-                                <p className="text-[9px] text-blue-400 uppercase">QUICK INTEGRATION:</p>
-                                <code className="text-[9px] text-gray-300 block mt-1 break-all">
-                                    curl -X GET "https://fixorium.com.pk/max/v1/quote?inputMint=So111...&outputMint=EPjFW...&amount=1000000" -H "X-API-Key: {apiKey.slice(0, 15)}..."
-                                </code>
-                            </div>
-                            <button onClick={() => setShowMaxApiDialog(false)} className="w-full py-2 bg-primary text-black text-xs font-semibold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider">
-                                DONE
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* MintMe Registration Dialog */}
-            {showMintMeRegisterDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">REGISTER FOR MINTME API</h2>
-                            <button onClick={() => setShowMintMeRegisterDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="space-y-3">
-                            {mintMeRegisterError && (
-                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
-                                    <p className="text-[10px] text-red-400">{mintMeRegisterError}</p>
-                                </div>
-                            )}
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
-                                <input
-                                    type="email"
-                                    value={mintMeEmail}
-                                    onChange={(e) => setMintMeEmail(e.target.value)}
-                                    placeholder="your@email.com"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
-                                <input
-                                    type="password"
-                                    value={mintMePassword}
-                                    onChange={(e) => setMintMePassword(e.target.value)}
-                                    placeholder="CREATE PASSWORD"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">CONFIRM PASSWORD</label>
-                                <input
-                                    type="password"
-                                    value={mintMeConfirmPassword}
-                                    onChange={(e) => setMintMeConfirmPassword(e.target.value)}
-                                    placeholder="CONFIRM PASSWORD"
-                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
-                                />
-                            </div>
-                            <button
-                                onClick={handleMintMeRegister}
-                                disabled={isMintMeRegistering}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
-                            >
-                                {isMintMeRegistering ? 'REGISTERING...' : 'REGISTER'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* MintMe API Key Display Dialog */}
-            {showMintMeApiDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MINTME API KEY</h2>
-                            <button onClick={() => setShowMintMeApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2">
-                                <p className="text-[10px] text-yellow-400 uppercase">⚠️ SAVE THESE CREDENTIALS SECURELY!</p>
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API KEY</label>
-                                <div className="flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-primary break-all">{mintMeApiKey}</code>
-                                    <button onClick={() => copyToClipboard(mintMeApiKey)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
-                                        {copied ? '✓' : 'COPY'}
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API SECRET</label>
-                                <div className="flex items-center gap-2">
-                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-yellow-400 break-all">{mintMeApiSecret}</code>
-                                    <button onClick={() => copyToClipboard(mintMeApiSecret)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
-                                        COPY
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2">
-                                <p className="text-[9px] text-green-400 uppercase">MINTME DEX ROUTER</p>
-                                <code className="text-[9px] text-gray-300 block mt-1 break-all">
-                                    CONTRACT: {MINTME_CONTRACT}
-                                </code>
-                            </div>
-                            <button onClick={() => setShowMintMeApiDialog(false)} className="w-full py-2 bg-primary text-black text-xs font-semibold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider">
-                                DONE
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </div>
 
             <style>{`
-                @keyframes spin-slow {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
                 }
-                .animate-spin-slow {
-                    animation: spin-slow 20s linear infinite;
-                }
-                @keyframes pulse-slow {
-                    0%, 100% { opacity: 0.15; transform: scale(1); }
-                    50% { opacity: 0.4; transform: scale(1.05); }
-                }
-                .animate-pulse-slow {
-                    animation: pulse-slow 4s ease-in-out infinite;
-                }
-                @keyframes ping-slow {
-                    0% { transform: scale(0.95); opacity: 0.3; }
-                    50% { transform: scale(1.05); opacity: 0.1; }
-                    100% { transform: scale(0.95); opacity: 0.3; }
-                }
-                .animate-ping-slow {
-                    animation: ping-slow 3s ease-in-out infinite;
-                }
-                @keyframes bounce {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-5px); }
-                }
-                .animate-bounce {
-                    animation: bounce 1s ease-in-out infinite;
+                .animate-marquee {
+                    animation: marquee 40s linear infinite;
                 }
             `}</style>
         </div>
     );
 };
 
-export default Home;
+export default Dashboard;
