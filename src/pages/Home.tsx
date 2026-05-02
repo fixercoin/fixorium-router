@@ -55,22 +55,22 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     useEffect(() => {
         const fetchMarqueePrices = async () => {
             const symbols = [
-                { name: 'BTC', mint: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599' },
-                { name: 'ETH', mint: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' },
-                { name: 'BNB', mint: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' },
-                { name: 'SOL', mint: 'So11111111111111111111111111111111111111112' },
-                { name: 'FIXERCOIN', mint: 'H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump' },
-                { name: 'LOCKER', mint: 'EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump' },
-                { name: 'PINGX', mint: '7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump' },
-                { name: 'FXM', mint: '7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump' },
+                { name: 'BTC', address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599' },
+                { name: 'ETH', address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' },
+                { name: 'BNB', address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' },
+                { name: 'SOL', address: 'So11111111111111111111111111111111111111112' },
+                { name: 'FIXERCOIN', address: 'H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump' },
+                { name: 'LOCKER', address: 'EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump' },
+                { name: 'PINGX', address: '7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump' },
+                { name: 'FXM', address: '7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump' },
             ];
             const prices = [];
             
             for (const symbol of symbols) {
                 try {
-                    const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${symbol.mint}`);
+                    const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${symbol.address}`);
                     const data = await response.json();
-                    if (data.pairs && data.pairs[0]) {
+                    if (data.pairs && data.pairs[0] && data.pairs[0].priceUsd) {
                         const price = parseFloat(data.pairs[0].priceUsd);
                         prices.push({
                             symbol: symbol.name,
@@ -80,6 +80,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                         prices.push({ symbol: symbol.name, price: '0.00' });
                     }
                 } catch (e) {
+                    console.log(`Failed to fetch ${symbol.name}`);
                     prices.push({ symbol: symbol.name, price: '0.00' });
                 }
             }
@@ -182,102 +183,61 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
 
     return (
         <div className="min-h-screen bg-dark">
-            {/* Fixed Header - Only 3-line dropdown */}
+            {/* Fixed Header */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-end h-12 md:h-14">
-                        {/* 3-Line Dropdown Menu - Same for mobile and desktop */}
-                        <div className="relative">
-                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
-                                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
-                            
-                            {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50">
-                                    <div className="py-1">
-                                        <button
-                                            onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
-                                            className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
-                                        >
-                                            MAX API KEY
-                                        </button>
-                                        <button
-                                            onClick={() => { setShowMintMeRegisterDialog(true); setShowUserMenu(false); }}
-                                            className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
-                                        >
-                                            MINTME API KEY
-                                        </button>
-                                        <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            EXCHANGE
-                                        </a>
-                                        <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                            WALLET
-                                        </a>
-                                        
-                                        {isRegistered ? (
-                                            <>
-                                                <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2">
-                                                    {registeredEmail}
-                                                </div>
-                                                <button
-                                                    onClick={handleLogout}
-                                                    className="block w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
-                                                >
-                                                    LOGOUT
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <button
-                                                onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
-                                                className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider border-t border-border mt-1 pt-2"
-                                            >
-                                                REGISTER
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
+                    <div className="flex items-center justify-between h-12 md:h-14">
+                        {/* Brand Name */}
+                        <div className="cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                            <span className="font-bold text-base md:text-xl tracking-wider text-primary">FIXORIUM</span>
                         </div>
+
+                        {/* Connect Wallet Button - Restored */}
+                        <button onClick={onConnect} className="px-3 py-1.5 md:px-4 md:py-2 bg-primary text-black text-[10px] md:text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider">
+                            {isLoggedIn ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : 'CONNECT WALLET'}
+                        </button>
                     </div>
                 </div>
             </header>
 
-            {/* Marquee - No Background, No Border, No Connect Button */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 overflow-hidden whitespace-nowrap py-1 z-40">
+            {/* Marquee - Live Prices from DexScreener */}
+            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/5 border-y border-primary/20 overflow-hidden whitespace-nowrap py-1 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     {marqueeItems.map((item, idx) => (
-                        <span key={idx} className="mx-2 inline-flex items-center gap-1">
+                        <span key={idx} className="mx-3 inline-flex items-center gap-2">
                             <span className="text-white text-[9px] md:text-xs uppercase tracking-wider font-semibold">{item.symbol}</span>
-                            <span className="text-gray-400 text-[9px] md:text-xs">${typeof item.price === 'number' ? item.price.toLocaleString() : item.price}</span>
+                            <span className="text-primary text-[9px] md:text-xs font-mono">${typeof item.price === 'number' ? item.price.toLocaleString() : item.price}</span>
                         </span>
                     ))}
                 </div>
             </div>
 
-            {/* Main Content - Decreased Top Space */}
-            <div className="pt-20 md:pt-24">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-                    {/* Animated Circle Logo with FIXORIUM Text */}
+            {/* Main Content */}
+            <div className="pt-28 md:pt-32">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+                    {/* Animated Circle Logo with FIXORIUM Text - Proper Gap */}
                     <div className="text-center">
-                        <div className="relative inline-flex items-center justify-center mb-4">
-                            {/* Animated Circles */}
-                            <div className="absolute w-48 h-48 md:w-80 md:h-80 rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
-                            <div className="absolute w-44 h-44 md:w-72 md:h-72 rounded-full border border-primary/20 animate-spin-slow"></div>
-                            <div className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full bg-primary/5 animate-ping-slow"></div>
+                        <div className="relative inline-flex items-center justify-center mb-8 md:mb-12">
+                            {/* Animated Circles - Colorful */}
+                            <div className="absolute w-48 h-48 md:w-80 md:h-80 rounded-full border-2 border-primary/40 animate-pulse-slow"></div>
+                            <div className="absolute w-44 h-44 md:w-72 md:h-72 rounded-full border border-primary/30 animate-spin-slow"></div>
+                            <div className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
                             
-                            {/* Center Logo with FIXORIUM Text */}
-                            <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center p-4">
-                                <span className="text-lg md:text-2xl font-bold text-primary text-center leading-tight break-words px-2">
+                            {/* Center Logo */}
+                            <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-primary/20">
+                                <span className="text-xl md:text-3xl font-bold text-white text-center leading-tight break-words px-2 drop-shadow-md">
                                     FIXORIUM
                                 </span>
                             </div>
                         </div>
                         
-                        <div className="flex items-center justify-center gap-2 mt-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></div>
-                            <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider">0.01% FEE • MULTI-CHAIN DEX AGGREGATOR</p>
+                        {/* Tagline with gap */}
+                        <div className="space-y-3 mt-4">
+                            <div className="flex items-center justify-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                                <p className="text-gray-300 text-[10px] md:text-xs uppercase tracking-wider font-medium">0.01% FEE • MULTI-CHAIN DEX AGGREGATOR</p>
+                            </div>
+                            <p className="text-gray-500 text-[8px] md:text-[10px] uppercase tracking-wider">SOLANA • MINTME • EVM</p>
                         </div>
                     </div>
                 </div>
@@ -298,7 +258,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             <div className="space-y-2 text-left mb-4">
                                 <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
                                     <span className="text-[10px] text-gray-400">PROGRAM ID</span>
-                                    <code className="text-[10px] text-primary">EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM</code>
+                                    <code className="text-[10px] text-primary break-all text-right ml-2">EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM</code>
                                 </div>
                                 <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
                                     <span className="text-[10px] text-gray-400">BASE URL</span>
@@ -529,19 +489,19 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     to { transform: rotate(360deg); }
                 }
                 .animate-spin-slow {
-                    animation: spin-slow 15s linear infinite;
+                    animation: spin-slow 20s linear infinite;
                 }
                 @keyframes pulse-slow {
-                    0%, 100% { opacity: 0.2; transform: scale(1); }
-                    50% { opacity: 0.5; transform: scale(1.08); }
+                    0%, 100% { opacity: 0.15; transform: scale(1); }
+                    50% { opacity: 0.4; transform: scale(1.05); }
                 }
                 .animate-pulse-slow {
                     animation: pulse-slow 4s ease-in-out infinite;
                 }
                 @keyframes ping-slow {
-                    0% { transform: scale(0.95); opacity: 0.4; }
-                    50% { transform: scale(1.08); opacity: 0.1; }
-                    100% { transform: scale(0.95); opacity: 0.4; }
+                    0% { transform: scale(0.95); opacity: 0.3; }
+                    50% { transform: scale(1.05); opacity: 0.1; }
+                    100% { transform: scale(0.95); opacity: 0.3; }
                 }
                 .animate-ping-slow {
                     animation: ping-slow 3s ease-in-out infinite;
