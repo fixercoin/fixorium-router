@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
+// Remove Header and Footer imports - we don't need them anymore
+// import Header from './components/Header';
+// import Footer from './components/Footer';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Dashboard from './pages/Dashboard';
@@ -21,20 +22,10 @@ const App: React.FC = () => {
         }
     }, []);
 
+    // This function is kept for compatibility but not used
     const handleConnectWallet = async () => {
-        if (window.solana && window.solana.isPhantom) {
-            try {
-                const response = await window.solana.connect();
-                setWalletAddress(response.publicKey.toString());
-                localStorage.setItem('max_wallet', response.publicKey.toString());
-                setIsLoggedIn(true);
-                setCurrentPage('dashboard');
-            } catch (err) {
-                console.error('Wallet connection failed:', err);
-            }
-        } else {
-            window.open('https://phantom.app/', '_blank');
-        }
+        // Connect wallet is disabled - this function does nothing
+        console.log('Connect wallet is disabled');
     };
 
     const handleDisconnect = () => {
@@ -46,17 +37,18 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-dark">
-            <Header 
-                currentPage={currentPage} 
-                setCurrentPage={setCurrentPage}
-                isLoggedIn={isLoggedIn}
-                walletAddress={walletAddress}
-                onConnect={handleConnectWallet}
-                onDisconnect={handleDisconnect}
-            />
+            {/* No Header - completely removed */}
             
-            <main className="pt-20 pb-16">
-                {currentPage === 'home' && <Home setCurrentPage={setCurrentPage} onConnect={handleConnectWallet} />}
+            <main className="pt-0">
+                {currentPage === 'home' && (
+                    <Home 
+                        setCurrentPage={setCurrentPage} 
+                        onConnect={handleConnectWallet}
+                        isLoggedIn={isLoggedIn}
+                        walletAddress={walletAddress || ''}
+                        onLogout={handleDisconnect}
+                    />
+                )}
                 {currentPage === 'products' && <Products />}
                 {currentPage === 'dashboard' && isLoggedIn && <Dashboard walletAddress={walletAddress!} />}
                 {currentPage === 'apikeys' && isLoggedIn && <ApiKeys walletAddress={walletAddress!} />}
@@ -71,7 +63,7 @@ const App: React.FC = () => {
                 )}
             </main>
             
-            <Footer />
+            {/* No Footer - completely removed */}
         </div>
     );
 };
