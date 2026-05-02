@@ -1,0 +1,31 @@
+
+---
+
+## 📋 Complete File Summary
+
+| # | File | Path |
+|---|------|------|
+| 1 | `index.html` | `/index.html` |
+| 2 | `index.tsx` | `/src/index.tsx` |
+| 3 | `App.tsx` | `/src/App.tsx` |
+| 4 | `Header.tsx` | `/src/components/Header.tsx` |
+| 5 | `Footer.tsx` | `/src/components/Footer.tsx` |
+| 6 | `ApiKeyModal.tsx` | `/src/components/ApiKeyModal.tsx` |
+| 7 | `Home.tsx` | `/src/pages/Home.tsx` |
+| 8 | `Products.tsx` | `/src/pages/Products.tsx` |
+| 9 | `Dashboard.tsx` | `/src/pages/Dashboard.tsx` |
+| 10 | `styles.css` | `/src/styles.css` |
+| 11 | `package.json` | `/package.json` |
+| 12 | `vite.config.ts` | `/vite.config.ts` |
+| 13 | `tsconfig.json` | `/tsconfig.json` |
+| 14 | `tsconfig.node.json` | `/tsconfig.node.json` |
+| 15 | `README.md` | `/README.md` |
+
+---
+
+## 🚀 To Run the Application
+
+```bash
+cd max-router
+npm install
+npm run dev
