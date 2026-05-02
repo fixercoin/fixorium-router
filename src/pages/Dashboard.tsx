@@ -226,7 +226,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Cryptorank Marquee Widget */}
+            {/* Cryptorank Marquee Widget - Only Marquee */}
             <div className="fixed top-12 md:top-14 left-0 right-0 z-40 bg-dark">
                 <div 
                     id="cr-widget-marquee" 
@@ -239,15 +239,15 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     data-api-url="https://api.cryptorank.io/v0"
                     className="w-full"
                 >
-                    <a href="https://cryptorank.io" className="text-gray-500 text-xs"></a>
+                    <a href="https://cryptorank.io" className="text-gray-500 text-xs">Coins by Cryptorank</a>
                 </div>
             </div>
 
-            {/* Load Cryptorank widget script */}
+            {/* Cryptorank Widget Script */}
             <script src="https://cryptorank.io/widget/marquee.js" async></script>
 
             {/* Main Content */}
-            <div className="min-h-screen flex flex-col items-center justify-center pt-28 md:pt-32 pb-12">
+            <div className="min-h-screen flex flex-col items-center justify-center pt-20 md:pt-24 pb-12">
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Animated Circle Logo with Logo Image */}
                     <div className="flex flex-col items-center justify-center">
