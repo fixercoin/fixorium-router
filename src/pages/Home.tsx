@@ -182,18 +182,13 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
 
     return (
         <div className="min-h-screen bg-dark">
-            {/* Fixed Header */}
+            {/* Fixed Header - Only 3-line dropdown */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-12 md:h-14">
-                        {/* Brand Name */}
-                        <div className="cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <span className="font-bold text-base md:text-xl tracking-wider text-primary">FIXORIUM</span>
-                        </div>
-
-                        {/* 3-Line Dropdown Menu with all items */}
+                    <div className="flex items-center justify-end h-12 md:h-14">
+                        {/* 3-Line Dropdown Menu - Same for mobile and desktop */}
                         <div className="relative">
-                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary">
+                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
                                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
@@ -221,7 +216,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                             WALLET
                                         </a>
                                         
-                                        {/* Register Button / User Status */}
                                         {isRegistered ? (
                                             <>
                                                 <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2">
@@ -250,7 +244,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Marquee - No Background, No Border */}
+            {/* Marquee - No Background, No Border, No Connect Button */}
             <div className="fixed top-12 md:top-14 left-0 right-0 overflow-hidden whitespace-nowrap py-1 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     {marqueeItems.map((item, idx) => (
@@ -265,26 +259,25 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             {/* Main Content - Decreased Top Space */}
             <div className="pt-20 md:pt-24">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-                    {/* Animated Circle Logo with FIXORIUM Text - Larger Animation */}
+                    {/* Animated Circle Logo with FIXORIUM Text */}
                     <div className="text-center">
                         <div className="relative inline-flex items-center justify-center mb-4">
-                            {/* Animated Circle - Larger */}
-                            <div className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
-                            <div className="absolute w-36 h-36 md:w-56 md:h-56 rounded-full border border-primary/20 animate-spin-slow"></div>
-                            <div className="absolute w-32 h-32 md:w-48 md:h-48 rounded-full bg-primary/5 animate-ping-slow"></div>
+                            {/* Animated Circles */}
+                            <div className="absolute w-48 h-48 md:w-80 md:h-80 rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
+                            <div className="absolute w-44 h-44 md:w-72 md:h-72 rounded-full border border-primary/20 animate-spin-slow"></div>
+                            <div className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full bg-primary/5 animate-ping-slow"></div>
                             
-                            {/* Logo Circle */}
-                            <div className="relative w-24 h-24 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                                <span className="text-5xl md:text-7xl font-bold text-primary">M</span>
+                            {/* Center Logo with FIXORIUM Text */}
+                            <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center p-4">
+                                <span className="text-lg md:text-2xl font-bold text-primary text-center leading-tight break-words px-2">
+                                    FIXORIUM
+                                </span>
                             </div>
                         </div>
                         
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-wider bg-gradient-to-r from-primary to-yellow-500 bg-clip-text text-transparent">
-                            FIXORIUM
-                        </h1>
                         <div className="flex items-center justify-center gap-2 mt-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></div>
-                            <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider">MULTI-CHAIN DEX AGGREGATOR | 0.01% FEE</p>
+                            <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider">0.01% FEE • MULTI-CHAIN DEX AGGREGATOR</p>
                         </div>
                     </div>
                 </div>
