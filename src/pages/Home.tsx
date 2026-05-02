@@ -185,26 +185,13 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             {/* Fixed Header */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-14 md:h-16">
+                    <div className="flex items-center justify-between h-12 md:h-14">
                         {/* Brand Name */}
                         <div className="cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <span className="font-bold text-lg md:text-2xl tracking-wider text-primary">FIXORIUM</span>
+                            <span className="font-bold text-base md:text-xl tracking-wider text-primary">FIXORIUM</span>
                         </div>
 
-                        {/* Desktop Navigation */}
-                        <nav className="hidden md:flex items-center gap-6">
-                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                EXCHANGE
-                            </a>
-                            <button onClick={() => setShowAggregatorDialog(true)} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                AGGREGATOR
-                            </button>
-                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                WALLET
-                            </a>
-                        </nav>
-
-                        {/* 3-Line Dropdown Menu */}
+                        {/* 3-Line Dropdown Menu with all items */}
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary">
                                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,19 +200,8 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             </button>
                             
                             {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-50">
+                                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50">
                                     <div className="py-1">
-                                        {/* Mobile Navigation Links (visible only on mobile) */}
-                                        <div className="md:hidden border-b border-border pb-1 mb-1">
-                                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                                EXCHANGE
-                                            </a>
-                                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
-                                                WALLET
-                                            </a>
-                                        </div>
-                                        
-                                        {/* API Key Options */}
                                         <button
                                             onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
                                             className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
@@ -238,8 +214,14 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                         >
                                             MINTME API KEY
                                         </button>
+                                        <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            EXCHANGE
+                                        </a>
+                                        <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            WALLET
+                                        </a>
                                         
-                                        {/* User Status / Logout */}
+                                        {/* Register Button / User Status */}
                                         {isRegistered ? (
                                             <>
                                                 <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2">
@@ -252,7 +234,14 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                                     LOGOUT
                                                 </button>
                                             </>
-                                        ) : null}
+                                        ) : (
+                                            <button
+                                                onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
+                                                className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider border-t border-border mt-1 pt-2"
+                                            >
+                                                REGISTER
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -262,7 +251,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             </header>
 
             {/* Marquee - No Background, No Border */}
-            <div className="fixed top-14 md:top-16 left-0 right-0 overflow-hidden whitespace-nowrap py-1 z-40">
+            <div className="fixed top-12 md:top-14 left-0 right-0 overflow-hidden whitespace-nowrap py-1 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     {marqueeItems.map((item, idx) => (
                         <span key={idx} className="mx-2 inline-flex items-center gap-1">
@@ -273,52 +262,30 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="pt-24 md:pt-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-                    {/* Animated Circle Logo with FIXORIUM Text */}
-                    <div className="text-center mb-8 md:mb-12">
-                        <div className="relative inline-flex items-center justify-center mb-6">
-                            {/* Animated Circle */}
-                            <div className="absolute w-32 h-32 md:w-48 md:h-48 rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
-                            <div className="absolute w-28 h-28 md:w-40 md:h-40 rounded-full border border-primary/20 animate-spin-slow"></div>
-                            <div className="absolute w-24 h-24 md:w-32 md:h-32 rounded-full bg-primary/5 animate-ping-slow"></div>
+            {/* Main Content - Decreased Top Space */}
+            <div className="pt-20 md:pt-24">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+                    {/* Animated Circle Logo with FIXORIUM Text - Larger Animation */}
+                    <div className="text-center">
+                        <div className="relative inline-flex items-center justify-center mb-4">
+                            {/* Animated Circle - Larger */}
+                            <div className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
+                            <div className="absolute w-36 h-36 md:w-56 md:h-56 rounded-full border border-primary/20 animate-spin-slow"></div>
+                            <div className="absolute w-32 h-32 md:w-48 md:h-48 rounded-full bg-primary/5 animate-ping-slow"></div>
                             
                             {/* Logo Circle */}
-                            <div className="relative w-20 h-20 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                                <span className="text-3xl md:text-5xl font-bold text-primary">M</span>
+                            <div className="relative w-24 h-24 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                                <span className="text-5xl md:text-7xl font-bold text-primary">M</span>
                             </div>
                         </div>
                         
-                        <h1 className="text-4xl md:text-6xl font-bold tracking-wider bg-gradient-to-r from-primary to-yellow-500 bg-clip-text text-transparent">
+                        <h1 className="text-5xl md:text-7xl font-bold tracking-wider bg-gradient-to-r from-primary to-yellow-500 bg-clip-text text-transparent">
                             FIXORIUM
                         </h1>
-                        <div className="flex items-center justify-center gap-2 mt-3">
-                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                            <p className="text-gray-400 text-[10px] md:text-xs uppercase tracking-wider">MULTI-CHAIN DEX AGGREGATOR | 0.01% FEE</p>
+                        <div className="flex items-center justify-center gap-2 mt-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></div>
+                            <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider">MULTI-CHAIN DEX AGGREGATOR | 0.01% FEE</p>
                         </div>
-                    </div>
-
-                    {/* Buttons Section */}
-                    <div className="flex flex-col items-center justify-center gap-4 max-w-md mx-auto">
-                        <button
-                            onClick={() => setShowMaxRegisterDialog(true)}
-                            className="w-full py-3 bg-primary text-black text-xs md:text-sm font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider"
-                        >
-                            GET MAX API KEY
-                        </button>
-                        <button
-                            onClick={() => setShowMintMeRegisterDialog(true)}
-                            className="w-full py-3 border border-primary text-primary text-xs md:text-sm font-bold rounded-xl hover:bg-primary/10 transition uppercase tracking-wider"
-                        >
-                            GET MINTME API KEY
-                        </button>
-                        <button
-                            onClick={() => setShowAggregatorDialog(true)}
-                            className="w-full py-3 bg-primary/10 border border-primary/50 text-primary text-xs md:text-sm font-bold rounded-xl hover:bg-primary/20 transition uppercase tracking-wider"
-                        >
-                            AGGREGATOR INFO
-                        </button>
                     </div>
                 </div>
             </div>
@@ -569,22 +536,22 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     to { transform: rotate(360deg); }
                 }
                 .animate-spin-slow {
-                    animation: spin-slow 12s linear infinite;
+                    animation: spin-slow 15s linear infinite;
                 }
                 @keyframes pulse-slow {
-                    0%, 100% { opacity: 0.3; transform: scale(1); }
-                    50% { opacity: 0.6; transform: scale(1.05); }
+                    0%, 100% { opacity: 0.2; transform: scale(1); }
+                    50% { opacity: 0.5; transform: scale(1.08); }
                 }
                 .animate-pulse-slow {
-                    animation: pulse-slow 3s ease-in-out infinite;
+                    animation: pulse-slow 4s ease-in-out infinite;
                 }
                 @keyframes ping-slow {
-                    0% { transform: scale(0.95); opacity: 0.5; }
-                    50% { transform: scale(1.05); opacity: 0.2; }
-                    100% { transform: scale(0.95); opacity: 0.5; }
+                    0% { transform: scale(0.95); opacity: 0.4; }
+                    50% { transform: scale(1.08); opacity: 0.1; }
+                    100% { transform: scale(0.95); opacity: 0.4; }
                 }
                 .animate-ping-slow {
-                    animation: ping-slow 2s ease-in-out infinite;
+                    animation: ping-slow 3s ease-in-out infinite;
                 }
                 @keyframes bounce {
                     0%, 100% { transform: translateY(0); }
