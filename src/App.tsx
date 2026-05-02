@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Home from './pages/Home';
 import Products from './pages/Products';
-import Dashboard from './pages/UserDashboard';
+import UserDashboard from './pages/UserDashboard';  // Changed from Dashboard
 import ApiKeys from './pages/ApiKeys';
 
-type Page = 'home' | 'products' | 'userdashboard' | 'apikeys';
+type Page = 'home' | 'products' | 'userdashboard' | 'apikeys';  // Changed from 'dashboard'
 
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('home');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userEmail, setUserEmail] = useState<string>('');
 
-    // Check for email login on mount
     useEffect(() => {
         const savedEmail = localStorage.getItem('user_email');
         const isRegistered = localStorage.getItem('user_registered');
@@ -40,19 +39,19 @@ const App: React.FC = () => {
                 {currentPage === 'home' && (
                     <Home 
                         setCurrentPage={setCurrentPage} 
-                        onConnect={() => {}} // Not used anymore
+                        onConnect={() => {}}
                         isLoggedIn={isLoggedIn}
-                        walletAddress={userEmail} // Pass email as walletAddress for compatibility
+                        walletAddress={userEmail}
                         onLogout={handleLogout}
                     />
                 )}
                 {currentPage === 'products' && <Products />}
-                {currentPage === 'userdashboard' && isLoggedIn && <UserDashboard walletAddress={userEmail} />}
+                {currentPage === 'userdashboard' && isLoggedIn && <UserDashboard walletAddress={userEmail} />}  {/* Changed to userdashboard */}
                 {currentPage === 'apikeys' && isLoggedIn && <ApiKeys walletAddress={userEmail} />}
                 
-                {currentPage === 'dashboard' && !isLoggedIn && (
+                {currentPage === 'userdashboard' && !isLoggedIn && (  // Changed to userdashboard
                     <div className="max-w-md mx-auto mt-20 p-8 bg-card border border-border rounded-xl text-center">
-                        <p className="text-gray-400 mb-4">Please login to access the Userdashboard</p>
+                        <p className="text-gray-400 mb-4">Please login to access the dashboard</p>
                         <button 
                             onClick={() => setCurrentPage('home')} 
                             className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-[#e8d58a] transition"
