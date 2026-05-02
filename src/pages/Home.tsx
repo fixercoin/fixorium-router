@@ -15,14 +15,23 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const [showMaxApiDialog, setShowMaxApiDialog] = useState(false);
     const [showMintMeApiDialog, setShowMintMeApiDialog] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [apiKey, setApiKey] = useState('');
     const [apiSecret, setApiSecret] = useState('');
     const [mintMeApiKey, setMintMeApiKey] = useState('');
     const [mintMeApiSecret, setMintMeApiSecret] = useState('');
     const [copied, setCopied] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [trendingTokens, setTrendingTokens] = useState<any[]>([]);
     const [isLoadingTokens, setIsLoadingTokens] = useState(true);
+    const [swapAmount, setSwapAmount] = useState('');
+    const [swapFromToken, setSwapFromToken] = useState('SOL');
+    const [swapToToken, setSwapToToken] = useState('USDC');
+    
+    // Login form states
+    const [loginEmail, setLoginEmail] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
     
     // Registration form states
     const [email, setEmail] = useState('');
@@ -38,70 +47,51 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const [mintMeRegisterError, setMintMeRegisterError] = useState('');
     const [isMintMeRegistering, setIsMintMeRegistering] = useState(false);
 
-    // Fetch trending tokens from DexScreener API
+    // API endpoints to display
+    const apiEndpoints = [
+        { method: 'GET', endpoint: '/max/v1/quote', description: 'GET SWAP QUOTE' },
+        { method: 'POST', endpoint: '/max/v1/swap', description: 'EXECUTE SWAP' },
+        { method: 'POST', endpoint: '/max/v1/limit', description: 'CREATE LIMIT ORDER' },
+        { method: 'POST', endpoint: '/max/v1/dca', description: 'CREATE DCA STRATEGY' },
+        { method: 'GET', endpoint: '/max/v1/keys', description: 'LIST API KEYS' },
+    ];
+
+    // Fetch trending tokens with live prices
     useEffect(() => {
         const fetchTrendingTokens = async () => {
             setIsLoadingTokens(true);
             try {
-                let tokens = [];
+                const symbols = ['SOL', 'BTC', 'ETH', 'BNB', 'MATIC', 'USDC', 'USDT', 'FIXERCOIN', 'FXM'];
+                const tokens = [];
                 
-                try {
-                    const response = await fetch('https://api.dexscreener.com/token-boosts/top/v1');
-                    if (response.ok) {
+                for (const symbol of symbols) {
+                    try {
+                        const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${symbol}`);
                         const data = await response.json();
-                        if (data && data.length > 0) {
-                            tokens = data.slice(0, 12).map((item: any) => ({
-                                symbol: item.symbol || item.tokenSymbol || 'UNKNOWN',
-                                name: item.name || item.tokenName || '',
-                                price: item.priceUsd ? `$${parseFloat(item.priceUsd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}` : '$0.00',
-                                change: item.priceChange?.h24 ? `${item.priceChange.h24 >= 0 ? '+' : ''}${item.priceChange.h24.toFixed(2)}%` : '0%',
-                                positive: item.priceChange?.h24 >= 0,
-                                volume: item.volume?.h24 ? `$${(item.volume.h24 / 1000000).toFixed(1)}M` : 'N/A',
-                                chain: item.chainId || 'SOLANA'
-                            }));
+                        if (data.pairs && data.pairs[0]) {
+                            const price = parseFloat(data.pairs[0].priceUsd);
+                            const change = parseFloat(data.pairs[0].priceChange?.h24 || 0);
+                            tokens.push({
+                                symbol: symbol,
+                                price: `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`,
+                                change: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
+                                positive: change >= 0,
+                                volume: data.pairs[0].volume?.h24 ? `$${(data.pairs[0].volume.h24 / 1000000).toFixed(1)}M` : 'N/A',
+                            });
                         }
+                    } catch (e) {
+                        console.log(`Failed to fetch ${symbol}`);
                     }
-                } catch (e) {
-                    console.log('DexScreener endpoint failed, trying alternative');
-                }
-                
-                if (tokens.length === 0) {
-                    const symbols = ['SOL', 'BTC', 'ETH', 'BNB', 'MATIC', 'USDC', 'USDT'];
-                    for (const symbol of symbols) {
-                        try {
-                            const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${symbol}`);
-                            const data = await response.json();
-                            if (data.pairs && data.pairs[0]) {
-                                const price = parseFloat(data.pairs[0].priceUsd);
-                                const change = parseFloat(data.pairs[0].priceChange?.h24 || 0);
-                                tokens.push({
-                                    symbol: symbol,
-                                    name: data.pairs[0].baseToken?.name || symbol,
-                                    price: `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`,
-                                    change: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
-                                    positive: change >= 0,
-                                    volume: data.pairs[0].volume?.h24 ? `$${(data.pairs[0].volume.h24 / 1000000).toFixed(1)}M` : 'N/A',
-                                    chain: data.pairs[0].chainId || 'SOLANA'
-                                });
-                            }
-                        } catch (e) {
-                            console.log(`Failed to fetch ${symbol}`);
-                        }
-                    }
+                    await new Promise(r => setTimeout(r, 100));
                 }
                 
                 setTrendingTokens(tokens.length > 0 ? tokens : [
-                    { symbol: 'SOL', name: 'SOLANA', price: '$185.42', change: '+5.2%', positive: true, volume: '$2.1B', chain: 'SOLANA' },
-                    { symbol: 'BTC', name: 'BITCOIN', price: '$69,420', change: '+2.3%', positive: true, volume: '$25B', chain: 'MULTIPLE' },
-                    { symbol: 'ETH', name: 'ETHEREUM', price: '$3,850', change: '+1.8%', positive: true, volume: '$15B', chain: 'ETHEREUM' },
+                    { symbol: 'SOL', price: '$185.42', change: '+5.2%', positive: true, volume: '$2.1B' },
+                    { symbol: 'BTC', price: '$69,420', change: '+2.3%', positive: true, volume: '$25B' },
+                    { symbol: 'ETH', price: '$3,850', change: '+1.8%', positive: true, volume: '$15B' },
                 ]);
             } catch (error) {
                 console.error('Failed to fetch trending tokens:', error);
-                setTrendingTokens([
-                    { symbol: 'SOL', name: 'SOLANA', price: '$185.42', change: '+5.2%', positive: true, volume: '$2.1B', chain: 'SOLANA' },
-                    { symbol: 'BTC', name: 'BITCOIN', price: '$69,420', change: '+2.3%', positive: true, volume: '$25B', chain: 'MULTIPLE' },
-                    { symbol: 'ETH', name: 'ETHEREUM', price: '$3,850', change: '+1.8%', positive: true, volume: '$15B', chain: 'ETHEREUM' },
-                ]);
             } finally {
                 setIsLoadingTokens(false);
             }
@@ -112,17 +102,50 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         return () => clearInterval(interval);
     }, []);
 
+    const handleLogin = async () => {
+        if (!loginEmail || !loginPassword) {
+            setLoginError('EMAIL AND PASSWORD REQUIRED');
+            return;
+        }
+        
+        setIsLoggingIn(true);
+        setLoginError('');
+        
+        try {
+            const response = await fetch('/api/max/v1/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: loginEmail, password: loginPassword })
+            });
+            const data = await response.json();
+            if (data.success) {
+                localStorage.setItem('user_email', loginEmail);
+                localStorage.setItem('user_logged_in', 'true');
+                setShowLoginDialog(false);
+                setLoginEmail('');
+                setLoginPassword('');
+                window.location.reload();
+            } else {
+                setLoginError(data.error || 'LOGIN FAILED');
+            }
+        } catch (error) {
+            setLoginError('NETWORK ERROR');
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user_email');
+        localStorage.removeItem('user_logged_in');
+        if (onLogout) onLogout();
+        setShowUserMenu(false);
+        window.location.reload();
+    };
+
     const handleMaxRegister = async () => {
-        if (!email) {
-            setRegisterError('EMAIL IS REQUIRED');
-            return;
-        }
-        if (!password) {
-            setRegisterError('PASSWORD IS REQUIRED');
-            return;
-        }
-        if (password !== confirmPassword) {
-            setRegisterError('PASSWORDS DO NOT MATCH');
+        if (!email || !password || password !== confirmPassword) {
+            setRegisterError('PLEASE FILL ALL FIELDS CORRECTLY');
             return;
         }
         
@@ -148,23 +171,15 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 setRegisterError(data.error || 'REGISTRATION FAILED');
             }
         } catch (error) {
-            setRegisterError('NETWORK ERROR. PLEASE TRY AGAIN.');
+            setRegisterError('NETWORK ERROR');
         } finally {
             setIsRegistering(false);
         }
     };
 
     const handleMintMeRegister = async () => {
-        if (!mintMeEmail) {
-            setMintMeRegisterError('EMAIL IS REQUIRED');
-            return;
-        }
-        if (!mintMePassword) {
-            setMintMeRegisterError('PASSWORD IS REQUIRED');
-            return;
-        }
-        if (mintMePassword !== mintMeConfirmPassword) {
-            setMintMeRegisterError('PASSWORDS DO NOT MATCH');
+        if (!mintMeEmail || !mintMePassword || mintMePassword !== mintMeConfirmPassword) {
+            setMintMeRegisterError('PLEASE FILL ALL FIELDS CORRECTLY');
             return;
         }
         
@@ -190,7 +205,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 setMintMeRegisterError(data.error || 'REGISTRATION FAILED');
             }
         } catch (error) {
-            setMintMeRegisterError('NETWORK ERROR. PLEASE TRY AGAIN.');
+            setMintMeRegisterError('NETWORK ERROR');
         } finally {
             setIsMintMeRegistering(false);
         }
@@ -202,12 +217,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const handleLogout = () => {
-        if (onLogout) {
-            onLogout();
-        }
-        setShowUserMenu(false);
-    };
+    const isUserLoggedIn = localStorage.getItem('user_logged_in') === 'true';
 
     return (
         <div className="min-h-screen bg-dark">
@@ -216,11 +226,11 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Brand Name */}
-                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                        <div className="cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                             <span className="font-bold text-2xl tracking-wider text-primary">FIXORIUM</span>
                         </div>
 
-                        {/* Desktop Navigation - Removed Connect Wallet Button */}
+                        {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center gap-8">
                             <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 EXCHANGE
@@ -256,10 +266,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                         >
                                             GET MINTME API KEY
                                         </button>
-                                        {isLoggedIn ? (
+                                        {isUserLoggedIn ? (
                                             <>
                                                 <div className="px-4 py-2 text-xs text-gray-500 border-t border-border mt-1 pt-2">
-                                                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
+                                                    {localStorage.getItem('user_email')}
                                                 </div>
                                                 <button
                                                     onClick={handleLogout}
@@ -270,10 +280,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                             </>
                                         ) : (
                                             <button
-                                                onClick={() => { onConnect(); setShowUserMenu(false); }}
+                                                onClick={() => { setShowLoginDialog(true); setShowUserMenu(false); }}
                                                 className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
                                             >
-                                                CONNECT WALLET
+                                                LOGIN
                                             </button>
                                         )}
                                     </div>
@@ -284,38 +294,39 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
+            {/* Marquee - White Text */}
+            <div className="fixed top-16 left-0 right-0 bg-primary/10 border-y border-primary/30 overflow-hidden whitespace-nowrap py-1 z-40">
+                <div className="inline-block animate-marquee whitespace-nowrap">
+                    <span className="mx-4 text-white text-xs uppercase tracking-wider">⚡ FIXORIUM AGGREGATOR — 0.01% FEE — FASTEST SOLANA DEX ROUTER ⚡</span>
+                    <span className="mx-4 text-white text-xs uppercase tracking-wider">⚡ FIXORIUM AGGREGATOR — 0.01% FEE — FASTEST SOLANA DEX ROUTER ⚡</span>
+                    <span className="mx-4 text-white text-xs uppercase tracking-wider">⚡ FIXORIUM AGGREGATOR — 0.01% FEE — FASTEST SOLANA DEX ROUTER ⚡</span>
+                </div>
+            </div>
+
             {/* Main Content */}
-            <div className="pt-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    {/* Hero Section */}
-                    <div className="text-center mb-12">
-                        <div className="mb-4">
-                            <span className="text-6xl md:text-7xl font-bold tracking-wider bg-gradient-to-r from-primary to-yellow-600 bg-clip-text text-transparent">
-                                FIXORIUM
-                            </span>
-                        </div>
-                        <p className="text-gray-400 text-base max-w-2xl mx-auto mb-4 uppercase tracking-wider">
-                            MULTI-CHAIN DEX AGGREGATOR | SOLANA • MINTME • EVM
-                        </p>
-                        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-6 py-2">
-                            <span className="text-xs text-primary uppercase tracking-wider">THE LOWEST FEES IN DEFI — ONLY 0.01%</span>
-                        </div>
+            <div className="pt-32">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    {/* Hero Title */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-5xl md:text-6xl font-bold tracking-wider bg-gradient-to-r from-primary to-yellow-600 bg-clip-text text-transparent">
+                            FIXORIUM
+                        </h1>
+                        <p className="text-gray-400 text-sm mt-2 uppercase tracking-wider">MULTI-CHAIN DEX AGGREGATOR | 0.01% FEE</p>
                     </div>
 
-                    {/* 3 Cards Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                    {/* 3 Cards - No Gap */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
                         {/* Card 1 - Trending Tokens */}
-                        <div className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition">
+                        <div className="bg-card border border-border p-5">
                             <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider text-center">TRENDING TOKENS</h3>
                             {isLoadingTokens ? (
                                 <div className="text-center py-4 text-gray-400 text-xs">LOADING...</div>
                             ) : (
-                                <div className="space-y-2 max-h-64 overflow-y-auto">
-                                    {trendingTokens.slice(0, 5).map((token, idx) => (
+                                <div className="space-y-2">
+                                    {trendingTokens.map((token, idx) => (
                                         <div key={idx} className="flex items-center justify-between p-2 bg-darker rounded-lg">
                                             <div>
                                                 <div className="font-bold text-white text-xs uppercase">{token.symbol}</div>
-                                                <div className="text-[10px] text-gray-500">{token.chain}</div>
                                             </div>
                                             <div className="text-right">
                                                 <div className="text-white text-xs font-semibold">{token.price}</div>
@@ -329,56 +340,148 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             )}
                         </div>
 
-                        {/* Card 2 - MAX Aggregator API */}
-                        <div className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition text-center">
-                            <div className="text-4xl mb-3">⚡</div>
-                            <h3 className="text-sm font-bold text-primary mb-2 uppercase tracking-wider">MAX AGGREGATOR API</h3>
-                            <p className="text-xs text-gray-400 mb-4 uppercase">SOLANA DEX AGGREGATOR • 0.01% FEE</p>
+                        {/* Card 2 - MAX API Endpoints */}
+                        <div className="bg-card border border-border p-5">
+                            <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider text-center">MAX API ENDPOINTS</h3>
+                            <div className="space-y-2">
+                                {apiEndpoints.map((api, idx) => (
+                                    <div key={idx} className="flex items-center justify-between p-2 bg-darker rounded-lg">
+                                        <span className={`text-[10px] font-bold px-1 py-0.5 rounded ${api.method === 'GET' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                                            {api.method}
+                                        </span>
+                                        <span className="text-[10px] text-gray-300 font-mono">{api.endpoint}</span>
+                                        <span className="text-[8px] text-gray-500">{api.description}</span>
+                                    </div>
+                                ))}
+                            </div>
                             <button
                                 onClick={() => setShowMaxRegisterDialog(true)}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider"
+                                className="w-full mt-4 py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider"
                             >
                                 GET API KEY
                             </button>
                         </div>
 
-                        {/* Card 3 - Swap Tokens */}
-                        <div className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition text-center">
-                            <div className="text-4xl mb-3">🔄</div>
-                            <h3 className="text-sm font-bold text-primary mb-2 uppercase tracking-wider">SWAP TOKENS</h3>
-                            <p className="text-xs text-gray-400 mb-4 uppercase">INSTANT SWAPS • BEST RATES • LOW FEES</p>
-                            <button
-                                onClick={() => window.open('https://exchange.fixorium.com.pk', '_blank')}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider"
-                            >
-                                LAUNCH SWAP
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Supported Networks Section */}
-                    <div className="bg-card border border-border rounded-xl p-6">
-                        <h2 className="text-sm font-bold text-primary mb-4 uppercase tracking-wider text-center">SUPPORTED NETWORKS</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                            {['SOLANA', 'MINTME', 'ETHEREUM', 'BNB CHAIN', 'POLYGON'].map((network, idx) => (
-                                <div key={idx} className="p-3 bg-darker rounded-lg text-center">
-                                    <div className="font-semibold text-white text-xs uppercase">{network}</div>
-                                    <div className="text-[10px] text-green-400 mt-1">0.01% FEE</div>
+                        {/* Card 3 - Swap Form */}
+                        <div className="bg-card border border-border p-5">
+                            <h3 className="text-sm font-bold text-primary mb-3 uppercase tracking-wider text-center">SWAP TOKENS</h3>
+                            <div className="space-y-3">
+                                <div>
+                                    <label className="block text-[10px] text-gray-400 uppercase mb-1">FROM</label>
+                                    <select
+                                        value={swapFromToken}
+                                        onChange={(e) => setSwapFromToken(e.target.value)}
+                                        className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs"
+                                    >
+                                        <option value="SOL">SOL</option>
+                                        <option value="USDC">USDC</option>
+                                        <option value="USDT">USDT</option>
+                                        <option value="FIXERCOIN">FIXERCOIN</option>
+                                        <option value="FXM">FXM</option>
+                                    </select>
                                 </div>
-                            ))}
+                                <div>
+                                    <label className="block text-[10px] text-gray-400 uppercase mb-1">AMOUNT</label>
+                                    <input
+                                        type="number"
+                                        value={swapAmount}
+                                        onChange={(e) => setSwapAmount(e.target.value)}
+                                        placeholder="0.00"
+                                        className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs"
+                                    />
+                                </div>
+                                <div className="flex justify-center">
+                                    <button className="text-yellow-400 text-xs">▼</button>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] text-gray-400 uppercase mb-1">TO</label>
+                                    <select
+                                        value={swapToToken}
+                                        onChange={(e) => setSwapToToken(e.target.value)}
+                                        className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs"
+                                    >
+                                        <option value="USDC">USDC</option>
+                                        <option value="SOL">SOL</option>
+                                        <option value="USDT">USDT</option>
+                                        <option value="FIXERCOIN">FIXERCOIN</option>
+                                        <option value="FXM">FXM</option>
+                                    </select>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-[10px] text-gray-500">RATE: 1 {swapFromToken} ≈ $185.42</span>
+                                </div>
+                                <button
+                                    onClick={onConnect}
+                                    className="w-full py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider"
+                                >
+                                    CONNECT WALLET
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Footer - No Logo, Just Brand Name */}
+            {/* Footer - Team and Brand Name */}
             <footer className="bg-darker border-t border-border py-4 mt-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center text-xs text-gray-500 uppercase tracking-wider">
-                        FIXORIUM
+                    <div className="flex flex-col items-center justify-center gap-2">
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">FIXORIUM</span>
+                        <button 
+                            onClick={() => window.open('https://fixorium.com.pk/team', '_blank')}
+                            className="text-[10px] text-gray-500 hover:text-primary transition uppercase tracking-wider"
+                        >
+                            TEAM
+                        </button>
                     </div>
                 </div>
             </footer>
+
+            {/* Login Dialog */}
+            {showLoginDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold text-primary uppercase tracking-wider">LOGIN</h2>
+                            <button onClick={() => setShowLoginDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-4">
+                            {loginError && (
+                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3">
+                                    <p className="text-xs text-red-400">{loginError}</p>
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-xs text-gray-400 uppercase mb-1">EMAIL</label>
+                                <input
+                                    type="email"
+                                    value={loginEmail}
+                                    onChange={(e) => setLoginEmail(e.target.value)}
+                                    placeholder="your@email.com"
+                                    className="w-full p-3 bg-darker border border-border rounded-lg text-white focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs text-gray-400 uppercase mb-1">PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={loginPassword}
+                                    onChange={(e) => setLoginPassword(e.target.value)}
+                                    placeholder="PASSWORD"
+                                    className="w-full p-3 bg-darker border border-border rounded-lg text-white focus:border-primary outline-none"
+                                />
+                            </div>
+                            <button
+                                onClick={handleLogin}
+                                disabled={isLoggingIn}
+                                className="w-full py-3 bg-primary text-black font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                            >
+                                {isLoggingIn ? 'LOGGING IN...' : 'LOGIN'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* MAX Aggregator Dialog */}
             {showAggregatorDialog && (
@@ -403,7 +506,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             )}
 
-            {/* MAX Registration Dialog - Keeping as is */}
+            {/* MAX Registration Dialog */}
             {showMaxRegisterDialog && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-card border border-border rounded-xl max-w-md w-full p-6">
@@ -566,7 +669,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold text-primary uppercase tracking-wider">MINTME API KEY</h2>
                             <button onClick={() => setShowMintMeApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-        </div>
+                        </div>
                         <div className="space-y-4">
                             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
                                 <p className="text-xs text-yellow-400 uppercase">⚠️ SAVE THESE CREDENTIALS SECURELY!</p>
@@ -602,6 +705,16 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     </div>
                 </div>
             )}
+
+            <style>{`
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                    animation: marquee 20s linear infinite;
+                }
+            `}</style>
         </div>
     );
 };
