@@ -1,305 +1,542 @@
 import React, { useState, useEffect } from 'react';
-import ApiKeyModal from '../components/ApiKeyModal';
 
-interface DashboardProps {
-    walletAddress: string;
+interface HomeProps {
+    setCurrentPage: (page: 'dashboard' | 'products') => void;
+    onConnect: () => void;
+    isLoggedIn?: boolean;
+    walletAddress?: string;
+    onLogout?: () => void;
 }
 
-interface DeveloperData {
-    id: string;
-    walletAddress: string;
-    email: string;
-    companyName: string;
-    apiKeys: Array<{
-        id: string;
-        name: string;
-        apiKey: string;
-        createdAt: number;
-        requests: number;
-    }>;
-}
+const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = false, walletAddress = '', onLogout }) => {
+    const [showAggregatorDialog, setShowAggregatorDialog] = useState(false);
+    const [showMaxRegisterDialog, setShowMaxRegisterDialog] = useState(false);
+    const [showMintMeRegisterDialog, setShowMintMeRegisterDialog] = useState(false);
+    const [showMaxApiDialog, setShowMaxApiDialog] = useState(false);
+    const [showMintMeApiDialog, setShowMintMeApiDialog] = useState(false);
+    const [showUserMenu, setShowUserMenu] = useState(false);
+    const [apiKey, setApiKey] = useState('');
+    const [apiSecret, setApiSecret] = useState('');
+    const [mintMeApiKey, setMintMeApiKey] = useState('');
+    const [mintMeApiSecret, setMintMeApiSecret] = useState('');
+    const [copied, setCopied] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState('');
+    const [isRegistered, setIsRegistered] = useState(false);
+    
+    // Registration form states
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [registerError, setRegisterError] = useState('');
+    const [isRegistering, setIsRegistering] = useState(false);
+    
+    // MintMe registration form states
+    const [mintMeEmail, setMintMeEmail] = useState('');
+    const [mintMePassword, setMintMePassword] = useState('');
+    const [mintMeConfirmPassword, setMintMeConfirmPassword] = useState('');
+    const [mintMeRegisterError, setMintMeRegisterError] = useState('');
+    const [isMintMeRegistering, setIsMintMeRegistering] = useState(false);
 
-interface TokenPrice {
-    symbol: string;
-    name: string;
-    price: number;
-    priceChange24h: number;
-    volume24h: number;
-    liquidity: number;
-    chain: string;
-}
+    // MintMe contract address
+    const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
 
-const Dashboard: React.FC<DashboardProps> = ({ walletAddress }) => {
-    const [showApiModal, setShowApiModal] = useState(false);
-    const [developerData, setDeveloperData] = useState<DeveloperData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
-    const [pricesLoading, setPricesLoading] = useState(true);
-    const [stats, setStats] = useState({ totalVolume: 0, totalFees: 0, totalRequests: 0 });
-
-    // Token addresses to fetch
-    const tokens = [
-        { symbol: 'SOL', name: 'Solana', address: 'So11111111111111111111111111111111111111112' },
-        { symbol: 'BTC', name: 'Bitcoin', address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599' },
-        { symbol: 'ETH', name: 'Ethereum', address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' },
-        { symbol: 'BNB', name: 'BNB', address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' },
-        { symbol: 'FIXERCOIN', name: 'Fixercoin', address: 'H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump' },
-        { symbol: 'FXM', name: 'Fixorium', address: '7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump' },
-        { symbol: 'LOCKER', name: 'Locker', address: 'EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump' },
-        { symbol: 'PINGX', name: 'Pingx', address: '7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump' },
-    ];
-
-    // Fetch live token prices from DexScreener
-    const fetchTokenPrices = async () => {
-        setPricesLoading(true);
-        const prices: TokenPrice[] = [];
-
-        for (const token of tokens) {
-            try {
-                const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${token.address}`);
-                const data = await response.json();
-
-                if (data.pairs && data.pairs.length > 0) {
-                    // Find the best pair (highest liquidity)
-                    let bestPair = data.pairs[0];
-                    for (const pair of data.pairs) {
-                        const pairLiquidity = pair.liquidity?.usd || 0;
-                        const bestLiquidity = bestPair.liquidity?.usd || 0;
-                        if (pairLiquidity > bestLiquidity) {
-                            bestPair = pair;
-                        }
-                    }
-
-                    const price = parseFloat(bestPair.priceUsd) || 0;
-                    const priceChange24h = bestPair.priceChange?.h24 || 0;
-                    const volume24h = bestPair.volume?.h24 || 0;
-                    const liquidity = bestPair.liquidity?.usd || 0;
-                    const chain = bestPair.chainId || 'Unknown';
-
-                    prices.push({
-                        symbol: token.symbol,
-                        name: token.name,
-                        price,
-                        priceChange24h,
-                        volume24h,
-                        liquidity,
-                        chain,
-                    });
-                } else {
-                    // Fallback data if API fails
-                    prices.push({
-                        symbol: token.symbol,
-                        name: token.name,
-                        price: 0,
-                        priceChange24h: 0,
-                        volume24h: 0,
-                        liquidity: 0,
-                        chain: 'Unknown',
-                    });
-                }
-            } catch (error) {
-                console.error(`Failed to fetch price for ${token.symbol}:`, error);
-                prices.push({
-                    symbol: token.symbol,
-                    name: token.name,
-                    price: 0,
-                    priceChange24h: 0,
-                    volume24h: 0,
-                    liquidity: 0,
-                    chain: 'Unknown',
-                });
-            }
-        }
-
-        setTokenPrices(prices);
-        setPricesLoading(false);
-    };
-
+    // Check registration status on load
     useEffect(() => {
-        fetchDeveloperData();
-        fetchTokenPrices();
-        
-        // Refresh prices every 30 seconds
-        const interval = setInterval(fetchTokenPrices, 30000);
-        return () => clearInterval(interval);
-    }, [walletAddress]);
-
-    const fetchDeveloperData = async () => {
-        try {
-            // In production, fetch from your API
-            // const response = await fetch(`/api/max/v1/developers/${walletAddress}`);
-            // const data = await response.json();
-            
-            // Demo data
-            setDeveloperData({
-                id: 'dev_123',
-                walletAddress: walletAddress,
-                email: 'developer@example.com',
-                companyName: 'My Awesome App',
-                apiKeys: [
-                    { id: 'key_1', name: 'Production Key', apiKey: 'max_abc123...', createdAt: Date.now(), requests: 1234 },
-                    { id: 'key_2', name: 'Development Key', apiKey: 'max_def456...', createdAt: Date.now(), requests: 567 }
-                ]
-            });
-            setStats({ totalVolume: 125000, totalFees: 12.5, totalRequests: 1801 });
-        } catch (error) {
-            console.error('Failed to fetch developer data:', error);
-        } finally {
-            setLoading(false);
+        const userEmail = localStorage.getItem('user_email');
+        const userRegistered = localStorage.getItem('user_registered');
+        if (userEmail && userRegistered === 'true') {
+            setRegisteredEmail(userEmail);
+            setIsRegistered(true);
         }
-    };
+    }, []);
 
-    const handleCreateApiKey = async (name: string, rateLimit: number) => {
+    const handleMaxRegister = async () => {
+        if (!email || !password || password !== confirmPassword) {
+            setRegisterError('PLEASE FILL ALL FIELDS CORRECTLY');
+            return;
+        }
+        
+        setIsRegistering(true);
+        setRegisterError('');
+        
         try {
-            const response = await fetch('/api/max/v1/developers', {
+            const response = await fetch('/api/max/v1/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletAddress, name, rateLimit })
+                body: JSON.stringify({ email, password })
             });
             const data = await response.json();
             if (data.success) {
-                alert(`API Key Created!\n\nKey: ${data.apiKey}\nSecret: ${data.apiSecret}\n\nSave this secret - you won't see it again!`);
-                fetchDeveloperData();
+                setApiKey(data.apiKey);
+                setApiSecret(data.apiSecret);
+                localStorage.setItem('user_email', email);
+                localStorage.setItem('user_registered', 'true');
+                setRegisteredEmail(email);
+                setIsRegistered(true);
+                setShowMaxRegisterDialog(false);
+                setShowMaxApiDialog(true);
+                setEmail('');
+                setPassword('');
+                setConfirmPassword('');
+            } else {
+                setRegisterError(data.error || 'REGISTRATION FAILED');
             }
         } catch (error) {
-            console.error('Failed to create API key:', error);
+            setRegisterError('NETWORK ERROR');
+        } finally {
+            setIsRegistering(false);
         }
-        setShowApiModal(false);
     };
 
-    const formatPrice = (price: number) => {
-        if (price === 0) return '$0.00';
-        if (price < 0.000001) return `$${price.toExponential(4)}`;
-        if (price < 0.001) return `$${price.toFixed(8)}`;
-        if (price < 1) return `$${price.toFixed(6)}`;
-        return `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const handleMintMeRegister = async () => {
+        if (!mintMeEmail || !mintMePassword || mintMePassword !== mintMeConfirmPassword) {
+            setMintMeRegisterError('PLEASE FILL ALL FIELDS CORRECTLY');
+            return;
+        }
+        
+        setIsMintMeRegistering(true);
+        setMintMeRegisterError('');
+        
+        try {
+            const response = await fetch('/api/mintme/v1/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: mintMeEmail, password: mintMePassword })
+            });
+            const data = await response.json();
+            if (data.success) {
+                setMintMeApiKey(data.apiKey);
+                setMintMeApiSecret(data.apiSecret);
+                setShowMintMeRegisterDialog(false);
+                setShowMintMeApiDialog(true);
+                setMintMeEmail('');
+                setMintMePassword('');
+                setMintMeConfirmPassword('');
+            } else {
+                setMintMeRegisterError(data.error || 'REGISTRATION FAILED');
+            }
+        } catch (error) {
+            setMintMeRegisterError('NETWORK ERROR');
+        } finally {
+            setIsMintMeRegistering(false);
+        }
     };
 
-    const formatVolume = (volume: number) => {
-        if (volume === 0) return 'N/A';
-        if (volume >= 1_000_000_000) return `$${(volume / 1_000_000_000).toFixed(1)}B`;
-        if (volume >= 1_000_000) return `$${(volume / 1_000_000).toFixed(1)}M`;
-        if (volume >= 1_000) return `$${(volume / 1_000).toFixed(1)}K`;
-        return `$${volume.toFixed(0)}`;
+    const handleLogout = () => {
+        localStorage.removeItem('user_email');
+        localStorage.removeItem('user_registered');
+        setIsRegistered(false);
+        setRegisteredEmail('');
+        setShowUserMenu(false);
     };
 
-    if (loading && pricesLoading) {
-        return (
-            <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-        );
-    }
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            {/* Welcome Section */}
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold">Welcome back!</h1>
-                <p className="text-gray-400">Manage your MAX Router integration</p>
-            </div>
+        <div className="min-h-screen bg-dark">
+            {/* Fixed Header */}
+            <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-12 md:h-14">
+                        {/* Left side - DEFI PLATFORM text */}
+                        <div className="text-[10px] md:text-xs font-semibold text-primary uppercase tracking-wider">
+                            DEFI PLATFORM
+                        </div>
 
-            {/* Live Token Prices Section */}
-            <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">Live Token Prices</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {tokenPrices.map((token) => (
-                        <div key={token.symbol} className="bg-card border border-border rounded-xl p-4">
-                            <div className="flex justify-between items-start mb-2">
-                                <div>
-                                    <div className="font-bold text-white text-lg">{token.symbol}</div>
-                                    <div className="text-xs text-gray-500">{token.name}</div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-white font-semibold">{formatPrice(token.price)}</div>
-                                    <div className={`text-xs ${token.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                                        {token.priceChange24h >= 0 ? '+' : ''}{token.priceChange24h.toFixed(2)}%
+                        {/* 3-Line Dropdown Menu with Icons */}
+                        <div className="relative">
+                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
+                                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                            
+                            {showUserMenu && (
+                                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50">
+                                    <div className="py-1">
+                                        <button
+                                            onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
+                                            className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                            MAX API KEY
+                                        </button>
+                                        <button
+                                            onClick={() => { setShowMintMeRegisterDialog(true); setShowUserMenu(false); }}
+                                            className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                                            </svg>
+                                            MINTME API KEY
+                                        </button>
+                                        <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
+                                            </svg>
+                                            EXCHANGE
+                                        </a>
+                                        <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
+                                            </svg>
+                                            WALLET
+                                        </a>
+                                        
+                                        {isRegistered ? (
+                                            <>
+                                                <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2 flex items-center gap-2">
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                    {registeredEmail}
+                                                </div>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                    </svg>
+                                                    LOGOUT
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button
+                                                onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
+                                                className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider border-t border-border mt-1 pt-2"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                                </svg>
+                                                REGISTER
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                            <div className="flex justify-between text-xs text-gray-500 mt-3 pt-2 border-t border-border">
-                                <span>Vol: {formatVolume(token.volume24h)}</span>
-                                <span>Liq: {formatVolume(token.liquidity)}</span>
-                                <span className="text-primary">{token.chain}</span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {/* Cryptorank Marquee Widget */}
+            <div className="fixed top-12 md:top-14 left-0 right-0 z-40 bg-dark">
+                <div 
+                    id="cr-widget-marquee" 
+                    data-coins="bitcoin,ethereum,bitcoin-ai,ripple,bnb,dogecoin,tether"
+                    data-theme="dark"
+                    data-show-symbol="false"
+                    data-show-icon="true"
+                    data-show-period-change="false"
+                    data-period-change="24H"
+                    data-api-url="https://api.cryptorank.io/v0"
+                    className="w-full"
+                >
+                    <a href="https://cryptorank.io" className="text-gray-500 text-xs"></a>
+                </div>
+            </div>
+
+            {/* Load Cryptorank widget script */}
+            <script src="https://cryptorank.io/widget/marquee.js" async></script>
+
+            {/* Main Content */}
+            <div className="min-h-screen flex flex-col items-center justify-center pt-28 md:pt-32 pb-12">
+                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Animated Circle Logo with Logo Image */}
+                    <div className="flex flex-col items-center justify-center">
+                        {/* Animation Container */}
+                        <div className="relative flex items-center justify-center">
+                            {/* Outer animated rings */}
+                            <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
+                            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-primary/20 animate-spin-slow"></div>
+                            <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
+                            
+                            {/* Center Logo - Image */}
+                            <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-primary/30 overflow-hidden">
+                                <img 
+                                    src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
+                                    alt="Fixorium Logo" 
+                                    className="w-32 h-32 md:w-48 md:h-48 object-contain"
+                                />
                             </div>
                         </div>
-                    ))}
-                </div>
-                {pricesLoading && (
-                    <div className="text-center py-4">
-                        <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                        <span className="text-xs text-gray-400">Refreshing prices...</span>
                     </div>
-                )}
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-card border border-border rounded-xl p-6">
-                    <div className="text-sm text-gray-400 mb-1">Total Volume</div>
-                    <div className="text-2xl font-bold text-primary">${stats.totalVolume.toLocaleString()}</div>
-                </div>
-                <div className="bg-card border border-border rounded-xl p-6">
-                    <div className="text-sm text-gray-400 mb-1">Fees Collected</div>
-                    <div className="text-2xl font-bold text-green-400">${stats.totalFees.toLocaleString()}</div>
-                </div>
-                <div className="bg-card border border-border rounded-xl p-6">
-                    <div className="text-sm text-gray-400 mb-1">API Requests</div>
-                    <div className="text-2xl font-bold text-primary">{stats.totalRequests.toLocaleString()}</div>
                 </div>
             </div>
 
-            {/* API Keys Section */}
-            <div className="bg-card border border-border rounded-xl p-6 mb-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">API Keys</h2>
-                    <button onClick={() => setShowApiModal(true)} className="px-4 py-2 bg-primary text-black text-sm font-semibold rounded-lg hover:bg-[#e8d58a] transition">
-                        + Create API Key
-                    </button>
-                </div>
-                
-                {developerData?.apiKeys.length === 0 ? (
-                    <p className="text-gray-400 text-center py-8">No API keys yet. Create your first key to get started.</p>
-                ) : (
-                    <div className="space-y-4">
-                        {developerData?.apiKeys.map((key) => (
-                            <div key={key.id} className="border border-border rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div>
-                                    <div className="font-semibold">{key.name}</div>
-                                    <div className="text-sm font-mono text-gray-400">{key.apiKey}</div>
-                                    <div className="text-xs text-gray-500 mt-1">Created: {new Date(key.createdAt).toLocaleDateString()}</div>
+            {/* MAX Aggregator Dialog */}
+            {showAggregatorDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX AGGREGATOR</h2>
+                            <button onClick={() => setShowAggregatorDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="text-center py-4">
+                            <div className="text-5xl mb-3 animate-bounce">⚡</div>
+                            <h3 className="text-base font-bold text-white mb-2 uppercase">SOLANA DEX AGGREGATOR</h3>
+                            <p className="text-gray-400 text-[11px] mb-4 uppercase">0.01% FEE • MULTI-DEX ROUTING • BEST PRICES</p>
+                            <div className="space-y-2 text-left mb-4">
+                                <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
+                                    <span className="text-[10px] text-gray-400">PROGRAM ID</span>
+                                    <code className="text-[10px] text-primary break-all text-right ml-2">EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM</code>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="text-right">
-                                        <div className="text-sm text-gray-400">Requests</div>
-                                        <div className="font-semibold">{key.requests.toLocaleString()}</div>
-                                    </div>
-                                    <button className="text-red-400 hover:text-red-300 text-sm">Revoke</button>
+                                <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
+                                    <span className="text-[10px] text-gray-400">BASE URL</span>
+                                    <code className="text-[10px] text-primary">https://fixorium.com.pk/max/v1</code>
                                 </div>
                             </div>
-                        ))}
+                            <button
+                                onClick={() => { setShowAggregatorDialog(false); setShowMaxRegisterDialog(true); }}
+                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider"
+                            >
+                                GET API KEY
+                            </button>
+                        </div>
                     </div>
-                )}
-            </div>
-
-            {/* Quick Start Section */}
-            <div className="bg-darker border border-border rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-4">Quick Start</h2>
-                <div className="space-y-3">
-                    <code className="block bg-black/50 p-3 rounded-lg text-sm text-gray-300">
-                        curl -X GET "https://fixorium.com.pk/api/max/v1/quote?inputMint=So111...&outputMint=EPjFW...&amount=1000000" \
-                        <br />  -H "X-API-Key: YOUR_API_KEY"
-                    </code>
-                    <a href="/max/docs" className="text-primary hover:text-[#e8d58a] text-sm inline-block">Read full documentation →</a>
                 </div>
-            </div>
-
-            {/* API Key Modal */}
-            {showApiModal && (
-                <ApiKeyModal onClose={() => setShowApiModal(false)} onCreate={handleCreateApiKey} />
             )}
+
+            {/* MAX Registration Dialog */}
+            {showMaxRegisterDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">REGISTER FOR MAX API</h2>
+                            <button onClick={() => setShowMaxRegisterDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-3">
+                            {registerError && (
+                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
+                                    <p className="text-[10px] text-red-400">{registerError}</p>
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="your@email.com"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="CREATE PASSWORD"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">CONFIRM PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="CONFIRM PASSWORD"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <button
+                                onClick={handleMaxRegister}
+                                disabled={isRegistering}
+                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                            >
+                                {isRegistering ? 'REGISTERING...' : 'REGISTER'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MAX API Key Display Dialog */}
+            {showMaxApiDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX API KEY</h2>
+                            <button onClick={() => setShowMaxApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2">
+                                <p className="text-[10px] text-yellow-400 uppercase">⚠️ SAVE THESE CREDENTIALS SECURELY!</p>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API KEY</label>
+                                <div className="flex items-center gap-2">
+                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-primary break-all">{apiKey}</code>
+                                    <button onClick={() => copyToClipboard(apiKey)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
+                                        {copied ? '✓' : 'COPY'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API SECRET</label>
+                                <div className="flex items-center gap-2">
+                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-yellow-400 break-all">{apiSecret}</code>
+                                    <button onClick={() => copyToClipboard(apiSecret)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
+                                        COPY
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-2">
+                                <p className="text-[9px] text-blue-400 uppercase">QUICK INTEGRATION:</p>
+                                <code className="text-[9px] text-gray-300 block mt-1 break-all">
+                                    curl -X GET "https://fixorium.com.pk/max/v1/quote?inputMint=So111...&outputMint=EPjFW...&amount=1000000" -H "X-API-Key: {apiKey.slice(0, 15)}..."
+                                </code>
+                            </div>
+                            <button onClick={() => setShowMaxApiDialog(false)} className="w-full py-2 bg-primary text-black text-xs font-semibold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider">
+                                DONE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MintMe Registration Dialog */}
+            {showMintMeRegisterDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">REGISTER FOR MINTME API</h2>
+                            <button onClick={() => setShowMintMeRegisterDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-3">
+                            {mintMeRegisterError && (
+                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
+                                    <p className="text-[10px] text-red-400">{mintMeRegisterError}</p>
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
+                                <input
+                                    type="email"
+                                    value={mintMeEmail}
+                                    onChange={(e) => setMintMeEmail(e.target.value)}
+                                    placeholder="your@email.com"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={mintMePassword}
+                                    onChange={(e) => setMintMePassword(e.target.value)}
+                                    placeholder="CREATE PASSWORD"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">CONFIRM PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={mintMeConfirmPassword}
+                                    onChange={(e) => setMintMeConfirmPassword(e.target.value)}
+                                    placeholder="CONFIRM PASSWORD"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <button
+                                onClick={handleMintMeRegister}
+                                disabled={isMintMeRegistering}
+                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                            >
+                                {isMintMeRegistering ? 'REGISTERING...' : 'REGISTER'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MintMe API Key Display Dialog */}
+            {showMintMeApiDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MINTME API KEY</h2>
+                            <button onClick={() => setShowMintMeApiDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2">
+                                <p className="text-[10px] text-yellow-400 uppercase">⚠️ SAVE THESE CREDENTIALS SECURELY!</p>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API KEY</label>
+                                <div className="flex items-center gap-2">
+                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-primary break-all">{mintMeApiKey}</code>
+                                    <button onClick={() => copyToClipboard(mintMeApiKey)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
+                                        {copied ? '✓' : 'COPY'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">API SECRET</label>
+                                <div className="flex items-center gap-2">
+                                    <code className="flex-1 p-2 bg-darker rounded-lg text-[10px] text-yellow-400 break-all">{mintMeApiSecret}</code>
+                                    <button onClick={() => copyToClipboard(mintMeApiSecret)} className="px-2 py-1.5 bg-darker border border-border rounded-lg text-[10px] text-gray-400 hover:text-white">
+                                        COPY
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2">
+                                <p className="text-[9px] text-green-400 uppercase">MINTME DEX ROUTER</p>
+                                <code className="text-[9px] text-gray-300 block mt-1 break-all">
+                                    CONTRACT: {MINTME_CONTRACT}
+                                </code>
+                            </div>
+                            <button onClick={() => setShowMintMeApiDialog(false)} className="w-full py-2 bg-primary text-black text-xs font-semibold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider">
+                                DONE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <style>{`
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 20s linear infinite;
+                }
+                @keyframes pulse-slow {
+                    0%, 100% { opacity: 0.15; transform: scale(1); }
+                    50% { opacity: 0.4; transform: scale(1.05); }
+                }
+                .animate-pulse-slow {
+                    animation: pulse-slow 4s ease-in-out infinite;
+                }
+                @keyframes ping-slow {
+                    0% { transform: scale(0.95); opacity: 0.3; }
+                    50% { transform: scale(1.05); opacity: 0.1; }
+                    100% { transform: scale(0.95); opacity: 0.3; }
+                }
+                .animate-ping-slow {
+                    animation: ping-slow 3s ease-in-out infinite;
+                }
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-5px); }
+                }
+                .animate-bounce {
+                    animation: bounce 1s ease-in-out infinite;
+                }
+            `}</style>
         </div>
     );
 };
 
-export default Dashboard;
+export default Home;
