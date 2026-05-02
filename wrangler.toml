@@ -1,11 +1,6 @@
 name = "fixorium-router"
 compatibility_date = "2024-01-01"
-account_id = ""
 pages_build_output_dir = "public"
-
-[build]
-command = "npm run build"
-cwd = "./"
 
 # KV Namespace Bindings
 [[kv_namespaces]]
