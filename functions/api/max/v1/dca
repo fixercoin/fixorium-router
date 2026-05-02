@@ -1,0 +1,81 @@
+export async function onRequestPost(request: Request, env: Env) {
+  const apiKey = request.headers.get('X-API-Key');
+  
+  if (!apiKey) {
+    return Response.json({ error: 'API key required' }, { status: 401 });
+  }
+  
+  const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
+  if (!keyData || keyData.status !== 'active') {
+    return Response.json({ error: 'Invalid API key' }, { status: 401 });
+  }
+  
+  const { 
+    inputMint, 
+    outputMint, 
+    totalAmount, 
+    amountPerCycle, 
+    cycleSeconds, 
+    totalCycles 
+  } = await request.json();
+  
+  if (!inputMint || !outputMint || !totalAmount || !amountPerCycle || !cycleSeconds || !totalCycles) {
+    return Response.json({ 
+      error: 'Missing required fields: inputMint, outputMint, totalAmount, amountPerCycle, cycleSeconds, totalCycles' 
+    }, { status: 400 });
+  }
+  
+  const strategyId = Date.now();
+  const totalDuration = cycleSeconds * totalCycles;
+  const expectedEnd = new Date(Date.now() + (totalDuration * 1000)).toISOString();
+  
+  return Response.json({
+    success: true,
+    strategyId,
+    inputMint,
+    outputMint,
+    totalAmount,
+    amountPerCycle,
+    cycleSeconds,
+    totalCycles,
+    expectedEnd,
+    fee: {
+      bps: 1,
+      percentage: '0.01%'
+    }
+  });
+}
+
+export async function onRequestGet(request: Request, env: Env) {
+  const apiKey = request.headers.get('X-API-Key');
+  
+  if (!apiKey) {
+    return Response.json({ error: 'API key required' }, { status: 401 });
+  }
+  
+  const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
+  if (!keyData || keyData.status !== 'active') {
+    return Response.json({ error: 'Invalid API key' }, { status: 401 });
+  }
+  
+  const url = new URL(request.url);
+  const strategyId = url.searchParams.get('strategyId');
+  
+  if (strategyId) {
+    return Response.json({
+      success: true,
+      strategy: {
+        strategyId: parseInt(strategyId),
+        status: 'active',
+        completedCycles: 0,
+        totalCycles: 10,
+        nextExecution: new Date(Date.now() + 86400000).toISOString()
+      }
+    });
+  } else {
+    return Response.json({
+      success: true,
+      strategies: []
+    });
+  }
+}
