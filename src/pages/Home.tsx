@@ -183,25 +183,70 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
 
     return (
         <div className="min-h-screen bg-dark">
-            {/* Fixed Header */}
+            {/* Fixed Header - Only Dropdown */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-12 md:h-14">
-                        {/* Brand Name */}
-                        <div className="cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <span className="font-bold text-base md:text-xl tracking-wider text-primary">FIXORIUM</span>
+                    <div className="flex items-center justify-end h-12 md:h-14">
+                        {/* 3-Line Dropdown Menu */}
+                        <div className="relative">
+                            <button onClick={() => setShowUserMenu(!showUserMenu)} className="text-gray-400 hover:text-primary p-2">
+                                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                            
+                            {showUserMenu && (
+                                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50">
+                                    <div className="py-1">
+                                        <button
+                                            onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
+                                            className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
+                                        >
+                                            MAX API KEY
+                                        </button>
+                                        <button
+                                            onClick={() => { setShowMintMeRegisterDialog(true); setShowUserMenu(false); }}
+                                            className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
+                                        >
+                                            MINTME API KEY
+                                        </button>
+                                        <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            EXCHANGE
+                                        </a>
+                                        <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            WALLET
+                                        </a>
+                                        
+                                        {isRegistered ? (
+                                            <>
+                                                <div className="px-4 py-2 text-[10px] text-gray-500 border-t border-border mt-1 pt-2">
+                                                    {registeredEmail}
+                                                </div>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="block w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider"
+                                                >
+                                                    LOGOUT
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button
+                                                onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
+                                                className="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider border-t border-border mt-1 pt-2"
+                                            >
+                                                REGISTER
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-
-                        {/* Connect Wallet Button - Restored */}
-                        <button onClick={onConnect} className="px-3 py-1.5 md:px-4 md:py-2 bg-primary text-black text-[10px] md:text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider">
-                            {isLoggedIn ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : 'CONNECT WALLET'}
-                        </button>
                     </div>
                 </div>
             </header>
 
             {/* Marquee - Live Prices from DexScreener */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/5 border-y border-primary/20 overflow-hidden whitespace-nowrap py-1 z-40">
+            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/5 border-y border-primary/20 overflow-hidden whitespace-nowrap py-1.5 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     {marqueeItems.map((item, idx) => (
                         <span key={idx} className="mx-3 inline-flex items-center gap-2">
@@ -212,27 +257,28 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="pt-28 md:pt-32">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-                    {/* Animated Circle Logo with FIXORIUM Text - Proper Gap */}
-                    <div className="text-center">
-                        <div className="relative inline-flex items-center justify-center mb-8 md:mb-12">
-                            {/* Animated Circles - Colorful */}
-                            <div className="absolute w-48 h-48 md:w-80 md:h-80 rounded-full border-2 border-primary/40 animate-pulse-slow"></div>
-                            <div className="absolute w-44 h-44 md:w-72 md:h-72 rounded-full border border-primary/30 animate-spin-slow"></div>
-                            <div className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
+            {/* Main Content - Auto-stretch width */}
+            <div className="min-h-screen flex flex-col items-center justify-center pt-28 md:pt-32 pb-12">
+                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Animated Circle Logo - Auto width */}
+                    <div className="flex flex-col items-center justify-center">
+                        {/* Animation Container - Responsive auto-stretch */}
+                        <div className="relative flex items-center justify-center mb-12 md:mb-16">
+                            {/* Outer animated rings - responsive sizes */}
+                            <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
+                            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-primary/20 animate-spin-slow"></div>
+                            <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
                             
                             {/* Center Logo */}
-                            <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-primary/20">
-                                <span className="text-xl md:text-3xl font-bold text-white text-center leading-tight break-words px-2 drop-shadow-md">
+                            <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-primary/30">
+                                <span className="text-xl md:text-4xl font-bold text-white text-center leading-tight break-words px-3 drop-shadow-lg">
                                     FIXORIUM
                                 </span>
                             </div>
                         </div>
                         
-                        {/* Tagline with gap */}
-                        <div className="space-y-3 mt-4">
+                        {/* Text with proper gap */}
+                        <div className="text-center space-y-4 mt-6 md:mt-8">
                             <div className="flex items-center justify-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
                                 <p className="text-gray-300 text-[10px] md:text-xs uppercase tracking-wider font-medium">0.01% FEE • MULTI-CHAIN DEX AGGREGATOR</p>
