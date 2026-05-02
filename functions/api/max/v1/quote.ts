@@ -5,7 +5,9 @@ export async function onRequestGet({ request, env }: { request: Request; env: an
     return Response.json({ error: 'API key required' }, { status: 401 });
   }
   
-  const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
+  // Use DEVELOPERS_KV instead of API_KEYS_KV
+  const keyData = await env.DEVELOPERS_KV.get(`key:${apiKey}`, 'json');
+  
   if (!keyData || keyData.status !== 'active') {
     return Response.json({ error: 'Invalid API key' }, { status: 401 });
   }
@@ -30,7 +32,12 @@ export async function onRequestGet({ request, env }: { request: Request; env: an
       outputMint,
       inAmount: amount,
       outAmount: amountOut.toString(),
-      fee: { bps: 1, percentage: '0.01%', amount: feeAmount.toString(), recipient: 'F9RJSJ4Fr2mLsQrZjemeg3PVMjG2KgjF9t5shZLHMnwG' }
+      fee: { 
+        bps: 1, 
+        percentage: '0.01%', 
+        amount: feeAmount.toString(), 
+        recipient: 'F9RJSJ4Fr2mLsQrZjemeg3PVMjG2KgjF9t5shZLHMnwG' 
+      }
     }
   });
 }
