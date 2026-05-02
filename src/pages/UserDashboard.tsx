@@ -494,4 +494,4 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     );
 };
 
-export default Dashboard;
+export default UserDashboard;
