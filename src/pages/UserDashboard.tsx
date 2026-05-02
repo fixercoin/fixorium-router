@@ -21,7 +21,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const [maxLoading, setMaxLoading] = useState(false);
     
     const [mintMeEndpoint, setMintMeEndpoint] = useState('quote');
-    const [mintMeParams, setMintMeParams] = useState('{\n  "tokenIn": "0x...",\n  "tokenOut": "0x...",\n  "amountIn": "1000000000000000000"\n}');
+    const [mintMeParams, setMintMeParams] = useState('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1"\n}');
     const [mintMeResponse, setMintMeResponse] = useState('');
     const [mintMeLoading, setMintMeLoading] = useState(false);
     
@@ -63,7 +63,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             if (savedMintMeSecret) setMintMeApiSecret(savedMintMeSecret);
         }
         
-        // Load API usage from localStorage
         const savedUsage = localStorage.getItem('api_usage');
         if (savedUsage) {
             setApiUsage(JSON.parse(savedUsage));
@@ -121,19 +120,18 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 try {
                     body = JSON.parse(maxParams);
                 } catch (e) {
-                    setMaxResponse(`Error: Invalid JSON in parameters\n\n${e.message}\n\nSwap requires: {"userPublicKey": "...", "quoteResponse": {...}}`);
+                    setMaxResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
                     setMaxLoading(false);
                     return;
                 }
                 
-                // Validate required fields
                 if (!body.userPublicKey) {
-                    setMaxResponse('Error: Missing "userPublicKey" in request body. Add your Solana wallet address.');
+                    setMaxResponse('Error: Missing "userPublicKey" in request body.');
                     setMaxLoading(false);
                     return;
                 }
                 if (!body.quoteResponse) {
-                    setMaxResponse('Error: Missing "quoteResponse" in request body. Get a quote first, then use it here.');
+                    setMaxResponse('Error: Missing "quoteResponse" in request body.');
                     setMaxLoading(false);
                     return;
                 }
@@ -157,7 +155,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             const data = await response.json();
             setMaxResponse(JSON.stringify(data, null, 2));
             
-            // Update API usage
             const newUsage = { ...apiUsage, maxCalls: apiUsage.maxCalls + 1 };
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
@@ -201,7 +198,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             const data = await response.json();
             setMintMeResponse(JSON.stringify(data, null, 2));
             
-            // Update API usage
             const newUsage = { ...apiUsage, mintMeCalls: apiUsage.mintMeCalls + 1 };
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
@@ -324,181 +320,183 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Main Content */}
+            {/* Main Content - Two Column Layout */}
             <div className="pt-28 md:pt-32 pb-20 md:pb-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
-                    <div className="mb-8 text-center">
-                        <h1 className="text-2xl md:text-3xl font-bold text-primary uppercase tracking-wider mb-2">
-                            API DASHBOARD
-                        </h1>
-                        <p className="text-gray-400 text-xs md:text-sm">
-                            Welcome back, <span className="text-primary">{registeredEmail}</span>
-                        </p>
-                    </div>
-
-                    {/* API Usage Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div className="bg-card border border-border rounded-xl p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider">MAX API USAGE</h3>
-                                <div className="px-2 py-1 bg-primary/10 rounded-lg">
-                                    <span className="text-[10px] text-primary uppercase">Solana</span>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] text-gray-400">API Calls Today</span>
-                                    <span className="text-xs text-white font-bold">{apiUsage.maxCalls} / {apiUsage.maxLimit}</span>
-                                </div>
-                                <div className="w-full bg-darker rounded-full h-2">
-                                    <div 
-                                        className="bg-primary h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${(apiUsage.maxCalls / apiUsage.maxLimit) * 100}%` }}
-                                    ></div>
-                                </div>
-                                <div className="flex justify-between items-center pt-2">
-                                    <span className="text-[10px] text-gray-400">Program ID</span>
-                                    <code className="text-[9px] text-primary break-all text-right ml-2">{MAX_PROGRAM_ID.slice(0, 20)}...</code>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="bg-card border border-border rounded-xl p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider">MINTME API USAGE</h3>
-                                <div className="px-2 py-1 bg-green-500/10 rounded-lg">
-                                    <span className="text-[10px] text-green-400 uppercase">EVM</span>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] text-gray-400">API Calls Today</span>
-                                    <span className="text-xs text-white font-bold">{apiUsage.mintMeCalls} / {apiUsage.mintMeLimit}</span>
-                                </div>
-                                <div className="w-full bg-darker rounded-full h-2">
-                                    <div 
-                                        className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${(apiUsage.mintMeCalls / apiUsage.mintMeLimit) * 100}%` }}
-                                    ></div>
-                                </div>
-                                <div className="flex justify-between items-center pt-2">
-                                    <span className="text-[10px] text-gray-400">Contract Address</span>
-                                    <code className="text-[9px] text-green-400 break-all text-right ml-2">{MINTME_CONTRACT.slice(0, 20)}...</code>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* MAX API Tester */}
-                    <div className="bg-card border border-border rounded-xl p-6 mb-8">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX API TESTER</h2>
-                            <div className="flex gap-2">
-                                <button 
-                                    onClick={() => setMaxEndpoint('quote')}
-                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${maxEndpoint === 'quote' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
-                                >
-                                    QUOTE
-                                </button>
-                                <button 
-                                    onClick={() => setMaxEndpoint('swap')}
-                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${maxEndpoint === 'swap' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
-                                >
-                                    SWAP
-                                </button>
-                                <button 
-                                    onClick={() => setMaxEndpoint('pools')}
-                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${maxEndpoint === 'pools' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
-                                >
-                                    POOLS
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-2">REQUEST PARAMETERS (JSON)</label>
-                                <textarea
-                                    value={maxParams}
-                                    onChange={(e) => setMaxParams(e.target.value)}
-                                    className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none"
-                                    placeholder="Enter JSON parameters..."
-                                />
-                                <div className="flex items-center justify-between mt-3">
-                                    <div className="text-[10px] text-gray-400">
-                                        API Key: {apiKey ? `${apiKey.slice(0, 15)}...` : 'Not available'}
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Left Column - 30% */}
+                        <div className="lg:w-[30%] space-y-6">
+                            {/* Welcome Card */}
+                            <div className="bg-gradient-to-br from-primary/10 to-darker border border-primary/20 rounded-xl p-6">
+                                <h1 className="text-xl md:text-2xl font-bold text-primary uppercase tracking-wider mb-1">
+                                    API DASHBOARD
+                                </h1>
+                                <p className="text-gray-400 text-xs">
+                                    Welcome back, <span className="text-primary font-semibold">{registeredEmail}</span>
+                                </p>
+                                <div className="mt-4 pt-4 border-t border-primary/20">
+                                    <div className="flex items-center justify-between text-[10px]">
+                                        <span className="text-gray-400">API Key Status</span>
+                                        <span className="text-green-400 flex items-center gap-1">
+                                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                                            Active
+                                        </span>
                                     </div>
-                                    <button
-                                        onClick={testMaxEndpoint}
-                                        disabled={maxLoading || !apiKey}
-                                        className="px-4 py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
-                                    >
-                                        {maxLoading ? 'TESTING...' : 'TEST ENDPOINT'}
-                                    </button>
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-2">RESPONSE</label>
-                                <pre className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto resize-none">
-                                    {maxResponse || 'Click "TEST ENDPOINT" to see response...'}
-                                </pre>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* MintMe API Tester */}
-                    <div className="bg-card border border-border rounded-xl p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MINTME API TESTER</h2>
-                            <div className="flex gap-2">
-                                <button 
-                                    onClick={() => setMintMeEndpoint('quote')}
-                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${mintMeEndpoint === 'quote' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
-                                >
-                                    QUOTE
-                                </button>
-                                <button 
-                                    onClick={() => setMintMeEndpoint('swap')}
-                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${mintMeEndpoint === 'swap' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
-                                >
-                                    SWAP
-                                </button>
-                                <button 
-                                    onClick={() => setMintMeEndpoint('liquidity')}
-                                    className={`px-3 py-1 text-[10px] rounded-lg transition ${mintMeEndpoint === 'liquidity' ? 'bg-primary text-black' : 'bg-darker text-gray-400'}`}
-                                >
-                                    LIQUIDITY
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-2">REQUEST PARAMETERS (JSON)</label>
-                                <textarea
-                                    value={mintMeParams}
-                                    onChange={(e) => setMintMeParams(e.target.value)}
-                                    className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none"
-                                    placeholder="Enter JSON parameters..."
-                                />
-                                <div className="flex items-center justify-between mt-3">
-                                    <div className="text-[10px] text-gray-400">
-                                        Contract: {MINTME_CONTRACT.slice(0, 15)}...
+                            {/* API Usage Section */}
+                            <div className="bg-card border border-border rounded-xl p-6">
+                                <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                    API USAGE
+                                </h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] text-gray-400">MAX API (Solana)</span>
+                                            <span className="text-[10px] text-white font-bold">{apiUsage.maxCalls} / {apiUsage.maxLimit}</span>
+                                        </div>
+                                        <div className="w-full bg-darker rounded-full h-1.5">
+                                            <div className="bg-primary h-1.5 rounded-full transition-all duration-300" style={{ width: `${(apiUsage.maxCalls / apiUsage.maxLimit) * 100}%` }}></div>
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={testMintMeEndpoint}
-                                        disabled={mintMeLoading || !mintMeApiKey}
-                                        className="px-4 py-2 bg-primary text-black text-xs font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
-                                    >
-                                        {mintMeLoading ? 'TESTING...' : 'TEST ENDPOINT'}
-                                    </button>
+                                    <div>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] text-gray-400">MintMe API (EVM)</span>
+                                            <span className="text-[10px] text-white font-bold">{apiUsage.mintMeCalls} / {apiUsage.mintMeLimit}</span>
+                                        </div>
+                                        <div className="w-full bg-darker rounded-full h-1.5">
+                                            <div className="bg-green-500 h-1.5 rounded-full transition-all duration-300" style={{ width: `${(apiUsage.mintMeCalls / apiUsage.mintMeLimit) * 100}%` }}></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-[10px] text-gray-400 uppercase mb-2">RESPONSE</label>
-                                <pre className="w-full h-64 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto resize-none">
-                                    {mintMeResponse || 'Click "TEST ENDPOINT" to see response...'}
-                                </pre>
+
+                            {/* Quick Info */}
+                            <div className="bg-card border border-border rounded-xl p-6">
+                                <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    QUICK INFO
+                                </h3>
+                                <div className="space-y-3">
+                                    <div>
+                                        <div className="text-[9px] text-gray-400 uppercase mb-1">MAX PROGRAM ID</div>
+                                        <code className="text-[9px] text-primary break-all">{MAX_PROGRAM_ID.slice(0, 20)}...</code>
+                                        <button onClick={() => copyToClipboard(MAX_PROGRAM_ID)} className="text-gray-500 hover:text-white ml-2">
+                                            <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div className="pt-2 border-t border-border">
+                                        <div className="text-[9px] text-gray-400 uppercase mb-1">MINTME CONTRACT</div>
+                                        <code className="text-[9px] text-green-400 break-all">{MINTME_CONTRACT.slice(0, 20)}...</code>
+                                        <button onClick={() => copyToClipboard(MINTME_CONTRACT)} className="text-gray-500 hover:text-white ml-2">
+                                            <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Your API Key */}
+                            <div className="bg-card border border-border rounded-xl p-6">
+                                <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                    </svg>
+                                    YOUR API KEY
+                                </h3>
+                                <div className="bg-darker rounded-lg p-3">
+                                    <code className="text-[10px] text-primary break-all">{apiKey || 'Not available'}</code>
+                                </div>
+                                {apiKey && (
+                                    <button onClick={() => copyToClipboard(apiKey)} className="mt-3 w-full py-2 bg-primary/10 text-primary text-[10px] font-semibold rounded-lg hover:bg-primary/20 transition uppercase tracking-wider">
+                                        COPY API KEY
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Right Column - 70% */}
+                        <div className="lg:w-[70%] space-y-8">
+                            {/* MAX API Tester */}
+                            <div className="bg-card border border-border rounded-xl overflow-hidden">
+                                <div className="bg-darker px-6 py-4 border-b border-border">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h2 className="text-base font-bold text-primary uppercase tracking-wider">MAX API TESTER</h2>
+                                            <p className="text-[10px] text-gray-400 mt-1">Solana DEX Aggregator</p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => setMaxEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'quote' ? 'bg-primary text-black shadow-lg' : 'bg-darker text-gray-400 hover:text-white'}`}>QUOTE</button>
+                                            <button onClick={() => setMaxEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'swap' ? 'bg-primary text-black shadow-lg' : 'bg-darker text-gray-400 hover:text-white'}`}>SWAP</button>
+                                            <button onClick={() => setMaxEndpoint('pools')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'pools' ? 'bg-primary text-black shadow-lg' : 'bg-darker text-gray-400 hover:text-white'}`}>POOLS</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
+                                            <textarea value={maxParams} onChange={(e) => setMaxParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" placeholder="Enter JSON parameters..." />
+                                            <div className="flex items-center justify-between mt-3">
+                                                <div className="text-[9px] text-gray-400">API Key: {apiKey ? `${apiKey.slice(0, 12)}...` : 'Not available'}</div>
+                                                <button onClick={testMaxEndpoint} disabled={maxLoading || !apiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50 shadow-lg">
+                                                    {maxLoading ? 'TESTING...' : 'SEND REQUEST'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
+                                            <pre className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto resize-none whitespace-pre-wrap break-all">{maxResponse || 'Click "SEND REQUEST" to see response...'}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* MintMe API Tester */}
+                            <div className="bg-card border border-border rounded-xl overflow-hidden">
+                                <div className="bg-darker px-6 py-4 border-b border-border">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h2 className="text-base font-bold text-primary uppercase tracking-wider">MINTME API TESTER</h2>
+                                            <p className="text-[10px] text-gray-400 mt-1">EVM DEX Aggregator</p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => setMintMeEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'quote' ? 'bg-primary text-black shadow-lg' : 'bg-darker text-gray-400 hover:text-white'}`}>QUOTE</button>
+                                            <button onClick={() => setMintMeEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'swap' ? 'bg-primary text-black shadow-lg' : 'bg-darker text-gray-400 hover:text-white'}`}>SWAP</button>
+                                            <button onClick={() => setMintMeEndpoint('liquidity')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'liquidity' ? 'bg-primary text-black shadow-lg' : 'bg-darker text-gray-400 hover:text-white'}`}>LIQUIDITY</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
+                                            <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" placeholder="Enter JSON parameters..." />
+                                            <div className="flex items-center justify-between mt-3">
+                                                <div className="text-[9px] text-gray-400 flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                                                    {MINTME_CONTRACT.slice(0, 12)}...
+                                                </div>
+                                                <button onClick={testMintMeEndpoint} disabled={mintMeLoading || !mintMeApiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50 shadow-lg">
+                                                    {mintMeLoading ? 'TESTING...' : 'SEND REQUEST'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
+                                            <pre className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto resize-none whitespace-pre-wrap break-all">{mintMeResponse || 'Click "SEND REQUEST" to see response...'}</pre>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -542,6 +540,13 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 }
                 .animate-marquee {
                     animation: marquee 40s linear infinite;
+                }
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+                .animate-pulse {
+                    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
                 }
             `}</style>
         </div>
