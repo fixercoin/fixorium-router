@@ -35,6 +35,17 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
     const MAX_PROGRAM_ID = "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
+    // Update params when endpoint changes
+    useEffect(() => {
+        if (maxEndpoint === 'quote') {
+            setMaxParams('{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}');
+        } else if (maxEndpoint === 'swap') {
+            setMaxParams('{\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "quoteResponse": {\n    "inputMint": "So11111111111111111111111111111111111111112",\n    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n    "inAmount": "1000000",\n    "outAmount": "999900",\n    "fee": {\n      "bps": 1,\n      "percentage": "0.01%",\n      "amount": "100"\n    }\n  }\n}');
+        } else if (maxEndpoint === 'pools') {
+            setMaxParams('{\n  "mint": "So11111111111111111111111111111111111111112"\n}');
+        }
+    }, [maxEndpoint]);
+
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
         const userRegistered = localStorage.getItem('user_registered');
@@ -86,7 +97,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         try {
             let url = `/api/max/v1/${maxEndpoint}`;
             let options: RequestInit = {
-                method: 'GET',
                 headers: {
                     'X-API-Key': apiKey,
                     'Content-Type': 'application/json'
@@ -94,12 +104,53 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             };
             
             if (maxEndpoint === 'quote') {
-                const params = JSON.parse(maxParams);
+                options.method = 'GET';
+                let params;
+                try {
+                    params = JSON.parse(maxParams);
+                } catch (e) {
+                    setMaxResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
+                    setMaxLoading(false);
+                    return;
+                }
                 const queryParams = new URLSearchParams(params).toString();
                 url += `?${queryParams}`;
             } else if (maxEndpoint === 'swap') {
                 options.method = 'POST';
-                options.body = maxParams;
+                let body;
+                try {
+                    body = JSON.parse(maxParams);
+                } catch (e) {
+                    setMaxResponse(`Error: Invalid JSON in parameters\n\n${e.message}\n\nSwap requires: {"userPublicKey": "...", "quoteResponse": {...}}`);
+                    setMaxLoading(false);
+                    return;
+                }
+                
+                // Validate required fields
+                if (!body.userPublicKey) {
+                    setMaxResponse('Error: Missing "userPublicKey" in request body. Add your Solana wallet address.');
+                    setMaxLoading(false);
+                    return;
+                }
+                if (!body.quoteResponse) {
+                    setMaxResponse('Error: Missing "quoteResponse" in request body. Get a quote first, then use it here.');
+                    setMaxLoading(false);
+                    return;
+                }
+                
+                options.body = JSON.stringify(body);
+            } else if (maxEndpoint === 'pools') {
+                options.method = 'GET';
+                let params;
+                try {
+                    params = JSON.parse(maxParams);
+                } catch (e) {
+                    setMaxResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
+                    setMaxLoading(false);
+                    return;
+                }
+                const queryParams = new URLSearchParams(params).toString();
+                url += `?${queryParams}`;
             }
             
             const response = await fetch(url, options);
@@ -110,7 +161,8 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             const newUsage = { ...apiUsage, maxCalls: apiUsage.maxCalls + 1 };
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
-        } catch (error) {
+        } catch (error: any) {
+            console.error('API test error:', error);
             setMaxResponse(`Error: ${error.message}`);
         } finally {
             setMaxLoading(false);
@@ -124,7 +176,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         try {
             let url = `/api/mintme/v1/${mintMeEndpoint}`;
             let options: RequestInit = {
-                method: 'GET',
                 headers: {
                     'X-API-Key': mintMeApiKey,
                     'Content-Type': 'application/json'
@@ -132,12 +183,18 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             };
             
             if (mintMeEndpoint === 'quote') {
+                options.method = 'GET';
                 const params = JSON.parse(mintMeParams);
                 const queryParams = new URLSearchParams(params).toString();
                 url += `?${queryParams}`;
             } else if (mintMeEndpoint === 'swap') {
                 options.method = 'POST';
                 options.body = mintMeParams;
+            } else if (mintMeEndpoint === 'liquidity') {
+                options.method = 'GET';
+                const params = JSON.parse(mintMeParams);
+                const queryParams = new URLSearchParams(params).toString();
+                url += `?${queryParams}`;
             }
             
             const response = await fetch(url, options);
@@ -148,7 +205,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             const newUsage = { ...apiUsage, mintMeCalls: apiUsage.mintMeCalls + 1 };
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
-        } catch (error) {
+        } catch (error: any) {
             setMintMeResponse(`Error: ${error.message}`);
         } finally {
             setMintMeLoading(false);
@@ -157,7 +214,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
 
     return (
         <div className="min-h-screen bg-dark">
-            {/* Fixed Header - Same as Home.tsx */}
+            {/* Fixed Header */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-12 md:h-14">
@@ -165,7 +222,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                             DEFI PLATFORM
                         </div>
 
-                        {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center gap-6">
                             <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 EXCHANGE
@@ -181,7 +237,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                             </a>
                         </nav>
 
-                        {/* User Profile Dropdown */}
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 text-gray-400 hover:text-primary transition p-2">
                                 <svg className="w-5 h-5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,7 +298,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </header>
 
-            {/* Custom Marquee - Same as Home.tsx */}
+            {/* Custom Marquee */}
             <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     <span className="mx-4 inline-flex items-center gap-2">
@@ -269,10 +324,9 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Main Content - API Testing Dashboard */}
+            {/* Main Content */}
             <div className="pt-28 md:pt-32 pb-20 md:pb-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
-                    {/* Welcome Section */}
                     <div className="mb-8 text-center">
                         <h1 className="text-2xl md:text-3xl font-bold text-primary uppercase tracking-wider mb-2">
                             API DASHBOARD
@@ -451,7 +505,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Bottom Navigation Bar - Mobile Only - Same as Home.tsx */}
+            {/* Bottom Navigation Bar - Mobile Only */}
             <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
                 <div className="flex items-center justify-around py-2">
                     <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
