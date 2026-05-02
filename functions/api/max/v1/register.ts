@@ -1,7 +1,6 @@
 export async function onRequestPost(context: any) {
   const { request, env } = context;
 
-  // Handle CORS
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -42,7 +41,21 @@ export async function onRequestPost(context: any) {
       );
     }
 
-    // Generate API key and secret
+    // Check if user already exists
+    const existingUser = await env.DEVELOPERS_KV.get(`dev:${email}`, 'json');
+    if (existingUser) {
+      return new Response(
+        JSON.stringify({ error: "User already registered" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
     const apiKey = `max_${crypto.randomUUID().replace(/-/g, '')}`;
     const apiSecret = Array.from(crypto.getRandomValues(new Uint8Array(32)))
       .map(b => b.toString(16).padStart(2, '0'))
@@ -61,16 +74,19 @@ export async function onRequestPost(context: any) {
     };
 
     // Store in KV
-    if (env.DEVELOPERS_KV) {
-      await env.DEVELOPERS_KV.put(`dev:${email}`, JSON.stringify(developer));
-      await env.DEVELOPERS_KV.put(`key:${apiKey}`, developerId);
-    }
+    await env.DEVELOPERS_KV.put(`dev:${email}`, JSON.stringify(developer));
+    await env.DEVELOPERS_KV.put(`key:${apiKey}`, developerId);
+
+    const MINTME_CONTRACT = env.MINTME_CONTRACT_ADDRESS || "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
+    const MAX_PROGRAM_ID = env.MAX_PROGRAM_ID || "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
     return new Response(
       JSON.stringify({
         success: true,
         apiKey,
         apiSecret,
+        mintmeContract: MINTME_CONTRACT,
+        maxProgramId: MAX_PROGRAM_ID,
         message: "Registration successful",
       }),
       {
