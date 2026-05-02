@@ -66,16 +66,20 @@ export async function onRequestPost(context: any) {
     const developer = {
       id: developerId,
       email,
-      password, // In production, hash this!
+      password,
       apiKey,
       apiSecret,
       createdAt: Date.now(),
       status: 'active',
     };
 
-    // Store in KV
+    // IMPORTANT: Store as JSON string
     await env.DEVELOPERS_KV.put(`dev:${email}`, JSON.stringify(developer));
-    await env.DEVELOPERS_KV.put(`key:${apiKey}`, developerId);
+    await env.DEVELOPERS_KV.put(`key:${apiKey}`, JSON.stringify(developer));
+
+    // Verify it was stored correctly
+    const verifyData = await env.DEVELOPERS_KV.get(`key:${apiKey}`, 'json');
+    console.log('Verification - Data stored correctly:', verifyData);
 
     const MINTME_CONTRACT = env.MINTME_CONTRACT_ADDRESS || "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
     const MAX_PROGRAM_ID = env.MAX_PROGRAM_ID || "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
