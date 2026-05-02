@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     setCurrentPage: (page: 'dashboard' | 'products') => void;
@@ -9,12 +10,14 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = false, walletAddress = '', onLogout }) => {
+    const navigate = useNavigate();
     const [showAggregatorDialog, setShowAggregatorDialog] = useState(false);
     const [showMaxRegisterDialog, setShowMaxRegisterDialog] = useState(false);
     const [showMintMeRegisterDialog, setShowMintMeRegisterDialog] = useState(false);
     const [showMaxApiDialog, setShowMaxApiDialog] = useState(false);
     const [showMintMeApiDialog, setShowMintMeApiDialog] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [apiKey, setApiKey] = useState('');
     const [apiSecret, setApiSecret] = useState('');
     const [mintMeApiKey, setMintMeApiKey] = useState('');
@@ -22,6 +25,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
     const [copied, setCopied] = useState(false);
     const [registeredEmail, setRegisteredEmail] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
+    const [loginEmail, setLoginEmail] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -43,7 +50,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         const userEmail = localStorage.getItem('user_email');
         const userRegistered = localStorage.getItem('user_registered');
         const savedApiKey = localStorage.getItem('max_api_key');
-        const savedMintMeContract = localStorage.getItem('mintme_contract');
         
         if (userEmail && userRegistered === 'true') {
             setRegisteredEmail(userEmail);
@@ -51,13 +57,49 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             if (savedApiKey) {
                 setApiKey(savedApiKey);
             }
-            if (savedMintMeContract) {
-                // MintMe contract is already set
-            } else {
-                localStorage.setItem('mintme_contract', MINTME_CONTRACT);
-            }
         }
     }, []);
+
+    const handleLogin = async () => {
+        if (!loginEmail || !loginPassword) {
+            setLoginError('EMAIL AND PASSWORD REQUIRED');
+            return;
+        }
+        
+        setIsLoggingIn(true);
+        setLoginError('');
+        
+        try {
+            const response = await fetch('/api/max/v1/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: loginEmail, password: loginPassword })
+            });
+            const data = await response.json();
+            if (data.success) {
+                localStorage.setItem('user_email', loginEmail);
+                localStorage.setItem('user_registered', 'true');
+                localStorage.setItem('max_api_key', data.apiKey || '');
+                localStorage.setItem('max_api_secret', data.apiSecret || '');
+                localStorage.setItem('mintme_contract', data.mintmeContract || '');
+                localStorage.setItem('max_program_id', data.maxProgramId || '');
+                setRegisteredEmail(loginEmail);
+                setIsRegistered(true);
+                setApiKey(data.apiKey || '');
+                setApiSecret(data.apiSecret || '');
+                setShowLoginDialog(false);
+                setLoginEmail('');
+                setLoginPassword('');
+                window.location.reload();
+            } else {
+                setLoginError(data.error || 'LOGIN FAILED');
+            }
+        } catch (error) {
+            setLoginError('NETWORK ERROR');
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
 
     const handleMaxRegister = async () => {
         if (!email || !password || password !== confirmPassword) {
@@ -82,7 +124,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 localStorage.setItem('user_registered', 'true');
                 localStorage.setItem('max_api_key', data.apiKey);
                 localStorage.setItem('max_api_secret', data.apiSecret);
-                localStorage.setItem('mintme_contract', MINTME_CONTRACT);
+                localStorage.setItem('mintme_contract', data.mintmeContract || MINTME_CONTRACT);
                 setRegisteredEmail(email);
                 setIsRegistered(true);
                 setShowMaxRegisterDialog(false);
@@ -90,6 +132,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 setEmail('');
                 setPassword('');
                 setConfirmPassword('');
+                window.location.reload();
             } else {
                 setRegisterError(data.error || 'REGISTRATION FAILED');
             }
@@ -139,17 +182,24 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         localStorage.removeItem('user_registered');
         localStorage.removeItem('max_api_key');
         localStorage.removeItem('max_api_secret');
+        localStorage.removeItem('mintme_contract');
+        localStorage.removeItem('max_program_id');
         setIsRegistered(false);
         setRegisteredEmail('');
         setApiKey('');
         setApiSecret('');
         setShowUserMenu(false);
+        setShowLoginDialog(true);
     };
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleDexService = () => {
+        navigate('/dashboard');
     };
 
     return (
@@ -167,8 +217,8 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 EXCHANGE
                             </a>
-                            <button onClick={() => setShowAggregatorDialog(true)} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                DEX+
+                            <button onClick={handleDexService} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                DEX SERVICE
                             </button>
                             <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 WALLET
@@ -184,7 +234,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                 <svg className="w-5 h-5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
-                                <span className="text-[10px] md:text-xs font-medium hidden sm:inline uppercase tracking-wider">PROFILE</span>
+                                <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider">PROFILE</span>
                             </button>
                             
                             {showUserMenu && (
@@ -233,10 +283,10 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                             </>
                                         ) : (
                                             <button
-                                                onClick={() => { setShowMaxRegisterDialog(true); setShowUserMenu(false); }}
+                                                onClick={() => { setShowLoginDialog(true); setShowUserMenu(false); }}
                                                 className="w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider"
                                             >
-                                                REGISTER
+                                                LOGIN
                                             </button>
                                         )}
                                     </div>
@@ -247,7 +297,53 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Custom Marquee - Information Text with Simple Icons */}
+            {/* Login Dialog */}
+            {showLoginDialog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">LOGIN</h2>
+                            <button onClick={() => setShowLoginDialog(false)} className="text-gray-400 hover:text-white">✕</button>
+                        </div>
+                        <div className="space-y-3">
+                            {loginError && (
+                                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2">
+                                    <p className="text-[10px] text-red-400">{loginError}</p>
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">EMAIL</label>
+                                <input
+                                    type="email"
+                                    value={loginEmail}
+                                    onChange={(e) => setLoginEmail(e.target.value)}
+                                    placeholder="your@email.com"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] text-gray-400 uppercase mb-1">PASSWORD</label>
+                                <input
+                                    type="password"
+                                    value={loginPassword}
+                                    onChange={(e) => setLoginPassword(e.target.value)}
+                                    placeholder="PASSWORD"
+                                    className="w-full p-2 bg-darker border border-border rounded-lg text-white text-xs focus:border-primary outline-none"
+                                />
+                            </div>
+                            <button
+                                onClick={handleLogin}
+                                disabled={isLoggingIn}
+                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider disabled:opacity-50"
+                            >
+                                {isLoggingIn ? 'LOGGING IN...' : 'LOGIN'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Marquee - Information Text */}
             <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     <span className="mx-4 inline-flex items-center gap-2">
@@ -273,23 +369,17 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </div>
 
-            {/* Main Content */}
+            {/* Main Content - Only Image, No Animation */}
             <div className="min-h-screen flex flex-col items-center justify-center pt-32 md:pt-40 pb-20 md:pb-12">
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center justify-center">
-                        {/* Animated Circles */}
-                        <div className="relative flex items-center justify-center">
-                            <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-yellow-400/50 animate-pulse-slow"></div>
-                            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-yellow-400/30 animate-spin-slow"></div>
-                            <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-yellow-500/10 via-yellow-400/10 to-yellow-500/10 animate-ping-slow"></div>
-                            
-                            <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-transparent flex items-center justify-center overflow-hidden">
-                                <img 
-                                    src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
-                                    alt="Fixorium Logo" 
-                                    className="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-2xl"
-                                />
-                            </div>
+                        {/* Simple Logo Image - No Animation */}
+                        <div className="flex items-center justify-center">
+                            <img 
+                                src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
+                                alt="Fixorium Logo" 
+                                className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl"
+                            />
                         </div>
                     </div>
                 </div>
@@ -304,11 +394,11 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                         </svg>
                         <span className="text-[8px] uppercase tracking-wider">EXCHANGE</span>
                     </a>
-                    <button onClick={() => setShowAggregatorDialog(true)} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                    <button onClick={handleDexService} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <span className="text-[8px] uppercase tracking-wider">DEX+</span>
+                        <span className="text-[8px] uppercase tracking-wider">DEX SERVICE</span>
                     </button>
                     <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -324,39 +414,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                     </a>
                 </div>
             </div>
-
-            {/* DEX+ Dialog (Aggregator Dialog) */}
-            {showAggregatorDialog && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-card border border-border rounded-xl max-w-md w-full p-5">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX DEX+ AGGREGATOR</h2>
-                            <button onClick={() => setShowAggregatorDialog(false)} className="text-gray-400 hover:text-white">✕</button>
-                        </div>
-                        <div className="text-center py-4">
-                            <div className="text-5xl mb-3 animate-bounce">⚡</div>
-                            <h3 className="text-base font-bold text-white mb-2 uppercase">SOLANA DEX AGGREGATOR</h3>
-                            <p className="text-gray-400 text-[11px] mb-4 uppercase">0.01% FEE • MULTI-DEX ROUTING • BEST PRICES</p>
-                            <div className="space-y-2 text-left mb-4">
-                                <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
-                                    <span className="text-[10px] text-gray-400">PROGRAM ID</span>
-                                    <code className="text-[10px] text-primary break-all text-right ml-2">EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM</code>
-                                </div>
-                                <div className="flex justify-between items-center p-2 bg-darker rounded-lg">
-                                    <span className="text-[10px] text-gray-400">BASE URL</span>
-                                    <code className="text-[10px] text-primary">https://fixorium.com.pk/max/v1</code>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { setShowAggregatorDialog(false); setShowMaxRegisterDialog(true); }}
-                                className="w-full py-2 bg-primary text-black text-xs font-bold rounded-xl hover:bg-[#e8d58a] transition uppercase tracking-wider"
-                            >
-                                GET API KEY
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* MAX Registration Dialog */}
             {showMaxRegisterDialog && (
@@ -565,35 +622,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 }
                 .animate-marquee {
                     animation: marquee 40s linear infinite;
-                }
-                @keyframes spin-slow {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                .animate-spin-slow {
-                    animation: spin-slow 20s linear infinite;
-                }
-                @keyframes pulse-slow {
-                    0%, 100% { opacity: 0.15; transform: scale(1); }
-                    50% { opacity: 0.4; transform: scale(1.05); }
-                }
-                .animate-pulse-slow {
-                    animation: pulse-slow 4s ease-in-out infinite;
-                }
-                @keyframes ping-slow {
-                    0% { transform: scale(0.95); opacity: 0.3; }
-                    50% { transform: scale(1.05); opacity: 0.1; }
-                    100% { transform: scale(0.95); opacity: 0.3; }
-                }
-                .animate-ping-slow {
-                    animation: ping-slow 3s ease-in-out infinite;
-                }
-                @keyframes bounce {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-5px); }
-                }
-                .animate-bounce {
-                    animation: bounce 1s ease-in-out infinite;
                 }
             `}</style>
         </div>
