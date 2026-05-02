@@ -1,0 +1,16 @@
+name = "fixorium-router"
+main = "functions/api/max/v1/swap.ts"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "npm run build"
+cwd = "./"
+watch_paths = ["src/**/*.ts", "src/**/*.tsx"]
+
+[env.production]
+routes = [
+  { pattern = "example.com/api/*", zone_name = "example.com" }
+]
+
+[[assets.bindings]]
+binding = "ASSETS"
