@@ -1,16 +1,38 @@
 name = "fixorium-router"
-main = "functions/api/max/v1/swap.ts"
 compatibility_date = "2024-01-01"
+type = "webpack"
+account_id = ""
+workers_dev = true
 
 [build]
 command = "npm run build"
 cwd = "./"
-watch_paths = ["src/**/*.ts", "src/**/*.tsx"]
 
-[env.production]
-routes = [
-  { pattern = "example.com/api/*", zone_name = "example.com" }
+[build.upload]
+format = "modules"
+main = "./public/index.js"
+rules = [
+  { type = "CompiledContentType", globs = ["**/*.wasm"], fallthrough = true },
+  { type = "Text", globs = ["**/*.txt", "**/*.html"], fallthrough = true },
+  { type = "Data", globs = ["**/*"], fallthrough = false }
 ]
 
-[[assets.bindings]]
-binding = "ASSETS"
+# API Routes
+[[routes]]
+pattern = "*/api/*"
+zone_name = "example.com"
+
+# Asset serving
+[[env.production.triggers.crons]]
+crons = ["0 2 * * *"]
+
+# KV Namespace Bindings
+[[kv_namespaces]]
+binding = "API_KEYS_KV"
+id = "api-keys-kv"
+preview_id = "api-keys-kv-preview"
+
+[[kv_namespaces]]
+binding = "DEVELOPERS_KV"
+id = "developers-kv"
+preview_id = "developers-kv-preview"
