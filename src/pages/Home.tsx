@@ -132,14 +132,13 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // Inject Cryptorank widget script only once
+    // Inject Cryptorank widget script
     useEffect(() => {
         const script = document.createElement('script');
         script.src = 'https://cryptorank.io/widget/marquee.js';
         script.async = true;
         document.body.appendChild(script);
         return () => {
-            // Cleanup
             const widget = document.getElementById('cr-widget-marquee');
             if (widget) widget.remove();
         };
@@ -195,6 +194,12 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                                             </svg>
                                             WALLET
                                         </a>
+                                        <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-primary/10 hover:text-primary transition uppercase tracking-wider">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                            </svg>
+                                            TEAM
+                                        </a>
                                         
                                         {isRegistered ? (
                                             <>
@@ -233,8 +238,8 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* ONLY Cryptorank Widget - No other marquee */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 z-40 w-full overflow-hidden">
+            {/* Cryptorank Widget - No background, no border */}
+            <div className="fixed top-12 md:top-14 left-0 right-0 z-40 w-full">
                 <div 
                     id="cr-widget-marquee" 
                     data-coins="bitcoin,ethereum,bitcoin-ai,ripple,bnb,dogecoin,tether"
@@ -249,20 +254,23 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="min-h-screen flex flex-col items-center justify-center pt-20 md:pt-24 pb-12">
+            {/* Main Content - Added gap between marquee and animation */}
+            <div className="min-h-screen flex flex-col items-center justify-center pt-32 md:pt-40 pb-12">
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center justify-center">
+                        {/* Animated Circles - Yellow color */}
                         <div className="relative flex items-center justify-center">
-                            <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-primary/30 animate-pulse-slow"></div>
-                            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-primary/20 animate-spin-slow"></div>
-                            <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 animate-ping-slow"></div>
+                            {/* Outer animated rings - Yellow colors */}
+                            <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] rounded-full border-2 border-yellow-400/50 animate-pulse-slow"></div>
+                            <div className="absolute w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full border border-yellow-400/30 animate-spin-slow"></div>
+                            <div className="absolute w-[240px] h-[240px] md:w-[390px] md:h-[390px] rounded-full bg-gradient-to-r from-yellow-500/10 via-yellow-400/10 to-yellow-500/10 animate-ping-slow"></div>
                             
-                            <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-gradient-to-br from-primary/30 via-yellow-500/20 to-primary/10 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-primary/30 overflow-hidden">
+                            {/* Center Logo - No background color, only transparent */}
+                            <div className="relative w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                                 <img 
                                     src="https://i.postimg.cc/VNCccDTn/connectpie-favicon-t.png" 
                                     alt="Fixorium Logo" 
-                                    className="w-32 h-32 md:w-48 md:h-48 object-contain"
+                                    className="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-2xl"
                                 />
                             </div>
                         </div>
