@@ -5,7 +5,8 @@ export async function onRequestPost({ request, env }: { request: Request; env: a
     return Response.json({ error: 'API key required' }, { status: 401 });
   }
   
-  const keyData = await env.API_KEYS_KV.get(`key:${apiKey}`, 'json');
+  // Changed to use DEVELOPERS_KV
+  const keyData = await env.DEVELOPERS_KV.get(`key:${apiKey}`, 'json');
   if (!keyData || keyData.status !== 'active') {
     return Response.json({ error: 'Invalid API key' }, { status: 401 });
   }
