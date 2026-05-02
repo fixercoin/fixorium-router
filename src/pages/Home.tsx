@@ -133,18 +133,6 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // Inject Cryptorank widget script
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://cryptorank.io/widget/marquee.js';
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            const widget = document.getElementById('cr-widget-marquee');
-            if (widget) widget.remove();
-        };
-    }, []);
-
     return (
         <div className="min-h-screen bg-dark">
             {/* Fixed Header */}
@@ -155,7 +143,7 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             DEFI PLATFORM
                         </div>
 
-                        {/* Desktop Navigation - Hidden on mobile */}
+                        {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center gap-6">
                             <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                 EXCHANGE
@@ -235,55 +223,29 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                 </div>
             </header>
 
-            {/* Bottom Navigation Bar - Mobile Only */}
-            <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
-                <div className="flex items-center justify-around py-2">
-                    <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-                        <span className="text-[8px] uppercase tracking-wider">EXCHANGE</span>
-                    </a>
-                    <button onClick={() => setShowAggregatorDialog(true)} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="text-[8px] uppercase tracking-wider">AGGREGATOR</span>
-                    </a>
-                    <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
-                        </svg>
-                        <span className="text-[8px] uppercase tracking-wider">WALLET</span>
-                    </a>
-                    <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <span className="text-[8px] uppercase tracking-wider">TEAM</span>
-                    </a>
-                    <a href="/max/docs" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                        <span className="text-[8px] uppercase tracking-wider">DOCS</span>
-                    </a>
-                </div>
-            </div>
-
-            {/* Cryptorank Widget */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 z-40 w-full">
-                <div 
-                    id="cr-widget-marquee" 
-                    data-coins="bitcoin,ethereum,bitcoin-ai,ripple,bnb,dogecoin,tether"
-                    data-theme="dark"
-                    data-show-symbol="false"
-                    data-show-icon="true"
-                    data-show-period-change="false"
-                    data-period-change="24H"
-                    data-api-url="https://api.cryptorank.io/v0"
-                >
-                    <a href="https://cryptorank.io" className="text-gray-500 text-xs hidden">Coins by Cryptorank</a>
+            {/* Custom Marquee - Information Text */}
+            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
+                <div className="inline-block animate-marquee whitespace-nowrap">
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">⚡ NEW</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">FIXORIUM EXCHANGE — MULTICHAIN DEX AGGREGATOR WITH NEW CRYPTO TRADE IDEAS</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">🔐 WALLET</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">FIXORIUM WALLET — MULTICHAIN WALLET SUPPORTING SOLANA, EVM, MINTME BLOCKCHAIN WITH POOL CREATION SYSTEM</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">🔄 ROUTER</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">MINTME FIXORIUM ROUTER — FREE TO USE FIXORIUM DEX ROUTER AVAILABLE AFTER REGISTRATION</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">⚡ MAX</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">MAX AGGREGATOR — SUPER FAST • VERY LOW FEES • MULTICHAIN AGGREGATOR</span>
+                    </span>
+                    <span className="mx-4 inline-flex items-center gap-2">
+                        <span className="text-yellow-400 text-[10px] md:text-xs uppercase tracking-wider font-semibold">🔑 API</span>
+                        <span className="text-white text-[9px] md:text-xs uppercase tracking-wider">GET MAX API KEY & SECRET KEY AFTER REGISTRATION — EASY TO INTEGRATE WITH SIMPLE ICONS</span>
+                    </span>
                 </div>
             </div>
 
@@ -306,6 +268,42 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Bottom Navigation Bar - Mobile Only */}
+            <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
+                <div className="flex items-center justify-around py-2">
+                    <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">EXCHANGE</span>
+                    </a>
+                    <button onClick={() => setShowAggregatorDialog(true)} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">AGGREGATOR</span>
+                    </button>
+                    <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">WALLET</span>
+                    </a>
+                    <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">TEAM</span>
+                    </a>
+                    <a href="/max/docs" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <span className="text-[8px] uppercase tracking-wider">DOCS</span>
+                    </a>
                 </div>
             </div>
 
@@ -543,6 +541,13 @@ const Home: React.FC<HomeProps> = ({ setCurrentPage, onConnect, isLoggedIn = fal
             )}
 
             <style>{`
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                    animation: marquee 40s linear infinite;
+                }
                 @keyframes spin-slow {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
