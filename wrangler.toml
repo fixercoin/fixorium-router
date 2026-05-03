@@ -1,0 +1,14 @@
+name = "fixorium-router"
+type = "javascript"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+
+[build]
+command = "npm run build"
+cwd = "./"
+watch_paths = []
+
+[env.production]
+name = "fixorium-router-prod"
