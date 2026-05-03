@@ -2,12 +2,15 @@ name = "max"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
+# KV Namespace Bindings
 [[kv_namespaces]]
 binding = "DEVELOPERS_KV"
 id = "e6e221ee390d461bbe2dc737752da27f"
 
-[triggers]
-crons = ["*/1 * * * *"]  # Run every minute
+[[kv_namespaces]]
+binding = "API_KEYS_KV"
+id = "21e449919ee04486bd1b6456a6684ff0"
 
-[env.production]
-vars = { CRON_SECRET = "your-secret-key" }
+[[kv_namespaces]]
+binding = "USAGE_KV"
+id = "079a1cc4c4934884b25b9c8a3f3c674d"
