@@ -1,48 +1,57 @@
+// api/max/v1/quote.ts
 export async function onRequestGet({ request, env }: { request: Request; env: any }) {
   const apiKey = request.headers.get('X-API-Key');
   
   if (!apiKey) {
-    return Response.json({ error: 'API key required' }, { status: 401 });
+    return new Response(JSON.stringify({ error: 'API key required' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
   
   const keyData = await env.DEVELOPERS_KV.get(`key:${apiKey}`, 'json');
   if (!keyData || keyData.status !== 'active') {
-    return Response.json({ error: 'Invalid API key' }, { status: 401 });
+    return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
   
   const url = new URL(request.url);
   const inputMint = url.searchParams.get('inputMint');
   const outputMint = url.searchParams.get('outputMint');
   const amount = url.searchParams.get('amount');
-  const network = url.searchParams.get('network') || 'devnet';
   
   if (!inputMint || !outputMint || !amount) {
-    return Response.json({ error: 'Missing parameters' }, { status: 400 });
+    return new Response(JSON.stringify({ error: 'Missing parameters: inputMint, outputMint, amount' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
   
-  // Calculate based on YOUR program's fee structure (0.01%)
   const amountNum = parseFloat(amount);
-  const feeBps = 1; // Your program's fee
+  const feeBps = 1;
   const feeAmount = amountNum * (feeBps / 10000);
   const amountOut = amountNum - feeAmount;
   const programId = env.MAX_PROGRAM_ID || 'EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM';
   
-  return Response.json({
+  return new Response(JSON.stringify({
     success: true,
-    network,
     programId: programId,
     quote: {
       inputMint,
       outputMint,
       inAmount: amount,
       outAmount: amountOut.toString(),
-      fee: { 
-        bps: feeBps, 
-        percentage: '0.01%', 
-        amount: feeAmount.toString(),
-        recipient: env.FEE_RECIPIENT || 'F9RJSJ4Fr2mLsQrZjemeg3PVMjG2KgjF9t5shZLHMnwG'
+      fee: {
+        bps: feeBps,
+        percentage: '0.01%',
+        amount: feeAmount.toString()
       }
     },
     timestamp: Date.now()
+  }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
   });
 }
