@@ -21,17 +21,13 @@ const App: React.FC = () => {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('user_email');
-        localStorage.removeItem('user_registered');
-        localStorage.removeItem('max_api_key');
-        localStorage.removeItem('max_api_secret');
-        setUserEmail('');
+        localStorage.clear();
         setIsLoggedIn(false);
         setCurrentPage('home');
     };
 
     return (
-        <div className="min-h-screen bg-dark">
+        <div>
             {currentPage === 'home' && (
                 <Home 
                     setCurrentPage={setCurrentPage} 
