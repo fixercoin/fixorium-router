@@ -26,7 +26,7 @@ export async function onRequestGet({ request, env }) {
         jsonrpc: '2.0',
         id: 1,
         method: 'getProgramAccounts',
-        params: [PROGRAM_ID]
+        params: [PROGRAM_ID, { encoding: 'base64' }]
       })
     });
     const data = await response.json();
