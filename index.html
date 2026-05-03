@@ -1,11 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fixorium Router</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fixorium Router</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(20, 20, 35, 0.95);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(100, 150, 255, 0.3);
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #6496ff 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .main-section {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .fixorium-animation {
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(10deg);
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(100, 150, 255, 0.6),
+                    inset 0 0 20px rgba(100, 150, 255, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(0, 212, 255, 0.8),
+                    inset 0 0 30px rgba(0, 212, 255, 0.3);
+      }
+    }
+
+    .fixorium-logo {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #6496ff 0%, #00d4ff 100%);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: bold;
+      animation: float 4s ease-in-out infinite, glow 3s ease-in-out infinite;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #6496ff 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-description {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 3rem;
+    }
+
+    .tabs-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: 2px solid rgba(100, 150, 255, 0.5);
+      background: rgba(100, 150, 255, 0.1);
+      color: #ffffff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .tab-button:hover {
+      border-color: #6496ff;
+      background: rgba(100, 150, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .tab-button.active {
+      background: linear-gradient(135deg, #6496ff 0%, #00d4ff 100%);
+      border-color: #00d4ff;
+      box-shadow: 0 0 20px rgba(100, 150, 255, 0.5);
+    }
+
+    .page-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .page-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, rgba(100, 150, 255, 0.15) 0%, rgba(0, 212, 255, 0.1) 100%);
+      border: 1px solid rgba(100, 150, 255, 0.3);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #6496ff 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+    }
+
+    .content-section {
+      background: rgba(30, 30, 50, 0.8);
+      border: 1px solid rgba(100, 150, 255, 0.2);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .content-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #00d4ff;
+    }
+
+    .content-section p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+
+    .feature-list li {
+      padding: 0.75rem 0;
+      color: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(100, 150, 255, 0.1);
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .feature-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #00d4ff;
+      font-weight: bold;
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, #6496ff 0%, #00d4ff 100%);
+      color: #000;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(100, 150, 255, 0.4);
+    }
+
+    .loader {
+      border: 4px solid rgba(100, 150, 255, 0.2);
+      border-top: 4px solid #00d4ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .coming-soon-section {
+      opacity: 0.6;
+      text-align: center;
+    }
+
+    .coming-soon-text {
+      font-size: 1.3rem;
+      color: #00d4ff;
+      font-weight: bold;
+      margin: 1rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .fixorium-animation {
+        max-width: 300px;
+        height: 300px;
+      }
+
+      .fixorium-logo {
+        font-size: 2.5rem;
+      }
+
+      .page-title {
+        font-size: 1.8rem;
+      }
+
+      .tabs-container {
+        gap: 0.5rem;
+      }
+
+      .tab-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .page-header {
+        padding: 1.5rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .page-header p {
+        font-size: 1rem;
+      }
+
+      .content-section {
+        padding: 1.5rem;
+      }
+
+      .content-section h2 {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 0.75rem 1rem;
+      }
+
+      .navbar-brand {
+        font-size: 1.2rem;
+      }
+
+      .fixorium-animation {
+        max-width: 250px;
+        height: 250px;
+      }
+
+      .fixorium-logo {
+        font-size: 2rem;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .page-description {
+        font-size: 1rem;
+      }
+
+      .tab-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">⚡ Fixorium Router</div>
+  </nav>
+
+  <div class="container">
+    <!-- Main Page -->
+    <div class="page-content active" id="main-page">
+      <div class="main-section">
+        <div class="fixorium-animation">
+          <div class="fixorium-logo">⚡</div>
+        </div>
+        <h1 class="page-title">Fixorium Exchange Router</h1>
+        <p class="page-description">Fast, secure, and efficient decentralized trading</p>
+      </div>
+
+      <div class="tabs-container">
+        <button class="tab-button active" data-page="exchange">Exchange</button>
+        <button class="tab-button" data-page="wallet">Wallet</button>
+        <button class="tab-button" data-page="dex-service">DEX Service</button>
+      </div>
+    </div>
+
+    <!-- Exchange Page -->
+    <div class="page-content" id="exchange-page">
+      <div class="page-header">
+        <h1>💱 Exchange</h1>
+        <p>Multi-party user control decentralized exchange</p>
+      </div>
+
+      <div class="content-section">
+        <h2>Multiparty User Control DEX Exchange</h2>
+        <p>Our cutting-edge DEX exchange platform leverages multiparty user control mechanisms to ensure maximum security and decentralization. Every transaction is governed by multiple parties, eliminating single points of failure.</p>
+        
+        <ul class="feature-list">
+          <li>Multiparty control for enhanced security</li>
+          <li>Fast and transparent trading</li>
+          <li>Low transaction fees</li>
+          <li>Non-custodial exchange</li>
+          <li>Real-time price feeds</li>
+        </ul>
+
+        <button class="download-btn">📱 Download App</button>
+      </div>
+    </div>
+
+    <!-- Wallet Page -->
+    <div class="page-content" id="wallet-page">
+      <div class="page-header">
+        <h1>💼 Wallet</h1>
+        <p>Secure and intuitive asset management</p>
+      </div>
+
+      <div class="content-section">
+        <h2>Multiparty User Control DEX Exchange</h2>
+        <p>Manage your digital assets with our secure wallet powered by multiparty control technology. Store, send, and receive tokens with complete peace of mind knowing your assets are protected by state-of-the-art security mechanisms.</p>
+        
+        <ul class="feature-list">
+          <li>Secure key management</li>
+          <li>Multi-signature support</li>
+          <li>Support for multiple token standards</li>
+          <li>Real-time balance tracking</li>
+          <li>Transaction history and export</li>
+        </ul>
+
+        <button class="download-btn">📱 Download App</button>
+      </div>
+    </div>
+
+    <!-- DEX Service Page -->
+    <div class="page-content" id="dex-service-page">
+      <div class="page-header">
+        <h1>🚀 DEX Service</h1>
+        <p>Advanced liquidity and trading solutions</p>
+      </div>
+
+      <div class="content-section">
+        <h2>MintMe DEX Router Active</h2>
+        <p>Experience seamless decentralized exchange through our MintMe DEX Router integration. Our router actively finds the best exchange rates across multiple liquidity pools.</p>
+        
+        <ul class="feature-list">
+          <li>Active MintMe DEX Router</li>
+          <li>Zero fees on protocol</li>
+          <li>Optimal price routing</li>
+          <li>Multi-path swaps</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>Liquidity Management</h2>
+        <p>Become a liquidity provider and earn trading fees</p>
+        
+        <ul class="feature-list">
+          <li>Creating Pool - Launch your own liquidity pools</li>
+          <li>Add Liquidity - Increase pool depth and earn rewards</li>
+          <li>Withdraw Liquidity - Access your funds anytime</li>
+          <li>0 Fees - No protocol fees on liquidity operations</li>
+        </ul>
+
+        <button class="download-btn">📱 Download App</button>
+      </div>
+
+      <div class="content-section coming-soon-section">
+        <h2>Max Aggregator</h2>
+        <p class="coming-soon-text">Coming Soon</p>
+        <div class="loader"></div>
+        <p>We're building the most advanced DEX aggregator for maximum returns on your swaps</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const pageContents = document.querySelectorAll('.page-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const targetPage = this.getAttribute('data-page') + '-page';
+        
+        // Hide all pages and remove active state from buttons
+        pageContents.forEach(page => page.classList.remove('active'));
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Show selected page and activate button
+        document.getElementById(targetPage).classList.add('active');
+        this.classList.add('active');
+        
+        // Hide main section when on a tab page
+        const mainPage = document.getElementById('main-page');
+        if (targetPage !== 'main-page') {
+          mainPage.style.display = 'none';
+        }
+      });
+    });
+
+    // Navigation back to main
+    document.querySelector('.navbar-brand').addEventListener('click', function() {
+      pageContents.forEach(page => page.classList.remove('active'));
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      document.getElementById('main-page').classList.add('active');
+      document.getElementById('main-page').style.display = 'block';
+      tabButtons[0].classList.add('active');
+    });
+  </script>
+</body>
 </html>

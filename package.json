@@ -1,0 +1,19 @@
+{
+  "name": "fixorium-router",
+  "version": "1.0.0",
+  "description": "Fixorium Exchange Router - Multi-page DeFi application",
+  "type": "module",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static site - no build required'",
+    "start": "python -m http.server 8000"
+  },
+  "keywords": [
+    "dex",
+    "exchange",
+    "fixorium",
+    "defi"
+  ],
+  "author": "",
+  "license": "MIT"
+}
