@@ -69,24 +69,19 @@
       margin-bottom: 3rem;
     }
 
+    /* IMAGE CONTAINER - ORIGINAL SIZE BY DEFAULT */
     .fixorium-animation {
-      width: 100%;
-      max-width: 300px;
-      height: 300px;
       margin: 0 auto 2rem;
       position: relative;
+      display: inline-block;
+      width: auto;
     }
 
     .fixorium-logo-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      animation: gentlePulse 3s ease-in-out infinite;
-    }
-
-    @keyframes gentlePulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.95; }
+      display: block;
+      max-width: none;
+      width: auto;
+      height: auto;
     }
 
     .page-title {
@@ -432,10 +427,23 @@
       .mobile-bottom-nav {
         display: block;
       }
-      .fixorium-animation {
-        max-width: 200px;
-        height: 200px;
+      
+      /* MOBILE: IMAGE STRETCHES FULL WIDTH WITH SMALL PADDING */
+      .main-section {
+        text-align: center;
       }
+      .fixorium-animation {
+        display: block;
+        width: calc(100% - 2rem);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .fixorium-logo-img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+      
       .page-title {
         font-size: 1.6rem;
       }
@@ -462,7 +470,7 @@
     <div class="page-content active" id="main-page">
       <div class="main-section">
         <div class="fixorium-animation">
-          <img src="https://i.postimg.cc/pL2JMyHv/connectpie-favicon-t.png" alt="MAX" class="fixorium-logo-img">
+          <img src="https://i.postimg.cc/fLNML4TV/Cryptocurrency-Trading-CMTrading-png-removebg-preview-removebg-preview.png" alt="MAX" class="fixorium-logo-img">
         </div>
         <h1 class="page-title">FIXORIUM DEFI PLATFORM</h1>
         <p class="page-description">FAST — SECURE — DECENTRALIZED TRADING</p>
