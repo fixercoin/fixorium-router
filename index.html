@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>FIXORIUM</title>
   <style>
     * {
@@ -17,6 +17,7 @@
       color: #ffffff;
       min-height: 100vh;
       font-size: 12px;
+      padding-bottom: 70px;
     }
 
     .navbar {
@@ -68,7 +69,6 @@
       margin-bottom: 3rem;
     }
 
-    /* IMAGE CONTAINER - REPLACES CUBE */
     .fixorium-animation {
       width: 100%;
       max-width: 300px;
@@ -85,14 +85,8 @@
     }
 
     @keyframes gentlePulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      50% {
-        transform: scale(1.05);
-        opacity: 0.95;
-      }
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.95; }
     }
 
     .page-title {
@@ -111,6 +105,7 @@
       letter-spacing: 3px;
     }
 
+    /* DESKTOP TABS */
     .tabs-container {
       display: flex;
       gap: 1rem;
@@ -144,6 +139,145 @@
       border-color: #ffffff;
       color: #0a0a14;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    /* GUIDELINE BUTTON (DESKTOP) */
+    .guideline-btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guideline-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* MOBILE BOTTOM NAVIGATION BAR */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 10, 20, 0.98);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      z-index: 100;
+    }
+
+    .mobile-nav-items {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .mobile-nav-item.active {
+      color: #ffffff;
+    }
+
+    .mobile-nav-icon {
+      font-size: 1.3rem;
+      font-weight: normal;
+    }
+
+    .mobile-nav-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* INFO MODAL (MOBILE) */
+    .info-modal {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 350px;
+      background: rgba(20, 20, 35, 0.98);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 1rem;
+      z-index: 200;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .info-modal.show {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .info-modal h4 {
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .info-modal p {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-modal ul {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+
+    .info-modal li {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.2rem;
+      cursor: pointer;
     }
 
     .page-content {
@@ -283,12 +417,37 @@
       letter-spacing: 2px;
     }
 
+    /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
-      .container { padding: 1rem; }
-      .fixorium-animation { max-width: 200px; height: 200px; }
-      .page-title { font-size: 1.6rem; }
-      .tab-button { padding: 0.6rem 1.2rem; border-radius: 40px; }
-      .download-btn { border-radius: 40px; }
+      body {
+        padding-bottom: 70px;
+      }
+      .container {
+        padding: 1rem;
+        padding-bottom: 2rem;
+      }
+      .tabs-container {
+        display: none;
+      }
+      .mobile-bottom-nav {
+        display: block;
+      }
+      .fixorium-animation {
+        max-width: 200px;
+        height: 200px;
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .page-header h1 {
+        font-size: 16px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-bottom-nav {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -309,10 +468,12 @@
         <p class="page-description">FAST — SECURE — DECENTRALIZED TRADING</p>
       </div>
 
+      <!-- Desktop Tabs + Guideline Button -->
       <div class="tabs-container">
         <button class="tab-button active" data-page="exchange">EXCHANGE</button>
         <button class="tab-button" data-page="wallet">WALLET</button>
         <button class="tab-button" data-page="dex-service">DEX SERVICE</button>
+        <button class="guideline-btn" id="desktopGuidelineBtn">[ i ] GUIDELINE</button>
       </div>
     </div>
 
@@ -431,11 +592,53 @@
     </div>
   </div>
 
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <div class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <button class="mobile-nav-item" data-page="exchange">
+        <div class="mobile-nav-icon">⇆</div>
+        <div class="mobile-nav-label">EXCHANGE</div>
+      </button>
+      <button class="mobile-nav-item" data-page="wallet">
+        <div class="mobile-nav-icon">◻</div>
+        <div class="mobile-nav-label">WALLET</div>
+      </button>
+      <button class="mobile-nav-item" data-page="dex-service">
+        <div class="mobile-nav-icon">⌗</div>
+        <div class="mobile-nav-label">DEX</div>
+      </button>
+      <button class="mobile-nav-item" id="mobileInfoBtn">
+        <div class="mobile-nav-icon">ⓘ</div>
+        <div class="mobile-nav-label">INFO</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- INFO MODAL (MOBILE) -->
+  <div class="info-modal" id="infoModal">
+    <button class="close-modal" id="closeModalBtn">✕</button>
+    <h4>GUIDELINE</h4>
+    <p>Fixorium DeFi Platform</p>
+    <ul>
+      <li>⇆ EXCHANGE - Cross-chain swaps</li>
+      <li>◻ WALLET - Secure wallet</li>
+      <li>⌗ DEX SERVICE - White-label DEX</li>
+      <li>MAX FEE 0.01% - Lowest on Solana</li>
+      <li>MEV PROTECTION - Advanced routing</li>
+    </ul>
+    <p style="margin-top: 8px; font-size: 10px;">Tap any tab to explore</p>
+  </div>
+
   <script>
     const tabButtons = document.querySelectorAll('.tab-button');
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
     const pageContents = document.querySelectorAll('.page-content');
     const backButton = document.getElementById('backButton');
     const homeButton = document.getElementById('homeButton');
+    const desktopGuidelineBtn = document.getElementById('desktopGuidelineBtn');
+    const mobileInfoBtn = document.getElementById('mobileInfoBtn');
+    const infoModal = document.getElementById('infoModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
 
     function showBackButton(show) {
       if (show) {
@@ -445,37 +648,81 @@
       }
     }
 
-    function goToMainPage() {
+    function switchPage(pageId) {
       pageContents.forEach(page => page.classList.remove('active'));
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      document.getElementById('main-page').classList.add('active');
-      document.getElementById('main-page').style.display = 'block';
-      tabButtons[0].classList.add('active');
-      showBackButton(false);
+      document.getElementById(pageId).classList.add('active');
+      
+      tabButtons.forEach(btn => {
+        const btnPage = btn.getAttribute('data-page') + '-page';
+        if (btnPage === pageId) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      mobileNavItems.forEach(item => {
+        const itemPage = item.getAttribute('data-page');
+        if (itemPage && (itemPage + '-page') === pageId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+      
+      const mainPage = document.getElementById('main-page');
+      if (pageId !== 'main-page') {
+        mainPage.style.display = 'none';
+        showBackButton(true);
+      } else {
+        mainPage.style.display = 'block';
+        showBackButton(false);
+      }
+    }
+
+    function goToMainPage() {
+      switchPage('main-page');
     }
 
     tabButtons.forEach(button => {
       button.addEventListener('click', function() {
         const targetPage = this.getAttribute('data-page') + '-page';
-        
-        pageContents.forEach(page => page.classList.remove('active'));
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        
-        document.getElementById(targetPage).classList.add('active');
-        this.classList.add('active');
-        
-        const mainPage = document.getElementById('main-page');
-        if (targetPage !== 'main-page') {
-          mainPage.style.display = 'none';
-          showBackButton(true);
-        } else {
-          showBackButton(false);
-        }
+        if (targetPage) switchPage(targetPage);
       });
+    });
+
+    mobileNavItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const targetPage = this.getAttribute('data-page');
+        if (targetPage) switchPage(targetPage + '-page');
+      });
+    });
+
+    desktopGuidelineBtn.addEventListener('click', function() {
+      alert('FIXORIUM GUIDELINE\n\n⇆ EXCHANGE - Cross-chain swaps\n◻ WALLET - Secure wallet\n⌗ DEX SERVICE - White-label DEX\nMAX FEE 0.01% - Lowest on Solana\nMEV PROTECTION - Advanced routing');
+    });
+
+    mobileInfoBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      infoModal.classList.add('show');
+    });
+
+    function closeModal() {
+      infoModal.classList.remove('show');
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    
+    document.addEventListener('click', function(e) {
+      if (infoModal.classList.contains('show') && !infoModal.contains(e.target) && e.target !== mobileInfoBtn) {
+        closeModal();
+      }
     });
 
     homeButton.addEventListener('click', goToMainPage);
     backButton.addEventListener('click', goToMainPage);
+
+    document.querySelector('.mobile-nav-item[data-page="exchange"]').classList.add('active');
   </script>
 </body>
 </html>
