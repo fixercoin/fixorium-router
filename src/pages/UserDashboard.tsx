@@ -164,12 +164,23 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     };
 
     const testMintMeEndpoint = async () => {
+        console.log('MintMe API Key:', mintMeApiKey);
+        console.log('MintMe Endpoint:', mintMeEndpoint);
+        console.log('MintMe Params:', mintMeParams);
+        
         setMintMeLoading(true);
         setMintMeResponse('');
+        
+        if (!mintMeApiKey) {
+            setMintMeResponse('Error: No MintMe API key found. Please register for MintMe API first.');
+            setMintMeLoading(false);
+            return;
+        }
         
         try {
             let url = `/api/mintme/v1/${mintMeEndpoint}`;
             let options: RequestInit = {
+                method: 'POST',
                 headers: {
                     'X-API-Key': mintMeApiKey,
                     'Content-Type': 'application/json'
@@ -177,16 +188,16 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             };
             
             if (mintMeEndpoint === 'quote') {
-                options.method = 'POST';
                 let body;
                 try {
                     body = JSON.parse(mintMeParams);
                 } catch (e) {
-                    setMintMeResponse(`Error: Invalid JSON\n\n${e.message}`);
+                    setMintMeResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
                     setMintMeLoading(false);
                     return;
                 }
                 options.body = JSON.stringify(body);
+                console.log('Sending request to:', url, options);
             } else if (mintMeEndpoint === 'swap') {
                 options.method = 'POST';
                 options.body = mintMeParams;
@@ -198,14 +209,17 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             }
             
             const response = await fetch(url, options);
+            console.log('Response status:', response.status);
             const data = await response.json();
+            console.log('Response data:', data);
             setMintMeResponse(JSON.stringify(data, null, 2));
             
             const newUsage = { ...apiUsage, mintMeCalls: apiUsage.mintMeCalls + 1 };
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
         } catch (error: any) {
-            setMintMeResponse(`Error: ${error.message}`);
+            console.error('MintMe API error:', error);
+            setMintMeResponse(`Error: ${error.message}\n\nMake sure the MintMe API endpoint is implemented.`);
         } finally {
             setMintMeLoading(false);
         }
@@ -216,25 +230,26 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             {/* Fixed Header */}
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-12 md:h-14">
-                        <div className="text-sm md:text-base font-semibold text-primary uppercase tracking-wider">
-                            DEFI PLATFORM
+                    <div className="flex items-center justify-between h-14">
+                        <div className="flex items-center gap-8">
+                            <div className="text-base font-semibold text-primary uppercase tracking-wider">
+                                DEFI PLATFORM
+                            </div>
+                            <nav className="hidden md:flex items-center gap-6">
+                                <a href="https://exchange.fixorium.com.pk" target="_blank" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                    EXCHANGE
+                                </a>
+                                <button onClick={() => window.location.href = '/'} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                    HOME
+                                </button>
+                                <a href="https://wallet.fixorium.com.pk" target="_blank" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                    WALLET
+                                </a>
+                                <a href="https://fixorium.com.pk/team" target="_blank" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                    TEAM
+                                </a>
+                            </nav>
                         </div>
-
-                        <nav className="hidden md:flex items-center gap-6">
-                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                EXCHANGE
-                            </a>
-                            <button onClick={() => window.location.href = '/'} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                HOME
-                            </button>
-                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                WALLET
-                            </a>
-                            <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                TEAM
-                            </a>
-                        </nav>
 
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 text-gray-400 hover:text-primary transition p-2">
@@ -293,7 +308,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             </header>
 
             {/* Custom Marquee */}
-            <div className="fixed top-12 md:top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
+            <div className="fixed top-14 left-0 right-0 bg-primary/10 border-y border-primary/20 overflow-hidden whitespace-nowrap py-2 z-40">
                 <div className="inline-block animate-marquee whitespace-nowrap">
                     <span className="mx-4 inline-flex items-center gap-2">
                         <span className="text-yellow-400 text-[10px] uppercase tracking-wider font-semibold">NEW</span>
@@ -310,21 +325,19 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Main Content - Two Column Layout */}
-            <div className="pt-28 md:pt-32 pb-20 md:pb-12 px-4 sm:px-6 lg:px-8">
+            {/* Main Content */}
+            <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Left Column - 30% - Navigation */}
+                        {/* Left Column - 30% */}
                         <div className="lg:w-[30%]">
-                            <div className="bg-card border border-border rounded-xl overflow-hidden sticky top-28">
-                                {/* Welcome Section */}
-                                <div className="bg-gradient-to-r from-primary/10 to-transparent p-5 border-b border-border">
+                            <div className="border border-gray-700 rounded-xl overflow-hidden sticky top-32 bg-transparent">
+                                <div className="p-5 border-b border-gray-700">
                                     <h1 className="text-lg font-bold text-primary uppercase tracking-wider">API DASHBOARD</h1>
                                     <p className="text-xs text-gray-400 mt-1">Welcome back, <span className="text-primary">{registeredEmail}</span></p>
                                 </div>
 
-                                {/* API Usage */}
-                                <div className="p-5 border-b border-border">
+                                <div className="p-5 border-b border-gray-700">
                                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">API USAGE</h3>
                                     <div className="space-y-3">
                                         <div>
@@ -348,11 +361,11 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     </div>
                                 </div>
 
-                                {/* Navigation Buttons */}
-                                <div className="p-5">
+                                {/* Simple Buttons */}
+                                <div className="p-5 border-b border-gray-700">
                                     <button
                                         onClick={() => setActiveTab('max')}
-                                        className={`w-full text-left px-4 py-3 rounded-lg transition-all mb-3 ${activeTab === 'max' ? 'bg-primary/20 border border-primary/50' : 'bg-darker border border-border hover:border-primary/30'}`}
+                                        className={`w-full text-left px-4 py-3 rounded-lg transition-all mb-3 ${activeTab === 'max' ? 'bg-primary/20 border border-primary' : 'border border-gray-700 hover:border-primary/30'}`}
                                     >
                                         <div className="flex items-center justify-between">
                                             <div>
@@ -369,7 +382,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
 
                                     <button
                                         onClick={() => setActiveTab('mintme')}
-                                        className={`w-full text-left px-4 py-3 rounded-lg transition-all ${activeTab === 'mintme' ? 'bg-primary/20 border border-primary/50' : 'bg-darker border border-border hover:border-primary/30'}`}
+                                        className={`w-full text-left px-4 py-3 rounded-lg transition-all ${activeTab === 'mintme' ? 'bg-primary/20 border border-primary' : 'border border-gray-700 hover:border-primary/30'}`}
                                     >
                                         <div className="flex items-center justify-between">
                                             <div>
@@ -385,14 +398,13 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     </button>
                                 </div>
 
-                                {/* API Key Info */}
-                                <div className="p-5 border-t border-border">
+                                <div className="p-5">
                                     <div className="text-[10px] text-gray-400 uppercase mb-2">Your API Key</div>
-                                    <div className="bg-darker rounded-lg p-2 mb-3">
+                                    <div className="bg-darker rounded-lg p-2 mb-3 border border-gray-700">
                                         <code className="text-[9px] text-primary break-all">{activeTab === 'max' ? (apiKey ? `${apiKey.slice(0, 20)}...` : 'Not available') : (mintMeApiKey ? `${mintMeApiKey.slice(0, 20)}...` : 'Not available')}</code>
                                     </div>
                                     {(activeTab === 'max' ? apiKey : mintMeApiKey) && (
-                                        <button onClick={() => copyToClipboard(activeTab === 'max' ? apiKey : mintMeApiKey)} className="w-full py-2 bg-primary/10 text-primary text-[10px] font-semibold rounded-lg hover:bg-primary/20 transition">
+                                        <button onClick={() => copyToClipboard(activeTab === 'max' ? apiKey : mintMeApiKey)} className="w-full py-2 bg-primary/10 text-primary text-[10px] font-semibold rounded-lg hover:bg-primary/20 transition border border-gray-700">
                                             COPY API KEY
                                         </button>
                                     )}
@@ -400,21 +412,20 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                             </div>
                         </div>
 
-                        {/* Right Column - 70% - Dynamic Content */}
+                        {/* Right Column - 70% */}
                         <div className="lg:w-[70%]">
                             {activeTab === 'max' ? (
-                                // MAX API Content
-                                <div className="bg-card border border-border rounded-xl overflow-hidden">
-                                    <div className="bg-darker px-6 py-4 border-b border-border">
+                                <div className="border border-gray-700 rounded-xl overflow-hidden bg-transparent">
+                                    <div className="p-6 border-b border-gray-700">
                                         <div className="flex items-center justify-between flex-wrap gap-3">
                                             <div>
                                                 <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX API TESTER</h2>
                                                 <p className="text-[11px] text-gray-400 mt-1">Solana DEX Aggregator - 0.01% Fee</p>
                                             </div>
                                             <div className="flex gap-2">
-                                                <button onClick={() => setMaxEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'quote' ? 'bg-primary text-black' : 'bg-darker text-gray-400 hover:text-white'}`}>QUOTE</button>
-                                                <button onClick={() => setMaxEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'swap' ? 'bg-primary text-black' : 'bg-darker text-gray-400 hover:text-white'}`}>SWAP</button>
-                                                <button onClick={() => setMaxEndpoint('pools')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'pools' ? 'bg-primary text-black' : 'bg-darker text-gray-400 hover:text-white'}`}>POOLS</button>
+                                                <button onClick={() => setMaxEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'quote' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>QUOTE</button>
+                                                <button onClick={() => setMaxEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'swap' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>SWAP</button>
+                                                <button onClick={() => setMaxEndpoint('pools')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'pools' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>POOLS</button>
                                             </div>
                                         </div>
                                     </div>
@@ -422,7 +433,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
-                                                <textarea value={maxParams} onChange={(e) => setMaxParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
+                                                <textarea value={maxParams} onChange={(e) => setMaxParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Program ID: {MAX_PROGRAM_ID.slice(0, 16)}...</div>
                                                     <button onClick={testMaxEndpoint} disabled={maxLoading || !apiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
@@ -432,24 +443,23 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                             </div>
                                             <div>
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
-                                                <pre className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all">{maxResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
+                                                <pre className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all">{maxResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                // MintMe API Content
-                                <div className="bg-card border border-border rounded-xl overflow-hidden">
-                                    <div className="bg-darker px-6 py-4 border-b border-border">
+                                <div className="border border-gray-700 rounded-xl overflow-hidden bg-transparent">
+                                    <div className="p-6 border-b border-gray-700">
                                         <div className="flex items-center justify-between flex-wrap gap-3">
                                             <div>
                                                 <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MINTME API TESTER</h2>
                                                 <p className="text-[11px] text-gray-400 mt-1">EVM DEX Aggregator - 0.01% Fee</p>
                                             </div>
                                             <div className="flex gap-2">
-                                                <button onClick={() => setMintMeEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'quote' ? 'bg-primary text-black' : 'bg-darker text-gray-400 hover:text-white'}`}>QUOTE</button>
-                                                <button onClick={() => setMintMeEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'swap' ? 'bg-primary text-black' : 'bg-darker text-gray-400 hover:text-white'}`}>SWAP</button>
-                                                <button onClick={() => setMintMeEndpoint('liquidity')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'liquidity' ? 'bg-primary text-black' : 'bg-darker text-gray-400 hover:text-white'}`}>LIQUIDITY</button>
+                                                <button onClick={() => setMintMeEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'quote' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>QUOTE</button>
+                                                <button onClick={() => setMintMeEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'swap' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>SWAP</button>
+                                                <button onClick={() => setMintMeEndpoint('liquidity')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'liquidity' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>LIQUIDITY</button>
                                             </div>
                                         </div>
                                     </div>
@@ -457,7 +467,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
-                                                <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
+                                                <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Contract: {MINTME_CONTRACT.slice(0, 16)}...</div>
                                                     <button onClick={testMintMeEndpoint} disabled={mintMeLoading || !mintMeApiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
@@ -467,7 +477,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                             </div>
                                             <div>
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
-                                                <pre className="w-full h-80 p-3 bg-darker border border-border rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all">{mintMeResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
+                                                <pre className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all">{mintMeResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
                                             </div>
                                         </div>
                                     </div>
@@ -478,7 +488,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Bottom Navigation - Mobile Only */}
+            {/* Bottom Navigation */}
             <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
                 <div className="flex items-center justify-around py-2">
                     <a href="https://exchange.fixorium.com.pk" target="_blank" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
