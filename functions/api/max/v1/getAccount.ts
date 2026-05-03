@@ -1,6 +1,3 @@
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-
 export async function onRequestGet({ request, env }: { request: Request; env: any }) {
   const apiKey = request.headers.get('X-API-Key');
   
@@ -18,59 +15,68 @@ export async function onRequestGet({ request, env }: { request: Request; env: an
   const network = url.searchParams.get('network') || 'devnet';
   
   if (!publicKey) {
-    return Response.json({ error: 'Missing publicKey parameter' }, { status: 400 });
+    return Response.json({ error: 'Missing publicKey' }, { status: 400 });
   }
   
-  // Use YOUR RPC endpoints
   const rpcUrl = network === 'devnet' 
     ? 'https://api.devnet.solana.com'
     : 'https://api.mainnet-beta.solana.com';
   
   try {
-    const connection = new Connection(rpcUrl);
-    const pubKey = new PublicKey(publicKey);
-    
-    // Get SOL balance
-    const balance = await connection.getBalance(pubKey);
-    const solBalance = balance / LAMPORTS_PER_SOL;
-    
-    // Get token accounts
-    const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubKey, {
-      programId: TOKEN_PROGRAM_ID
+    // Get SOL balance from Solana RPC
+    const balanceRes = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getBalance',
+        params: [publicKey]
+      })
     });
+    const balanceData = await balanceRes.json();
+    const lamports = balanceData.result?.value || 0;
+    const solBalance = lamports / 1e9;
+    
+    // Get token accounts from Solana RPC
+    const tokenRes = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'getTokenAccountsByOwner',
+        params: [
+          publicKey,
+          { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
+          { encoding: 'jsonParsed' }
+        ]
+      })
+    });
+    const tokenData = await tokenRes.json();
     
     const tokens = [];
-    for (const tokenAccount of tokenAccounts.value) {
-      const accountData = tokenAccount.account.data.parsed.info;
-      const balance2 = accountData.tokenAmount.uiAmount;
-      if (balance2 > 0) {
-        tokens.push({
-          mint: accountData.mint,
-          balance: balance2,
-          decimals: accountData.tokenAmount.decimals
-        });
+    if (tokenData.result?.value) {
+      for (const acc of tokenData.result.value) {
+        const info = acc.account.data.parsed.info;
+        const balance = info.tokenAmount.uiAmount;
+        if (balance > 0) {
+          tokens.push({ mint: info.mint, balance: balance });
+        }
       }
     }
-    
-    // Get transaction count
-    const signatures = await connection.getSignaturesForAddress(pubKey, { limit: 10 });
     
     return Response.json({
       success: true,
       network,
       publicKey,
-      lamports: balance,
+      lamports,
       solBalance,
       tokens,
-      transactionCount: signatures.length,
       timestamp: Date.now()
     });
     
   } catch (error: any) {
-    return Response.json({ 
-      success: false,
-      error: error.message || 'Failed to fetch account data',
-      network 
-    }, { status: 500 });
+    return Response.json({ error: error.message }, { status: 500 });
   }
 }
