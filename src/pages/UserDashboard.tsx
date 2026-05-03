@@ -20,7 +20,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const [maxLoading, setMaxLoading] = useState(false);
     
     const [mintMeEndpoint, setMintMeEndpoint] = useState('quote');
-    const [mintMeParams, setMintMeParams] = useState('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1000000000000000000"\n}');
+    const [mintMeParams, setMintMeParams] = useState('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1000000000000000000",\n  "recipient": "0xYourWalletAddress"\n}');
     const [mintMeResponse, setMintMeResponse] = useState('');
     const [mintMeLoading, setMintMeLoading] = useState(false);
     
@@ -43,6 +43,16 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             setMaxParams('{\n  "mint": "So11111111111111111111111111111111111111112"\n}');
         }
     }, [maxEndpoint]);
+
+    useEffect(() => {
+        if (mintMeEndpoint === 'quote') {
+            setMintMeParams('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1000000000000000000",\n  "recipient": "0xYourWalletAddress"\n}');
+        } else if (mintMeEndpoint === 'swap') {
+            setMintMeParams('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1000000000000000000",\n  "slippage": "100",\n  "recipient": "0xYourWalletAddress"\n}');
+        } else if (mintMeEndpoint === 'liquidity') {
+            setMintMeParams('{\n  "tokenAddress": "0x091da08c5bf888252ed1ab3e44246cbf72d63307"\n}');
+        }
+    }, [mintMeEndpoint]);
 
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
@@ -168,13 +178,13 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         try {
             let url = `/api/mintme/v1/${mintMeEndpoint}`;
             let options: RequestInit = {
-                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             };
             
             if (mintMeEndpoint === 'quote') {
+                options.method = 'POST';
                 let body;
                 try {
                     body = JSON.parse(mintMeParams);
@@ -183,9 +193,9 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     setMintMeLoading(false);
                     return;
                 }
-                body.contractAddress = MINTME_CONTRACT;
                 options.body = JSON.stringify(body);
             } else if (mintMeEndpoint === 'swap') {
+                options.method = 'POST';
                 let body;
                 try {
                     body = JSON.parse(mintMeParams);
@@ -194,13 +204,19 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     setMintMeLoading(false);
                     return;
                 }
-                body.contractAddress = MINTME_CONTRACT;
                 options.body = JSON.stringify(body);
             } else if (mintMeEndpoint === 'liquidity') {
                 options.method = 'GET';
-                const params = JSON.parse(mintMeParams);
+                let params;
+                try {
+                    params = JSON.parse(mintMeParams);
+                } catch (e) {
+                    setMintMeResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
+                    setMintMeLoading(false);
+                    return;
+                }
                 const queryParams = new URLSearchParams(params).toString();
-                url += `?${queryParams}&contractAddress=${MINTME_CONTRACT}`;
+                url += `?${queryParams}`;
             }
             
             const response = await fetch(url, options);
@@ -228,16 +244,16 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                 DEFI PLATFORM
                             </div>
                             <nav className="hidden md:flex items-center gap-6">
-                                <a href="https://exchange.fixorium.com.pk" target="_blank" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                     EXCHANGE
                                 </a>
                                 <button onClick={() => window.location.href = '/'} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                     HOME
                                 </button>
-                                <a href="https://wallet.fixorium.com.pk" target="_blank" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                     WALLET
                                 </a>
-                                <a href="https://fixorium.com.pk/team" target="_blank" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
                                     TEAM
                                 </a>
                             </nav>
@@ -317,13 +333,13 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Main Content */}
+            {/* Main Content - Equal Height Columns using flex */}
             <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Left Column - 30% - Simple Text Tabs */}
-                        <div className="lg:w-[30%]">
-                            <div className="border border-gray-700 rounded-xl overflow-hidden sticky top-32 bg-transparent">
+                        {/* Left Column - 30% */}
+                        <div className="lg:w-[30%] flex">
+                            <div className="w-full border border-gray-700 rounded-xl overflow-hidden bg-transparent flex flex-col">
                                 <div className="p-5 border-b border-gray-700">
                                     <h1 className="text-lg font-bold text-primary uppercase tracking-wider">API DASHBOARD</h1>
                                     <p className="text-xs text-gray-400 mt-1">Welcome back, <span className="text-primary">{registeredEmail}</span></p>
@@ -353,7 +369,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     </div>
                                 </div>
 
-                                {/* Simple Text Tabs - No Icons, No Cards */}
+                                {/* Simple Text Tabs */}
                                 <div className="p-5 border-b border-gray-700">
                                     <div className="flex gap-6">
                                         <button
@@ -371,7 +387,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     </div>
                                 </div>
 
-                                <div className="p-5">
+                                <div className="p-5 flex-1">
                                     <div className="text-[10px] text-gray-400 uppercase mb-2">
                                         {activeTab === 'max' ? 'Your API Key' : 'Contract Address'}
                                     </div>
@@ -397,10 +413,10 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                             </div>
                         </div>
 
-                        {/* Right Column - 70% */}
-                        <div className="lg:w-[70%]">
+                        {/* Right Column - 70% - Equal Height */}
+                        <div className="lg:w-[70%] flex">
                             {activeTab === 'max' ? (
-                                <div className="border border-gray-700 rounded-xl overflow-hidden bg-transparent">
+                                <div className="w-full border border-gray-700 rounded-xl overflow-hidden bg-transparent flex flex-col">
                                     <div className="p-6 border-b border-gray-700">
                                         <div className="flex items-center justify-between flex-wrap gap-3">
                                             <div>
@@ -414,11 +430,11 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="p-6">
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                            <div>
+                                    <div className="p-6 flex-1">
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                                            <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
-                                                <textarea value={maxParams} onChange={(e) => setMaxParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
+                                                <textarea value={maxParams} onChange={(e) => setMaxParams(e.target.value)} className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none min-h-[300px]" />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Program ID: {MAX_PROGRAM_ID.slice(0, 16)}...</div>
                                                     <button onClick={testMaxEndpoint} disabled={maxLoading || !apiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
@@ -426,15 +442,15 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div>
+                                            <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
-                                                <pre className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all">{maxResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
+                                                <pre className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all min-h-[300px]">{maxResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="border border-gray-700 rounded-xl overflow-hidden bg-transparent">
+                                <div className="w-full border border-gray-700 rounded-xl overflow-hidden bg-transparent flex flex-col">
                                     <div className="p-6 border-b border-gray-700">
                                         <div className="flex items-center justify-between flex-wrap gap-3">
                                             <div>
@@ -448,11 +464,11 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="p-6">
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                            <div>
+                                    <div className="p-6 flex-1">
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                                            <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
-                                                <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
+                                                <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none min-h-[300px]" />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Contract: {MINTME_CONTRACT.slice(0, 16)}...</div>
                                                     <button onClick={testMintMeEndpoint} disabled={mintMeLoading} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
@@ -460,9 +476,9 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div>
+                                            <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
-                                                <pre className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all">{mintMeResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
+                                                <pre className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all min-h-[300px]">{mintMeResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
                                             </div>
                                         </div>
                                     </div>
@@ -476,7 +492,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             {/* Bottom Navigation */}
             <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
                 <div className="flex items-center justify-around py-2">
-                    <a href="https://exchange.fixorium.com.pk" target="_blank" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                    <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" /></svg>
                         <span className="text-[8px] uppercase">EXCHANGE</span>
                     </a>
@@ -484,11 +500,11 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                         <span className="text-[8px] uppercase">HOME</span>
                     </button>
-                    <a href="https://wallet.fixorium.com.pk" target="_blank" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                    <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" /></svg>
                         <span className="text-[8px] uppercase">WALLET</span>
                     </a>
-                    <a href="https://fixorium.com.pk/team" target="_blank" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                    <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                         <span className="text-[8px] uppercase">TEAM</span>
                     </a>
