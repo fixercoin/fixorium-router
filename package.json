@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "python -m http.server 8000",
-    "build": "echo 'Static site - no build required'",
+    "build": "mkdir -p dist && cp index.html dist/ && cp _redirects dist/",
     "start": "python -m http.server 8000"
   },
   "keywords": [

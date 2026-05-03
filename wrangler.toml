@@ -9,6 +9,7 @@ zone_id = ""
 command = "npm run build"
 cwd = "./"
 watch_paths = []
+pages_build_output_dir = "dist"
 
 [env.production]
 name = "fixorium-router-prod"
