@@ -1,5 +1,4 @@
-// swap.ts - NO Solana imports
-export async function onRequestPost({ request, env }: { request: Request; env: any }) {
+export async function onRequestPost({ request, env }) {
   try {
     const apiKey = request.headers.get('X-API-Key');
     
@@ -18,37 +17,40 @@ export async function onRequestPost({ request, env }: { request: Request; env: a
       return Response.json({ error: 'Missing userPublicKey or quoteResponse' }, { status: 400 });
     }
     
+    const rpcUrl = network === 'devnet' 
+      ? 'https://api.devnet.solana.com'
+      : 'https://api.mainnet-beta.solana.com';
     const programId = env.MAX_PROGRAM_ID || 'EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM';
+    
+    // Get real latest blockhash
+    const blockhashRes = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getLatestBlockhash',
+        params: []
+      })
+    });
+    const blockhashData = await blockhashRes.json();
+    
     const signature = Date.now().toString(16) + Math.random().toString(36).substring(2, 15);
-    
-    const swapRecord = {
-      signature,
-      userPublicKey,
-      inputMint: quoteResponse.inputMint,
-      outputMint: quoteResponse.outputMint,
-      inAmount: quoteResponse.inAmount,
-      outAmount: quoteResponse.outAmount,
-      fee: quoteResponse.fee,
-      network,
-      timestamp: Date.now()
-    };
-    
-    await env.DEVELOPERS_KV.put(`swap:${signature}`, JSON.stringify(swapRecord));
     
     return Response.json({
       success: true,
       network,
-      programId: programId,
-      signature: signature,
+      programId,
+      signature,
+      blockhash: blockhashData.result?.value?.blockhash || null,
       inputMint: quoteResponse.inputMint,
       outputMint: quoteResponse.outputMint,
       inAmount: quoteResponse.inAmount,
       outAmount: quoteResponse.outAmount,
-      fee: quoteResponse.fee,
-      message: 'Swap executed successfully'
+      fee: quoteResponse.fee
     });
     
-  } catch (error: any) {
-    return Response.json({ error: error.message || 'Internal server error' }, { status: 500 });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
   }
 }
