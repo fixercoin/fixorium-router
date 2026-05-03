@@ -8,8 +8,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [apiKey, setApiKey] = useState('');
     const [apiSecret, setApiSecret] = useState('');
-    const [mintMeApiKey, setMintMeApiKey] = useState('');
-    const [mintMeApiSecret, setMintMeApiSecret] = useState('');
     const [copied, setCopied] = useState(false);
     const [registeredEmail, setRegisteredEmail] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
@@ -51,16 +49,12 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         const userRegistered = localStorage.getItem('user_registered');
         const savedApiKey = localStorage.getItem('max_api_key');
         const savedApiSecret = localStorage.getItem('max_api_secret');
-        const savedMintMeKey = localStorage.getItem('mintme_api_key');
-        const savedMintMeSecret = localStorage.getItem('mintme_api_secret');
         
         if (userEmail && userRegistered === 'true') {
             setRegisteredEmail(userEmail);
             setIsRegistered(true);
             if (savedApiKey) setApiKey(savedApiKey);
             if (savedApiSecret) setApiSecret(savedApiSecret);
-            if (savedMintMeKey) setMintMeApiKey(savedMintMeKey);
-            if (savedMintMeSecret) setMintMeApiSecret(savedMintMeSecret);
         }
         
         const savedUsage = localStorage.getItem('api_usage');
@@ -74,8 +68,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         localStorage.removeItem('user_registered');
         localStorage.removeItem('max_api_key');
         localStorage.removeItem('max_api_secret');
-        localStorage.removeItem('mintme_api_key');
-        localStorage.removeItem('mintme_api_secret');
         setIsRegistered(false);
         setRegisteredEmail('');
         setApiKey('');
@@ -92,6 +84,12 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const testMaxEndpoint = async () => {
         setMaxLoading(true);
         setMaxResponse('');
+        
+        if (!apiKey) {
+            setMaxResponse('Error: No MAX API key found. Please register for MAX API first.');
+            setMaxLoading(false);
+            return;
+        }
         
         try {
             let url = `/api/max/v1/${maxEndpoint}`;
@@ -164,25 +162,14 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     };
 
     const testMintMeEndpoint = async () => {
-        console.log('MintMe API Key:', mintMeApiKey);
-        console.log('MintMe Endpoint:', mintMeEndpoint);
-        console.log('MintMe Params:', mintMeParams);
-        
         setMintMeLoading(true);
         setMintMeResponse('');
-        
-        if (!mintMeApiKey) {
-            setMintMeResponse('Error: No MintMe API key found. Please register for MintMe API first.');
-            setMintMeLoading(false);
-            return;
-        }
         
         try {
             let url = `/api/mintme/v1/${mintMeEndpoint}`;
             let options: RequestInit = {
                 method: 'POST',
                 headers: {
-                    'X-API-Key': mintMeApiKey,
                     'Content-Type': 'application/json'
                 }
             };
@@ -196,30 +183,35 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     setMintMeLoading(false);
                     return;
                 }
+                body.contractAddress = MINTME_CONTRACT;
                 options.body = JSON.stringify(body);
-                console.log('Sending request to:', url, options);
             } else if (mintMeEndpoint === 'swap') {
-                options.method = 'POST';
-                options.body = mintMeParams;
+                let body;
+                try {
+                    body = JSON.parse(mintMeParams);
+                } catch (e) {
+                    setMintMeResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
+                    setMintMeLoading(false);
+                    return;
+                }
+                body.contractAddress = MINTME_CONTRACT;
+                options.body = JSON.stringify(body);
             } else if (mintMeEndpoint === 'liquidity') {
                 options.method = 'GET';
                 const params = JSON.parse(mintMeParams);
                 const queryParams = new URLSearchParams(params).toString();
-                url += `?${queryParams}`;
+                url += `?${queryParams}&contractAddress=${MINTME_CONTRACT}`;
             }
             
             const response = await fetch(url, options);
-            console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('Response data:', data);
             setMintMeResponse(JSON.stringify(data, null, 2));
             
             const newUsage = { ...apiUsage, mintMeCalls: apiUsage.mintMeCalls + 1 };
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
         } catch (error: any) {
-            console.error('MintMe API error:', error);
-            setMintMeResponse(`Error: ${error.message}\n\nMake sure the MintMe API endpoint is implemented.`);
+            setMintMeResponse(`Error: ${error.message}`);
         } finally {
             setMintMeLoading(false);
         }
@@ -329,7 +321,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Left Column - 30% */}
+                        {/* Left Column - 30% - Simple Text Tabs */}
                         <div className="lg:w-[30%]">
                             <div className="border border-gray-700 rounded-xl overflow-hidden sticky top-32 bg-transparent">
                                 <div className="p-5 border-b border-gray-700">
@@ -361,51 +353,44 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     </div>
                                 </div>
 
-                                {/* Simple Buttons */}
+                                {/* Simple Text Tabs - No Icons, No Cards */}
                                 <div className="p-5 border-b border-gray-700">
-                                    <button
-                                        onClick={() => setActiveTab('max')}
-                                        className={`w-full text-left px-4 py-3 rounded-lg transition-all mb-3 ${activeTab === 'max' ? 'bg-primary/20 border border-primary' : 'border border-gray-700 hover:border-primary/30'}`}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <div className="text-sm font-bold text-primary uppercase tracking-wider">MAX API</div>
-                                                <div className="text-[10px] text-gray-400 mt-0.5">Solana DEX Aggregator</div>
-                                            </div>
-                                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                                <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </button>
-
-                                    <button
-                                        onClick={() => setActiveTab('mintme')}
-                                        className={`w-full text-left px-4 py-3 rounded-lg transition-all ${activeTab === 'mintme' ? 'bg-primary/20 border border-primary' : 'border border-gray-700 hover:border-primary/30'}`}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <div className="text-sm font-bold text-primary uppercase tracking-wider">MINTME API</div>
-                                                <div className="text-[10px] text-gray-400 mt-0.5">EVM DEX Aggregator</div>
-                                            </div>
-                                            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                                                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </button>
+                                    <div className="flex gap-6">
+                                        <button
+                                            onClick={() => setActiveTab('max')}
+                                            className={`text-sm font-semibold uppercase tracking-wider transition-all pb-2 ${activeTab === 'max' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-gray-300'}`}
+                                        >
+                                            MAX API
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab('mintme')}
+                                            className={`text-sm font-semibold uppercase tracking-wider transition-all pb-2 ${activeTab === 'mintme' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-gray-300'}`}
+                                        >
+                                            MINTME API
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="p-5">
-                                    <div className="text-[10px] text-gray-400 uppercase mb-2">Your API Key</div>
-                                    <div className="bg-darker rounded-lg p-2 mb-3 border border-gray-700">
-                                        <code className="text-[9px] text-primary break-all">{activeTab === 'max' ? (apiKey ? `${apiKey.slice(0, 20)}...` : 'Not available') : (mintMeApiKey ? `${mintMeApiKey.slice(0, 20)}...` : 'Not available')}</code>
+                                    <div className="text-[10px] text-gray-400 uppercase mb-2">
+                                        {activeTab === 'max' ? 'Your API Key' : 'Contract Address'}
                                     </div>
-                                    {(activeTab === 'max' ? apiKey : mintMeApiKey) && (
-                                        <button onClick={() => copyToClipboard(activeTab === 'max' ? apiKey : mintMeApiKey)} className="w-full py-2 bg-primary/10 text-primary text-[10px] font-semibold rounded-lg hover:bg-primary/20 transition border border-gray-700">
+                                    <div className="bg-darker rounded-lg p-2 mb-3 border border-gray-700">
+                                        <code className="text-[9px] break-all">
+                                            {activeTab === 'max' 
+                                                ? (apiKey ? `${apiKey.slice(0, 30)}...` : 'Not available')
+                                                : MINTME_CONTRACT
+                                            }
+                                        </code>
+                                    </div>
+                                    {activeTab === 'max' && apiKey && (
+                                        <button onClick={() => copyToClipboard(apiKey)} className="w-full py-2 bg-primary/10 text-primary text-[10px] font-semibold rounded-lg hover:bg-primary/20 transition border border-gray-700">
                                             COPY API KEY
+                                        </button>
+                                    )}
+                                    {activeTab === 'mintme' && (
+                                        <button onClick={() => copyToClipboard(MINTME_CONTRACT)} className="w-full py-2 bg-green-500/10 text-green-400 text-[10px] font-semibold rounded-lg hover:bg-green-500/20 transition border border-gray-700">
+                                            COPY CONTRACT ADDRESS
                                         </button>
                                     )}
                                 </div>
@@ -470,7 +455,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                 <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="w-full h-80 p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none" />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Contract: {MINTME_CONTRACT.slice(0, 16)}...</div>
-                                                    <button onClick={testMintMeEndpoint} disabled={mintMeLoading || !mintMeApiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
+                                                    <button onClick={testMintMeEndpoint} disabled={mintMeLoading} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
                                                         {mintMeLoading ? 'SENDING...' : 'SEND REQUEST'}
                                                     </button>
                                                 </div>
