@@ -17,7 +17,7 @@
       color: #ffffff;
       min-height: 100vh;
       font-size: 12px;
-      padding-bottom: 70px;
+      padding-bottom: 100px;
     }
 
     .navbar {
@@ -69,7 +69,6 @@
       margin-bottom: 3rem;
     }
 
-    /* TEXT HEADER - RESPONSIVE FONT SIZE */
     .fixorium-header {
       margin: 0 auto 2rem;
       text-align: center;
@@ -81,7 +80,6 @@
       text-transform: uppercase;
       letter-spacing: 4px;
       margin-bottom: 1rem;
-      /* RESPONSIVE FONT SIZE */
       font-size: clamp(2rem, 8vw, 4rem);
     }
 
@@ -93,7 +91,6 @@
       margin-bottom: 0.5rem;
     }
 
-    /* SINGLE CARD - ALL CAPITAL TEXT, 11px, ALL WHITE */
     .fixorium-card {
       max-width: 900px;
       margin: 2rem auto;
@@ -129,7 +126,6 @@
       letter-spacing: 1px;
     }
 
-    /* DESKTOP TABS */
     .tabs-container {
       display: flex;
       gap: 1rem;
@@ -165,7 +161,6 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
 
-    /* GUIDELINE BUTTON (DESKTOP) */
     .guideline-btn {
       padding: 0.75rem 1.5rem;
       font-size: 12px;
@@ -188,7 +183,20 @@
       transform: translateY(-2px);
     }
 
-    /* MOBILE BOTTOM NAVIGATION BAR */
+    /* SUBPAGES - MINIMUM GAP BETWEEN CARDS */
+    .content-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-section:last-child {
+      margin-bottom: 0;
+    }
+
+    /* MOBILE BOTTOM NAVIGATION BAR - DOUBLED HEIGHT */
     .mobile-bottom-nav {
       display: none;
       position: fixed;
@@ -198,7 +206,7 @@
       background: rgba(10, 10, 20, 0.98);
       backdrop-filter: blur(10px);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1rem;
       z-index: 100;
     }
 
@@ -213,35 +221,27 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 8px 12px;
+      padding: 10px 16px;
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
       background: transparent;
       border: none;
       color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
     }
 
     .mobile-nav-item.active {
       color: #ffffff;
     }
 
-    .mobile-nav-icon {
-      font-size: 1.3rem;
-      font-weight: normal;
-    }
-
-    .mobile-nav-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* INFO MODAL (MOBILE) */
     .info-modal {
       display: none;
       position: fixed;
-      bottom: 80px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
@@ -323,7 +323,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
       padding: 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .page-header h1 {
@@ -339,14 +339,6 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 1px;
-    }
-
-    .content-section {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
     }
 
     .content-section h2 {
@@ -441,10 +433,9 @@
       letter-spacing: 2px;
     }
 
-    /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
       body {
-        padding-bottom: 70px;
+        padding-bottom: 90px;
       }
       .container {
         padding: 1rem;
@@ -469,6 +460,16 @@
       .card-feature {
         font-size: 9px;
       }
+
+      .content-section {
+        padding: 1rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .page-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
     }
 
     @media (min-width: 769px) {
@@ -488,13 +489,11 @@
     <!-- Main Page -->
     <div class="page-content active" id="main-page">
       <div class="main-section">
-        <!-- TEXT HEADER - RESPONSIVE -->
         <div class="fixorium-header">
           <div class="fixorium-title">DEFI PLATFORM</div>
           <div class="fixorium-subtitle">POWERED BY FIXORIUM</div>
         </div>
 
-        <!-- SINGLE CARD - FIXORIUM PLATFORM CONTENT -->
         <div class="fixorium-card">
           <p>FIXORIUM IS A NEXT-GENERATION DECENTRALIZED FINANCE PLATFORM BUILT ON SOLANA BLOCKCHAIN.</p>
           <p>WE PROVIDE EXCHANGE, WALLET, MINTME DEX ROUTER, AND SOLANA DEX ROUTER WITH ADVANCED MEV PROTECTION, CROSS-CHAIN SWAP ENGINE, AND NON-CUSTODIAL MULTI-CHAIN WALLET SOLUTIONS.</p>
@@ -508,7 +507,6 @@
         </div>
       </div>
 
-      <!-- Desktop Tabs + Guideline Button -->
       <div class="tabs-container">
         <button class="tab-button active" data-page="exchange">EXCHANGE</button>
         <button class="tab-button" data-page="wallet">WALLET</button>
@@ -632,25 +630,13 @@
     </div>
   </div>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR - DOUBLED HEIGHT -->
   <div class="mobile-bottom-nav">
     <div class="mobile-nav-items">
-      <button class="mobile-nav-item" data-page="exchange">
-        <div class="mobile-nav-icon">⇆</div>
-        <div class="mobile-nav-label">EXCHANGE</div>
-      </button>
-      <button class="mobile-nav-item" data-page="wallet">
-        <div class="mobile-nav-icon">□</div>
-        <div class="mobile-nav-label">WALLET</div>
-      </button>
-      <button class="mobile-nav-item" data-page="dex-service">
-        <div class="mobile-nav-icon">⌗</div>
-        <div class="mobile-nav-label">DEX</div>
-      </button>
-      <button class="mobile-nav-item" id="mobileInfoBtn">
-        <div class="mobile-nav-icon">ⓘ</div>
-        <div class="mobile-nav-label">INFO</div>
-      </button>
+      <button class="mobile-nav-item" data-page="exchange">EXCHANGE</button>
+      <button class="mobile-nav-item" data-page="wallet">WALLET</button>
+      <button class="mobile-nav-item" data-page="dex-service">DEX</button>
+      <button class="mobile-nav-item" id="mobileInfoBtn">INFO</button>
     </div>
   </div>
 
@@ -660,9 +646,9 @@
     <h4>GUIDELINE</h4>
     <p>FIXORIUM DEFI PLATFORM</p>
     <ul>
-      <li>⇆ EXCHANGE - CROSS-CHAIN SWAPS</li>
-      <li>□ WALLET - SECURE WALLET</li>
-      <li>⌗ DEX SERVICE - WHITE-LABEL DEX</li>
+      <li>EXCHANGE - CROSS-CHAIN SWAPS</li>
+      <li>WALLET - SECURE WALLET</li>
+      <li>DEX - WHITE-LABEL DEX</li>
       <li>MAX FEE 0.01% - LOWEST ON SOLANA</li>
       <li>MEV PROTECTION - ADVANCED ROUTING</li>
     </ul>
@@ -739,7 +725,7 @@
     });
 
     desktopGuidelineBtn.addEventListener('click', function() {
-      alert('FIXORIUM GUIDELINE\n\n⇆ EXCHANGE - CROSS-CHAIN SWAPS\n□ WALLET - SECURE WALLET\n⌗ DEX SERVICE - WHITE-LABEL DEX\nMAX FEE 0.01% - LOWEST ON SOLANA\nMEV PROTECTION - ADVANCED ROUTING');
+      alert('FIXORIUM GUIDELINE\n\nEXCHANGE - CROSS-CHAIN SWAPS\nWALLET - SECURE WALLET\nDEX SERVICE - WHITE-LABEL DEX\nMAX FEE 0.01% - LOWEST ON SOLANA\nMEV PROTECTION - ADVANCED ROUTING');
     });
 
     mobileInfoBtn.addEventListener('click', function(e) {
