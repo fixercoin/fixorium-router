@@ -1,5 +1,4 @@
 export async function onRequestGet({ request, env }) {
-    // CHANGE THIS: Use mainnet, not devnet
     const RPC_URL = 'https://api.mainnet-beta.solana.com';
     const PROGRAM_ID = '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8'; // Raydium
     
@@ -10,7 +9,7 @@ export async function onRequestGet({ request, env }) {
             jsonrpc: '2.0',
             id: 1,
             method: 'getProgramAccounts',
-            params: [PROGRAM_ID, { encoding: 'jsonParsed', commitment: 'confirmed' }]
+            params: [PROGRAM_ID, { encoding: 'base64', commitment: 'confirmed' }]  // USE base64
         })
     });
     
@@ -20,8 +19,7 @@ export async function onRequestGet({ request, env }) {
         success: true,
         rpcResponse: {
             hasResult: !!data.result,
-            resultLength: data.result?.length || 0,
-            firstAccount: data.result?.[0] || null
+            resultLength: data.result?.length || 0
         }
     });
 }
