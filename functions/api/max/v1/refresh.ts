@@ -9,18 +9,17 @@ export async function onRequestGet({ request, env }) {
     let paginationKey = null;
     let hasMore = true;
     
-    // Paginate through all Raydium pools
     while (hasMore) {
         const requestBody: any = {
             jsonrpc: '2.0',
             id: 1,
-            method: 'getProgramAccountsV2',  // Use V2 method
+            method: 'getProgramAccountsV2',
             params: [
-                '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', // Raydium program
+                '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
                 {
                     encoding: 'base64',
                     commitment: 'confirmed',
-                    limit: 1000,  // Max per request
+                    limit: 100,  // Reduced from 1000 to avoid rate limits
                     ...(paginationKey && { paginationKey })
                 }
             ]
@@ -35,6 +34,11 @@ export async function onRequestGet({ request, env }) {
         const data = await response.json();
         
         if (data.error) {
+            if (data.error.code === -32429) {
+                // Rate limited - wait and retry
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+            }
             return Response.json({ success: false, error: data.error });
         }
         
@@ -44,9 +48,13 @@ export async function onRequestGet({ request, env }) {
         
         paginationKey = data.result?.paginationKey;
         hasMore = !!paginationKey;
+        
+        // Add delay between requests to avoid rate limiting
+        if (hasMore) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
     }
     
-    // Save to KV
     await env.DEVELOPERS_KV.put('all_pools', JSON.stringify({
         pools: allPools,
         total: allPools.length,
@@ -57,6 +65,6 @@ export async function onRequestGet({ request, env }) {
     return Response.json({ 
         success: true, 
         total: allPools.length,
-        message: `Cached ${allPools.length} Raydium pools using pagination`
+        message: `Cached ${allPools.length} Raydium pools`
     });
 }
