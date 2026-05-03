@@ -69,35 +69,63 @@
       margin-bottom: 3rem;
     }
 
-    /* IMAGE CONTAINER - ORIGINAL SIZE BY DEFAULT */
-    .fixorium-animation {
+    /* TEXT HEADER */
+    .fixorium-header {
       margin: 0 auto 2rem;
-      position: relative;
-      display: inline-block;
-      width: auto;
+      text-align: center;
     }
 
-    .fixorium-logo-img {
-      display: block;
-      max-width: none;
-      width: auto;
-      height: auto;
-    }
-
-    .page-title {
-      font-size: 2.5rem;
+    .fixorium-title {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 4px;
       margin-bottom: 1rem;
-      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .fixorium-subtitle {
+      font-size: 1.2rem;
+      color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 2px;
+      margin-bottom: 0.5rem;
     }
 
-    .page-description {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.5);
-      margin-bottom: 3rem;
+    /* SINGLE CARD - ALL CAPITAL TEXT, 11px, ALL WHITE */
+    .fixorium-card {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .fixorium-card p {
+      font-size: 11px;
+      color: #ffffff;
+      line-height: 1.8;
+      margin-bottom: 1rem;
       text-transform: uppercase;
-      letter-spacing: 3px;
+    }
+
+    .card-features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-feature {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #ffffff;
+      letter-spacing: 1px;
     }
 
     /* DESKTOP TABS */
@@ -428,27 +456,21 @@
         display: block;
       }
       
-      /* MOBILE: IMAGE STRETCHES FULL WIDTH WITH SMALL PADDING */
-      .main-section {
-        text-align: center;
-      }
-      .fixorium-animation {
-        display: block;
-        width: calc(100% - 2rem);
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .fixorium-logo-img {
-        width: 100%;
-        height: auto;
-        object-fit: contain;
+      .fixorium-title {
+        font-size: 2.5rem;
       }
       
-      .page-title {
-        font-size: 1.6rem;
+      .fixorium-subtitle {
+        font-size: 1rem;
       }
-      .page-header h1 {
-        font-size: 16px;
+      
+      .fixorium-card {
+        margin: 1rem auto;
+        padding: 1rem;
+      }
+      
+      .fixorium-card p {
+        font-size: 11px;
       }
     }
 
@@ -469,11 +491,24 @@
     <!-- Main Page -->
     <div class="page-content active" id="main-page">
       <div class="main-section">
-        <div class="fixorium-animation">
-          <img src="https://i.postimg.cc/fLNML4TV/Cryptocurrency-Trading-CMTrading-png-removebg-preview-removebg-preview.png" alt="MAX" class="fixorium-logo-img">
+        <!-- TEXT HEADER -->
+        <div class="fixorium-header">
+          <div class="fixorium-title">DEFI PLATFORM</div>
+          <div class="fixorium-subtitle">POWERED BY FIXORIUM</div>
         </div>
-        <h1 class="page-title">FIXORIUM DEFI PLATFORM</h1>
-        <p class="page-description">FAST — SECURE — DECENTRALIZED TRADING</p>
+
+        <!-- SINGLE CARD - ALL CAPITAL TEXT -->
+        <div class="fixorium-card">
+          <p>FIXORIUM IS A NEXT-GENERATION DECENTRALIZED FINANCE PLATFORM BUILT ON SOLANA BLOCKCHAIN.</p>
+          <p>WE PROVIDE THE LOWEST FEE DEX AGGREGATOR (0.01%) WITH ADVANCED MEV PROTECTION, CROSS-CHAIN SWAP ENGINE, AND NON-CUSTODIAL MULTI-CHAIN WALLET SOLUTIONS.</p>
+          <p>OUR PLATFORM AGGREGATES LIQUIDITY FROM 15+ DEXES INCLUDING RAYDIUM, ORCA, METEORA, PUMP.FUN, UNISWAP, AND PANCAKESWAP ACROSS SOLANA, ETHEREUM, BSC, ARBITRUM, AND POLYGON NETWORKS.</p>
+          <div class="card-features">
+            <span class="card-feature">0.01% FEE</span>
+            <span class="card-feature">MEV PROTECTED</span>
+            <span class="card-feature">CROSS-CHAIN</span>
+            <span class="card-feature">NON-CUSTODIAL</span>
+          </div>
+        </div>
       </div>
 
       <!-- Desktop Tabs + Guideline Button -->
@@ -600,7 +635,7 @@
     </div>
   </div>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR - SIMPLE WALLET ICON -->
   <div class="mobile-bottom-nav">
     <div class="mobile-nav-items">
       <button class="mobile-nav-item" data-page="exchange">
@@ -608,7 +643,7 @@
         <div class="mobile-nav-label">EXCHANGE</div>
       </button>
       <button class="mobile-nav-item" data-page="wallet">
-        <div class="mobile-nav-icon">◻</div>
+        <div class="mobile-nav-icon">□</div>
         <div class="mobile-nav-label">WALLET</div>
       </button>
       <button class="mobile-nav-item" data-page="dex-service">
@@ -626,15 +661,15 @@
   <div class="info-modal" id="infoModal">
     <button class="close-modal" id="closeModalBtn">✕</button>
     <h4>GUIDELINE</h4>
-    <p>Fixorium DeFi Platform</p>
+    <p>FIXORIUM DEFI PLATFORM</p>
     <ul>
-      <li>⇆ EXCHANGE - Cross-chain swaps</li>
-      <li>◻ WALLET - Secure wallet</li>
-      <li>⌗ DEX SERVICE - White-label DEX</li>
-      <li>MAX FEE 0.01% - Lowest on Solana</li>
-      <li>MEV PROTECTION - Advanced routing</li>
+      <li>⇆ EXCHANGE - CROSS-CHAIN SWAPS</li>
+      <li>□ WALLET - SECURE WALLET</li>
+      <li>⌗ DEX SERVICE - WHITE-LABEL DEX</li>
+      <li>MAX FEE 0.01% - LOWEST ON SOLANA</li>
+      <li>MEV PROTECTION - ADVANCED ROUTING</li>
     </ul>
-    <p style="margin-top: 8px; font-size: 10px;">Tap any tab to explore</p>
+    <p style="margin-top: 8px; font-size: 10px;">TAP ANY TAB TO EXPLORE</p>
   </div>
 
   <script>
@@ -707,7 +742,7 @@
     });
 
     desktopGuidelineBtn.addEventListener('click', function() {
-      alert('FIXORIUM GUIDELINE\n\n⇆ EXCHANGE - Cross-chain swaps\n◻ WALLET - Secure wallet\n⌗ DEX SERVICE - White-label DEX\nMAX FEE 0.01% - Lowest on Solana\nMEV PROTECTION - Advanced routing');
+      alert('FIXORIUM GUIDELINE\n\n⇆ EXCHANGE - CROSS-CHAIN SWAPS\n□ WALLET - SECURE WALLET\n⌗ DEX SERVICE - WHITE-LABEL DEX\nMAX FEE 0.01% - LOWEST ON SOLANA\nMEV PROTECTION - ADVANCED ROUTING');
     });
 
     mobileInfoBtn.addEventListener('click', function(e) {
