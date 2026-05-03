@@ -15,7 +15,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     
     // API testing states
     const [maxEndpoint, setMaxEndpoint] = useState('quote');
-    const [maxParams, setMaxParams] = useState('{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}');
+    const [maxParams, setMaxParams] = useState('');
     const [maxResponse, setMaxResponse] = useState('');
     const [maxLoading, setMaxLoading] = useState(false);
     
@@ -41,7 +41,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         { value: 'pools', label: 'POOLS', method: 'GET', description: 'Get liquidity pools' },
         { value: 'tokenPrice', label: 'TOKEN PRICE', method: 'GET', description: 'Get token price' },
         { value: 'getAccount', label: 'GET ACCOUNT', method: 'GET', description: 'Get account info' },
-        { value: 'limitOrder', label: 'LIMIT ORDER', method: 'POST', description: 'Create limit order' },
+        { value: 'limit', label: 'LIMIT ORDER', method: 'POST', description: 'Create limit order' },
         { value: 'dca', label: 'DCA', method: 'POST', description: 'Create DCA strategy' }
     ];
 
@@ -52,15 +52,15 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         { value: 'liquidity', label: 'LIQUIDITY', method: 'GET', description: 'Get liquidity pools' }
     ];
 
+    // Update params based on selected endpoint
     useEffect(() => {
-        // Update params based on selected endpoint
         const endpointConfig: Record<string, string> = {
             quote: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}',
             swap: '{\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "quoteResponse": {\n    "inputMint": "So11111111111111111111111111111111111111112",\n    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n    "inAmount": "1000000",\n    "outAmount": "999900",\n    "fee": {\n      "bps": 1,\n      "percentage": "0.01%",\n      "amount": "100"\n    }\n  }\n}',
             pools: '{\n  "mint": "So11111111111111111111111111111111111111112"\n}',
             tokenPrice: '{\n  "mint": "So11111111111111111111111111111111111111112"\n}',
             getAccount: '{\n  "publicKey": "YourSolanaWalletAddressHere"\n}',
-            limitOrder: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "inputAmount": "1000000",\n  "triggerPrice": "150.5",\n  "expiryDays": 7,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}',
+            limit: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "inputAmount": "1000000",\n  "triggerPrice": "150.5",\n  "expiryDays": 7,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}',
             dca: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "totalAmount": "10000000",\n  "amountPerCycle": "1000000",\n  "cycleSeconds": 86400,\n  "totalCycles": 10,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}'
         };
         setMaxParams(endpointConfig[maxEndpoint] || endpointConfig.quote);
@@ -110,7 +110,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             pools: 'GET',
             tokenPrice: 'GET',
             getAccount: 'GET',
-            limitOrder: 'POST',
+            limit: 'POST',
             dca: 'POST'
         };
         return methods[endpoint] || 'GET';
@@ -148,6 +148,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 }
                 const queryParams = new URLSearchParams(params).toString();
                 url += `?${queryParams}`;
+                console.log('GET Request URL:', url);
             } else {
                 let body;
                 try {
@@ -158,6 +159,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     return;
                 }
                 options.body = JSON.stringify(body);
+                console.log('POST Request Body:', options.body);
             }
             
             const response = await fetch(url, options);
@@ -168,6 +170,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
         } catch (error: any) {
+            console.error('API test error:', error);
             setMaxResponse(`Error: ${error.message}`);
         } finally {
             setMaxLoading(false);
@@ -197,6 +200,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     return;
                 }
                 options.body = JSON.stringify(body);
+                console.log('MintMe Request:', { url, options });
             } else if (mintMeEndpoint === 'liquidity') {
                 options.method = 'GET';
                 let params;
@@ -219,6 +223,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
         } catch (error: any) {
+            console.error('MintMe API error:', error);
             setMintMeResponse(`Error: ${error.message}`);
         } finally {
             setMintMeLoading(false);
@@ -442,7 +447,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     <div className="p-6 flex-1">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
                                             <div className="flex flex-col">
-                                                <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
+                                                <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS (JSON)</label>
                                                 <textarea 
                                                     value={maxParams} 
                                                     onChange={(e) => setMaxParams(e.target.value)} 
@@ -495,7 +500,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                     <div className="p-6 flex-1">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
                                             <div className="flex flex-col">
-                                                <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
+                                                <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS (JSON)</label>
                                                 <textarea 
                                                     value={mintMeParams} 
                                                     onChange={(e) => setMintMeParams(e.target.value)} 
@@ -528,7 +533,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 </div>
             </div>
 
-            {/* Bottom Navigation */}
+            {/* Bottom Navigation - Mobile Only */}
             <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
                 <div className="flex items-center justify-around py-2">
                     <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
