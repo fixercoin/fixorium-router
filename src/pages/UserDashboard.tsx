@@ -55,13 +55,13 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     // Update params based on selected endpoint
     useEffect(() => {
         const endpointConfig: Record<string, string> = {
-            quote: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}',
-            swap: '{\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "quoteResponse": {\n    "inputMint": "So11111111111111111111111111111111111111112",\n    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n    "inAmount": "1000000",\n    "outAmount": "999900",\n    "fee": {\n      "bps": 1,\n      "percentage": "0.01%",\n      "amount": "100"\n    }\n  }\n}',
-            pools: '{\n  "mint": "So11111111111111111111111111111111111111112"\n}',
-            tokenPrice: '{\n  "mint": "So11111111111111111111111111111111111111112"\n}',
-            getAccount: '{\n  "publicKey": "YourSolanaWalletAddressHere"\n}',
-            limit: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "inputAmount": "1000000",\n  "triggerPrice": "150.5",\n  "expiryDays": 7,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}',
-            dca: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "totalAmount": "10000000",\n  "amountPerCycle": "1000000",\n  "cycleSeconds": 86400,\n  "totalCycles": 10,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}'
+            quote: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000",\n  "network": "devnet"\n}',
+            swap: '{\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "network": "devnet",\n  "quoteResponse": {\n    "inputMint": "So11111111111111111111111111111111111111112",\n    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n    "inAmount": "1000000",\n    "outAmount": "999900",\n    "fee": {\n      "bps": 1,\n      "percentage": "0.01%",\n      "amount": "100"\n    }\n  }\n}',
+            pools: '{\n  "mint": "So11111111111111111111111111111111111111112",\n  "network": "devnet"\n}',
+            tokenPrice: '{\n  "mint": "So11111111111111111111111111111111111111112",\n  "network": "devnet"\n}',
+            getAccount: '{\n  "publicKey": "YourSolanaWalletAddressHere",\n  "network": "devnet"\n}',
+            limit: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "inputAmount": "1000000",\n  "triggerPrice": "150.5",\n  "expiryDays": 7,\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "network": "devnet"\n}',
+            dca: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "totalAmount": "10000000",\n  "amountPerCycle": "1000000",\n  "cycleSeconds": 86400,\n  "totalCycles": 10,\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "network": "devnet"\n}'
         };
         setMaxParams(endpointConfig[maxEndpoint] || endpointConfig.quote);
     }, [maxEndpoint]);
@@ -148,7 +148,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 }
                 const queryParams = new URLSearchParams(params).toString();
                 url += `?${queryParams}`;
-                console.log('GET Request URL:', url);
             } else {
                 let body;
                 try {
@@ -159,7 +158,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     return;
                 }
                 options.body = JSON.stringify(body);
-                console.log('POST Request Body:', options.body);
             }
             
             const response = await fetch(url, options);
@@ -170,7 +168,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
         } catch (error: any) {
-            console.error('API test error:', error);
             setMaxResponse(`Error: ${error.message}`);
         } finally {
             setMaxLoading(false);
@@ -200,7 +197,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     return;
                 }
                 options.body = JSON.stringify(body);
-                console.log('MintMe Request:', { url, options });
             } else if (mintMeEndpoint === 'liquidity') {
                 options.method = 'GET';
                 let params;
@@ -223,7 +219,6 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             setApiUsage(newUsage);
             localStorage.setItem('api_usage', JSON.stringify(newUsage));
         } catch (error: any) {
-            console.error('MintMe API error:', error);
             setMintMeResponse(`Error: ${error.message}`);
         } finally {
             setMintMeLoading(false);
@@ -238,32 +233,35 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             <header className="fixed top-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-b border-border z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-14">
-                        <div className="flex items-center gap-8">
-                            <div className="text-base font-semibold text-primary uppercase tracking-wider">
-                                DEFI PLATFORM
-                            </div>
-                            <nav className="hidden md:flex items-center gap-6">
-                                <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                    EXCHANGE
-                                </a>
-                                <button onClick={() => window.location.href = '/'} className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                    HOME
-                                </button>
-                                <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                    WALLET
-                                </a>
-                                <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-primary transition uppercase tracking-wider">
-                                    TEAM
-                                </a>
-                            </nav>
+                        {/* Left side - DEFI PLATFORM */}
+                        <div className="text-base font-semibold text-primary uppercase tracking-wider">
+                            DEFI PLATFORM
                         </div>
 
+                        {/* Center - Navigation */}
+                        <nav className="hidden md:flex items-center gap-6">
+                            <button onClick={() => window.location.href = '/'} className="text-base text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                HOME
+                            </button>
+                            <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-base text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                EXCHANGE
+                            </a>
+                           
+                            <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="text-base text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                WALLET
+                            </a>
+                            <a href="https://fixorium.com.pk/team" target="_blank" rel="noopener noreferrer" className="text-base text-gray-400 hover:text-primary transition uppercase tracking-wider">
+                                TEAM
+                            </a>
+                        </nav>
+
+                        {/* Right side - Profile Dropdown */}
                         <div className="relative">
                             <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 text-gray-400 hover:text-primary transition p-2">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
-                                <span className="text-[10px] font-medium uppercase tracking-wider">PROFILE</span>
+                                <span className="text-base font-medium uppercase tracking-wider">PROFILE</span>
                             </button>
                             
                             {showUserMenu && (
@@ -536,13 +534,17 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
             {/* Bottom Navigation - Mobile Only */}
             <div className="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-md border-t border-border z-50 md:hidden">
                 <div className="flex items-center justify-around py-2">
+                    <button onClick={() => window.location.href = '/'} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        <span className="text-[8px] uppercase">HOME</span>
+                    </button>
                     <a href="https://exchange.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m3 4H4m0 0l4 4m-4-4l4-4" /></svg>
                         <span className="text-[8px] uppercase">EXCHANGE</span>
                     </a>
-                    <button onClick={() => window.location.href = '/'} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                        <span className="text-[8px] uppercase">HOME</span>
+                    <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" /></svg>
+                        <span className="text-[8px] uppercase">EVM</span>
                     </button>
                     <a href="https://wallet.fixorium.com.pk" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M6 14h12M9 18h6M12 6v12" /></svg>
