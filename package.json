@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "types:generate": "wrangler types"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -13,10 +14,12 @@
     "react-router-dom": "^6.14.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240405.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.0.0",
     "typescript": "^5.0.0",
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "wrangler": "^3.101.0"
   }
 }
