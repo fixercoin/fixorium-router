@@ -18,3 +18,45 @@ preview_id = "e6e221ee390d461bbe2dc737752da27f"
 binding = "USAGE_KV"
 id = "079a1cc4c4934884b25b9c8a3f3c674d"
 preview_id = "079a1cc4c4934884b25b9c8a3f3c674d"
+
+# External packages that should not be bundled
+[env.production]
+compatibility_flags = ["nodejs_compat"]
+
+[env.production.bundle]
+external = [
+  "@solana/web3.js",
+  "@solana/spl-token",
+  "buffer",
+  "stream",
+  "crypto",
+  "http",
+  "https",
+  "url",
+  "zlib",
+  "ws",
+  "node-fetch",
+  "bignumber.js",
+  "superstruct"
+]
+
+# Dev environment (optional)
+[env.dev]
+compatibility_flags = ["nodejs_compat"]
+
+[env.dev.bundle]
+external = [
+  "@solana/web3.js",
+  "@solana/spl-token",
+  "buffer",
+  "stream",
+  "crypto",
+  "http",
+  "https",
+  "url",
+  "zlib",
+  "ws",
+  "node-fetch",
+  "bignumber.js",
+  "superstruct"
+]
