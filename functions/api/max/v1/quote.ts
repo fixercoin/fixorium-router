@@ -14,8 +14,17 @@ export async function onRequestGet({ request, env }) {
         return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
     
-    // Get cached pools from KV
-    const cached = await env.DEVELOPERS_KV.get('all_pools', 'json');
+    // Get from KV - FIXED
+    const kvData = await env.DEVELOPERS_KV.get('all_pools');
+    let cached = null;
+    
+    if (kvData) {
+        try {
+            cached = JSON.parse(kvData);
+        } catch (e) {
+            console.error('Failed to parse KV data:', e);
+        }
+    }
     
     // If no cache, use fallback
     if (!cached || !cached.pools || cached.pools.length === 0) {
@@ -24,6 +33,7 @@ export async function onRequestGet({ request, env }) {
             success: true,
             source: 'fallback',
             message: 'No pools in cache',
+            poolsCount: cached?.pools?.length || 0,
             quote: {
                 inputMint,
                 outputMint,
@@ -34,7 +44,7 @@ export async function onRequestGet({ request, env }) {
         });
     }
     
-    // Find pools with matching token pair
+    // Find matching pools
     const relevantPools = cached.pools.filter((pool: any) => 
         (pool.tokenA === inputMint && pool.tokenB === outputMint) ||
         (pool.tokenA === outputMint && pool.tokenB === inputMint)
@@ -44,8 +54,8 @@ export async function onRequestGet({ request, env }) {
         const feeAmount = amount * 0.0001;
         return Response.json({
             success: true,
-            source: 'no_pool_found',
-            message: `No pool found for ${inputMint} -> ${outputMint}`,
+            source: 'no_pool',
+            message: `No pool found for this pair`,
             poolsScanned: cached.total,
             quote: {
                 inputMint,
@@ -57,7 +67,7 @@ export async function onRequestGet({ request, env }) {
         });
     }
     
-    // Calculate best output using constant product formula
+    // Calculate best output
     let bestOutput = 0;
     let bestPool = null;
     
@@ -72,19 +82,33 @@ export async function onRequestGet({ request, env }) {
             reserveOut = pool.reserveA;
         }
         
-        // x * y = k formula
-        const output = (amount * reserveOut) / (reserveIn + amount);
-        
-        if (output > bestOutput) {
-            bestOutput = output;
-            bestPool = pool;
+        if (reserveIn && reserveOut && reserveIn > 0) {
+            const output = (amount * reserveOut) / (reserveIn + amount);
+            if (output > bestOutput) {
+                bestOutput = output;
+                bestPool = pool;
+            }
         }
+    }
+    
+    if (bestOutput === 0) {
+        const feeAmount = amount * 0.0001;
+        return Response.json({
+            success: true,
+            source: 'calculation_failed',
+            quote: {
+                inputMint,
+                outputMint,
+                inAmount: amount,
+                outAmount: (amount - feeAmount).toFixed(9),
+                fee: { bps: 1, percentage: '0.01%', amount: feeAmount.toFixed(9) }
+            }
+        });
     }
     
     // Apply 0.01% fee
     const feeAmount = bestOutput * 0.0001;
     const finalOutput = bestOutput - feeAmount;
-    const priceImpact = ((amount / (bestPool?.reserveA || 1)) * 100).toFixed(4);
     
     return Response.json({
         success: true,
@@ -97,7 +121,6 @@ export async function onRequestGet({ request, env }) {
             outputMint,
             inAmount: amount,
             outAmount: finalOutput.toFixed(9),
-            priceImpact: `${priceImpact}%`,
             fee: { bps: 1, percentage: '0.01%', amount: feeAmount.toFixed(9) }
         }
     });
