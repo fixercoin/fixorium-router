@@ -69,23 +69,24 @@
       margin-bottom: 3rem;
     }
 
-    /* TEXT HEADER */
+    /* TEXT HEADER - RESPONSIVE FONT SIZE */
     .fixorium-header {
       margin: 0 auto 2rem;
       text-align: center;
     }
 
     .fixorium-title {
-      font-size: 4rem;
       font-weight: bold;
       color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 4px;
       margin-bottom: 1rem;
+      /* RESPONSIVE FONT SIZE */
+      font-size: clamp(2rem, 8vw, 4rem);
     }
 
     .fixorium-subtitle {
-      font-size: 1.2rem;
+      font-size: clamp(0.8rem, 3vw, 1.2rem);
       color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -456,21 +457,17 @@
         display: block;
       }
       
-      .fixorium-title {
-        font-size: 2.5rem;
-      }
-      
-      .fixorium-subtitle {
-        font-size: 1rem;
-      }
-      
       .fixorium-card {
         margin: 1rem auto;
         padding: 1rem;
       }
       
       .fixorium-card p {
-        font-size: 11px;
+        font-size: 10px;
+      }
+      
+      .card-feature {
+        font-size: 9px;
       }
     }
 
@@ -491,16 +488,16 @@
     <!-- Main Page -->
     <div class="page-content active" id="main-page">
       <div class="main-section">
-        <!-- TEXT HEADER -->
+        <!-- TEXT HEADER - RESPONSIVE -->
         <div class="fixorium-header">
           <div class="fixorium-title">DEFI PLATFORM</div>
           <div class="fixorium-subtitle">POWERED BY FIXORIUM</div>
         </div>
 
-        <!-- SINGLE CARD - ALL CAPITAL TEXT -->
+        <!-- SINGLE CARD - FIXORIUM PLATFORM CONTENT -->
         <div class="fixorium-card">
           <p>FIXORIUM IS A NEXT-GENERATION DECENTRALIZED FINANCE PLATFORM BUILT ON SOLANA BLOCKCHAIN.</p>
-          <p>WE PROVIDE THE LOWEST FEE DEX AGGREGATOR (0.01%) WITH ADVANCED MEV PROTECTION, CROSS-CHAIN SWAP ENGINE, AND NON-CUSTODIAL MULTI-CHAIN WALLET SOLUTIONS.</p>
+          <p>WE PROVIDE EXCHANGE, WALLET, MINTME DEX ROUTER, AND SOLANA DEX ROUTER WITH ADVANCED MEV PROTECTION, CROSS-CHAIN SWAP ENGINE, AND NON-CUSTODIAL MULTI-CHAIN WALLET SOLUTIONS.</p>
           <p>OUR PLATFORM AGGREGATES LIQUIDITY FROM 15+ DEXES INCLUDING RAYDIUM, ORCA, METEORA, PUMP.FUN, UNISWAP, AND PANCAKESWAP ACROSS SOLANA, ETHEREUM, BSC, ARBITRUM, AND POLYGON NETWORKS.</p>
           <div class="card-features">
             <span class="card-feature">0.01% FEE</span>
@@ -635,7 +632,7 @@
     </div>
   </div>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR - SIMPLE WALLET ICON -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
   <div class="mobile-bottom-nav">
     <div class="mobile-nav-items">
       <button class="mobile-nav-item" data-page="exchange">
