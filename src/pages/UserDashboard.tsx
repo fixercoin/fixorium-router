@@ -34,25 +34,37 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
     const MINTME_CONTRACT = "0x33C60168f237146647891BAae4ca4DF8Ac58D03E";
     const MAX_PROGRAM_ID = "EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM";
 
-    useEffect(() => {
-        if (maxEndpoint === 'quote') {
-            setMaxParams('{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}');
-        } else if (maxEndpoint === 'swap') {
-            setMaxParams('{\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "quoteResponse": {\n    "inputMint": "So11111111111111111111111111111111111111112",\n    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n    "inAmount": "1000000",\n    "outAmount": "999900",\n    "fee": {\n      "bps": 1,\n      "percentage": "0.01%",\n      "amount": "100"\n    }\n  }\n}');
-        } else if (maxEndpoint === 'pools') {
-            setMaxParams('{\n  "mint": "So11111111111111111111111111111111111111112"\n}');
-        }
-    }, [maxEndpoint]);
+    // Available MAX endpoints
+    const maxEndpoints = [
+        { value: 'quote', label: 'QUOTE', method: 'GET', description: 'Get swap quote' },
+        { value: 'swap', label: 'SWAP', method: 'POST', description: 'Execute swap' },
+        { value: 'pools', label: 'POOLS', method: 'GET', description: 'Get liquidity pools' },
+        { value: 'tokenPrice', label: 'TOKEN PRICE', method: 'GET', description: 'Get token price' },
+        { value: 'getAccount', label: 'GET ACCOUNT', method: 'GET', description: 'Get account info' },
+        { value: 'limitOrder', label: 'LIMIT ORDER', method: 'POST', description: 'Create limit order' },
+        { value: 'dca', label: 'DCA', method: 'POST', description: 'Create DCA strategy' }
+    ];
+
+    // Available MintMe endpoints
+    const mintMeEndpoints = [
+        { value: 'quote', label: 'QUOTE', method: 'POST', description: 'Get swap quote' },
+        { value: 'swap', label: 'SWAP', method: 'POST', description: 'Execute swap' },
+        { value: 'liquidity', label: 'LIQUIDITY', method: 'GET', description: 'Get liquidity pools' }
+    ];
 
     useEffect(() => {
-        if (mintMeEndpoint === 'quote') {
-            setMintMeParams('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1000000000000000000",\n  "recipient": "0xYourWalletAddress"\n}');
-        } else if (mintMeEndpoint === 'swap') {
-            setMintMeParams('{\n  "tokenIn": "0x0000000000000000000000000000000000000000",\n  "tokenOut": "0x091da08c5bf888252ed1ab3e44246cbf72d63307",\n  "amountIn": "1000000000000000000",\n  "slippage": "100",\n  "recipient": "0xYourWalletAddress"\n}');
-        } else if (mintMeEndpoint === 'liquidity') {
-            setMintMeParams('{\n  "tokenAddress": "0x091da08c5bf888252ed1ab3e44246cbf72d63307"\n}');
-        }
-    }, [mintMeEndpoint]);
+        // Update params based on selected endpoint
+        const endpointConfig: Record<string, string> = {
+            quote: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "amount": "1000000"\n}',
+            swap: '{\n  "userPublicKey": "YourSolanaWalletAddressHere",\n  "quoteResponse": {\n    "inputMint": "So11111111111111111111111111111111111111112",\n    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n    "inAmount": "1000000",\n    "outAmount": "999900",\n    "fee": {\n      "bps": 1,\n      "percentage": "0.01%",\n      "amount": "100"\n    }\n  }\n}',
+            pools: '{\n  "mint": "So11111111111111111111111111111111111111112"\n}',
+            tokenPrice: '{\n  "mint": "So11111111111111111111111111111111111111112"\n}',
+            getAccount: '{\n  "publicKey": "YourSolanaWalletAddressHere"\n}',
+            limitOrder: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "inputAmount": "1000000",\n  "triggerPrice": "150.5",\n  "expiryDays": 7,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}',
+            dca: '{\n  "inputMint": "So11111111111111111111111111111111111111112",\n  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",\n  "totalAmount": "10000000",\n  "amountPerCycle": "1000000",\n  "cycleSeconds": 86400,\n  "totalCycles": 10,\n  "userPublicKey": "YourSolanaWalletAddressHere"\n}'
+        };
+        setMaxParams(endpointConfig[maxEndpoint] || endpointConfig.quote);
+    }, [maxEndpoint]);
 
     useEffect(() => {
         const userEmail = localStorage.getItem('user_email');
@@ -91,6 +103,19 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const getMethodForEndpoint = (endpoint: string): string => {
+        const methods: Record<string, string> = {
+            quote: 'GET',
+            swap: 'POST',
+            pools: 'GET',
+            tokenPrice: 'GET',
+            getAccount: 'GET',
+            limitOrder: 'POST',
+            dca: 'POST'
+        };
+        return methods[endpoint] || 'GET';
+    };
+
     const testMaxEndpoint = async () => {
         setMaxLoading(true);
         setMaxResponse('');
@@ -103,15 +128,16 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         
         try {
             let url = `/api/max/v1/${maxEndpoint}`;
+            const method = getMethodForEndpoint(maxEndpoint);
             let options: RequestInit = {
+                method: method,
                 headers: {
                     'X-API-Key': apiKey,
                     'Content-Type': 'application/json'
                 }
             };
             
-            if (maxEndpoint === 'quote') {
-                options.method = 'GET';
+            if (method === 'GET') {
                 let params;
                 try {
                     params = JSON.parse(maxParams);
@@ -122,8 +148,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 }
                 const queryParams = new URLSearchParams(params).toString();
                 url += `?${queryParams}`;
-            } else if (maxEndpoint === 'swap') {
-                options.method = 'POST';
+            } else {
                 let body;
                 try {
                     body = JSON.parse(maxParams);
@@ -132,29 +157,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     setMaxLoading(false);
                     return;
                 }
-                if (!body.userPublicKey) {
-                    setMaxResponse('Error: Missing "userPublicKey"');
-                    setMaxLoading(false);
-                    return;
-                }
-                if (!body.quoteResponse) {
-                    setMaxResponse('Error: Missing "quoteResponse"');
-                    setMaxLoading(false);
-                    return;
-                }
                 options.body = JSON.stringify(body);
-            } else if (maxEndpoint === 'pools') {
-                options.method = 'GET';
-                let params;
-                try {
-                    params = JSON.parse(maxParams);
-                } catch (e) {
-                    setMaxResponse(`Error: Invalid JSON\n\n${e.message}`);
-                    setMaxLoading(false);
-                    return;
-                }
-                const queryParams = new URLSearchParams(params).toString();
-                url += `?${queryParams}`;
             }
             
             const response = await fetch(url, options);
@@ -183,18 +186,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                 }
             };
             
-            if (mintMeEndpoint === 'quote') {
-                options.method = 'POST';
-                let body;
-                try {
-                    body = JSON.parse(mintMeParams);
-                } catch (e) {
-                    setMintMeResponse(`Error: Invalid JSON in parameters\n\n${e.message}`);
-                    setMintMeLoading(false);
-                    return;
-                }
-                options.body = JSON.stringify(body);
-            } else if (mintMeEndpoint === 'swap') {
+            if (mintMeEndpoint === 'quote' || mintMeEndpoint === 'swap') {
                 options.method = 'POST';
                 let body;
                 try {
@@ -233,6 +225,8 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
         }
     };
 
+    const currentMaxEndpoint = maxEndpoints.find(e => e.value === maxEndpoint);
+
     return (
         <div className="min-h-screen bg-dark">
             {/* Fixed Header */}
@@ -268,7 +262,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                             </button>
                             
                             {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg z-50">
+                                <div className="absolute right-0 mt-2 w-80 bg-card border border-border rounded-lg shadow-lg z-50">
                                     <div className="py-1">
                                         {isRegistered && (
                                             <>
@@ -276,7 +270,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                     <div className="text-[10px] text-gray-400 uppercase mb-1">ACCOUNT</div>
                                                     <div className="text-xs text-white break-all">{registeredEmail}</div>
                                                 </div>
-                                                <div className="px-4 py-3">
+                                                <div className="px-4 py-3 border-b border-border">
                                                     <div className="text-[10px] text-gray-400 uppercase mb-1">MAX API KEY</div>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <code className="flex-1 text-[10px] text-primary break-all bg-darker p-1.5 rounded">
@@ -304,7 +298,9 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider">LOGOUT</button>
+                                                <div className="px-4 py-3 border-t border-border mt-2">
+                                                    <button onClick={handleLogout} className="w-full text-left px-2 py-1 text-xs text-red-400 hover:bg-red-500/10 transition uppercase tracking-wider">LOGOUT</button>
+                                                </div>
                                             </>
                                         )}
                                     </div>
@@ -328,12 +324,12 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                     </span>
                     <span className="mx-4 inline-flex items-center gap-2">
                         <span className="text-yellow-400 text-[10px] uppercase tracking-wider font-semibold">API</span>
-                        <span className="text-white text-[9px] uppercase tracking-wider">TEST YOUR API ENDPOINTS DIRECTLY FROM DASHBOARD</span>
+                        <span className="text-white text-[9px] uppercase tracking-wider">7 ENDPOINTS: QUOTE • SWAP • POOLS • TOKEN PRICE • ACCOUNT • LIMIT ORDER • DCA</span>
                     </span>
                 </div>
             </div>
 
-            {/* Main Content - Equal Height Columns using flex */}
+            {/* Main Content */}
             <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col lg:flex-row gap-6">
@@ -413,7 +409,7 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                             </div>
                         </div>
 
-                        {/* Right Column - 70% - Equal Height */}
+                        {/* Right Column - 70% */}
                         <div className="lg:w-[70%] flex">
                             {activeTab === 'max' ? (
                                 <div className="w-full border border-gray-700 rounded-xl overflow-hidden bg-transparent flex flex-col">
@@ -423,28 +419,52 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                 <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MAX API TESTER</h2>
                                                 <p className="text-[11px] text-gray-400 mt-1">Solana DEX Aggregator - 0.01% Fee</p>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => setMaxEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'quote' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>QUOTE</button>
-                                                <button onClick={() => setMaxEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'swap' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>SWAP</button>
-                                                <button onClick={() => setMaxEndpoint('pools')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${maxEndpoint === 'pools' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>POOLS</button>
+                                            <div className="flex flex-wrap gap-2">
+                                                <select
+                                                    value={maxEndpoint}
+                                                    onChange={(e) => setMaxEndpoint(e.target.value)}
+                                                    className="px-3 py-1.5 text-[10px] font-semibold rounded-lg border border-gray-700 bg-darker text-gray-400 hover:text-white focus:border-primary outline-none"
+                                                >
+                                                    {maxEndpoints.map(ep => (
+                                                        <option key={ep.value} value={ep.value}>
+                                                            {ep.label} ({ep.method})
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
+                                        {currentMaxEndpoint && (
+                                            <div className="mt-2 text-[9px] text-gray-500">
+                                                {currentMaxEndpoint.description} • Method: {currentMaxEndpoint.method}
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="p-6 flex-1">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
                                             <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
-                                                <textarea value={maxParams} onChange={(e) => setMaxParams(e.target.value)} className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none min-h-[300px]" />
+                                                <textarea 
+                                                    value={maxParams} 
+                                                    onChange={(e) => setMaxParams(e.target.value)} 
+                                                    className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none min-h-[350px]" 
+                                                    placeholder="Enter JSON parameters..."
+                                                />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Program ID: {MAX_PROGRAM_ID.slice(0, 16)}...</div>
-                                                    <button onClick={testMaxEndpoint} disabled={maxLoading || !apiKey} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
+                                                    <button 
+                                                        onClick={testMaxEndpoint} 
+                                                        disabled={maxLoading || !apiKey} 
+                                                        className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50"
+                                                    >
                                                         {maxLoading ? 'SENDING...' : 'SEND REQUEST'}
                                                     </button>
                                                 </div>
                                             </div>
                                             <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
-                                                <pre className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all min-h-[300px]">{maxResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
+                                                <pre className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all min-h-[350px]">
+                                                    {maxResponse || 'Click "SEND REQUEST" to test the endpoint...'}
+                                                </pre>
                                             </div>
                                         </div>
                                     </div>
@@ -457,10 +477,18 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                                 <h2 className="text-lg font-bold text-primary uppercase tracking-wider">MINTME API TESTER</h2>
                                                 <p className="text-[11px] text-gray-400 mt-1">EVM DEX Aggregator - 0.01% Fee</p>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => setMintMeEndpoint('quote')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'quote' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>QUOTE</button>
-                                                <button onClick={() => setMintMeEndpoint('swap')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'swap' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>SWAP</button>
-                                                <button onClick={() => setMintMeEndpoint('liquidity')} className={`px-4 py-1.5 text-[10px] font-semibold rounded-lg transition-all ${mintMeEndpoint === 'liquidity' ? 'bg-primary text-black' : 'border border-gray-700 text-gray-400 hover:text-white'}`}>LIQUIDITY</button>
+                                            <div className="flex flex-wrap gap-2">
+                                                <select
+                                                    value={mintMeEndpoint}
+                                                    onChange={(e) => setMintMeEndpoint(e.target.value)}
+                                                    className="px-3 py-1.5 text-[10px] font-semibold rounded-lg border border-gray-700 bg-darker text-gray-400 hover:text-white focus:border-primary outline-none"
+                                                >
+                                                    {mintMeEndpoints.map(ep => (
+                                                        <option key={ep.value} value={ep.value}>
+                                                            {ep.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -468,17 +496,28 @@ const Dashboard: React.FC<DashboardProps> = ({ walletAddress = '' }) => {
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
                                             <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">REQUEST PARAMETERS</label>
-                                                <textarea value={mintMeParams} onChange={(e) => setMintMeParams(e.target.value)} className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none min-h-[300px]" />
+                                                <textarea 
+                                                    value={mintMeParams} 
+                                                    onChange={(e) => setMintMeParams(e.target.value)} 
+                                                    className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-white text-xs font-mono focus:border-primary outline-none resize-none min-h-[350px]" 
+                                                    placeholder="Enter JSON parameters..."
+                                                />
                                                 <div className="flex items-center justify-between mt-3">
                                                     <div className="text-[9px] text-gray-400">Contract: {MINTME_CONTRACT.slice(0, 16)}...</div>
-                                                    <button onClick={testMintMeEndpoint} disabled={mintMeLoading} className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50">
+                                                    <button 
+                                                        onClick={testMintMeEndpoint} 
+                                                        disabled={mintMeLoading} 
+                                                        className="px-5 py-2 bg-primary text-black text-[11px] font-bold rounded-lg hover:bg-[#e8d58a] transition disabled:opacity-50"
+                                                    >
                                                         {mintMeLoading ? 'SENDING...' : 'SEND REQUEST'}
                                                     </button>
                                                 </div>
                                             </div>
                                             <div className="flex flex-col">
                                                 <label className="block text-[10px] text-gray-400 uppercase mb-2 font-semibold">RESPONSE</label>
-                                                <pre className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all min-h-[300px]">{mintMeResponse || 'Click "SEND REQUEST" to test the endpoint...'}</pre>
+                                                <pre className="flex-1 w-full p-3 bg-darker border border-gray-700 rounded-lg text-[10px] text-gray-300 font-mono overflow-auto whitespace-pre-wrap break-all min-h-[350px]">
+                                                    {mintMeResponse || 'Click "SEND REQUEST" to test the endpoint...'}
+                                                </pre>
                                             </div>
                                         </div>
                                     </div>
