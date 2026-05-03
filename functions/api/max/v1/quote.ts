@@ -11,13 +11,15 @@ export async function onRequestGet({ request, env }) {
   const amount = url.searchParams.get('amount');
   
   if (!inputMint || !outputMint || !amount) {
-    return Response.json({ error: 'Missing parameters' }, { status: 400 });
+    return Response.json({ error: 'Missing parameters: inputMint, outputMint, amount' }, { status: 400 });
   }
   
   const PROGRAM_ID = 'EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM';
   const RPC_URL = 'https://api.devnet.solana.com';
   
   let programAccounts = [];
+  let isRealData = false;
+  
   try {
     const response = await fetch(RPC_URL, {
       method: 'POST',
@@ -31,26 +33,33 @@ export async function onRequestGet({ request, env }) {
     });
     const data = await response.json();
     programAccounts = data.result || [];
-  } catch (e) {
-    console.error('Failed to fetch program accounts:', e);
+    isRealData = programAccounts.length > 0;
+  } catch (error) {
+    console.error('RPC call failed:', error);
   }
   
   const amountNum = parseFloat(amount);
-  const feeAmount = amountNum * 0.0001;
+  const feeBps = 1;
+  const feePercent = feeBps / 10000;
+  const feeAmount = amountNum * feePercent;
   const amountOut = amountNum - feeAmount;
   
   return Response.json({
     success: true,
     programId: PROGRAM_ID,
     network: 'devnet',
-    isRealData: programAccounts.length > 0,
+    isRealData: isRealData,
     programAccountsFound: programAccounts.length,
     quote: {
-      inputMint,
-      outputMint,
+      inputMint: inputMint,
+      outputMint: outputMint,
       inAmount: amount,
-      outAmount: amountOut.toString(),
-      fee: { bps: 1, percentage: '0.01%', amount: feeAmount.toString() }
+      outAmount: amountOut.toFixed(9),
+      fee: {
+        bps: feeBps,
+        percentage: '0.01%',
+        amount: feeAmount.toFixed(9)
+      }
     },
     timestamp: Date.now()
   });
