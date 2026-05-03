@@ -1,8 +1,8 @@
 export async function onRequestGet({ request, env }) {
+    // CHANGE THIS: Use mainnet, not devnet
     const RPC_URL = 'https://api.mainnet-beta.solana.com';
     const PROGRAM_ID = '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8'; // Raydium
     
-    // Direct test call to RPC
     const response = await fetch(RPC_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
