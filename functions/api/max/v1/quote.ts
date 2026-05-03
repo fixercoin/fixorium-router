@@ -1,0 +1,31 @@
+export async function onRequestGet({ request, env }) {
+  const apiKey = request.headers.get('X-API-Key');
+  
+  if (!apiKey) {
+    return Response.json({ error: 'API key required' }, { status: 401 });
+  }
+  
+  const url = new URL(request.url);
+  const inputMint = url.searchParams.get('inputMint');
+  const outputMint = url.searchParams.get('outputMint');
+  const amount = url.searchParams.get('amount');
+  
+  if (!inputMint || !outputMint || !amount) {
+    return Response.json({ error: 'Missing parameters' }, { status: 400 });
+  }
+  
+  const amountNum = parseFloat(amount);
+  const feeAmount = amountNum * 0.0001;
+  const amountOut = amountNum - feeAmount;
+  
+  return Response.json({
+    success: true,
+    quote: {
+      inputMint,
+      outputMint,
+      inAmount: amount,
+      outAmount: amountOut.toString(),
+      fee: { bps: 1, percentage: '0.01%', amount: feeAmount.toString() }
+    }
+  });
+}
