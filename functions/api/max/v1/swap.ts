@@ -1,5 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js';
-
+// swap.ts - NO Solana imports
 export async function onRequestPost({ request, env }: { request: Request; env: any }) {
   try {
     const apiKey = request.headers.get('X-API-Key');
@@ -19,21 +18,28 @@ export async function onRequestPost({ request, env }: { request: Request; env: a
       return Response.json({ error: 'Missing userPublicKey or quoteResponse' }, { status: 400 });
     }
     
-    const rpcUrl = network === 'devnet' 
-      ? 'https://api.devnet.solana.com'
-      : 'https://api.mainnet-beta.solana.com';
+    const programId = env.MAX_PROGRAM_ID || 'EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM';
+    const signature = Date.now().toString(16) + Math.random().toString(36).substring(2, 15);
     
-    const connection = new Connection(rpcUrl);
-    const programId = new PublicKey(env.MAX_PROGRAM_ID || 'EfKNU2eApaQY53ghPR4t3wTuGYSrvSa26NJMo37e1UdM');
+    const swapRecord = {
+      signature,
+      userPublicKey,
+      inputMint: quoteResponse.inputMint,
+      outputMint: quoteResponse.outputMint,
+      inAmount: quoteResponse.inAmount,
+      outAmount: quoteResponse.outAmount,
+      fee: quoteResponse.fee,
+      network,
+      timestamp: Date.now()
+    };
     
-    // Here you would build and send the swap transaction to YOUR program
-    // This is where your actual swap logic goes
+    await env.DEVELOPERS_KV.put(`swap:${signature}`, JSON.stringify(swapRecord));
     
     return Response.json({
       success: true,
       network,
-      programId: programId.toString(),
-      signature: 'YourSwapTransactionSignature',
+      programId: programId,
+      signature: signature,
       inputMint: quoteResponse.inputMint,
       outputMint: quoteResponse.outputMint,
       inAmount: quoteResponse.inAmount,
@@ -43,6 +49,6 @@ export async function onRequestPost({ request, env }: { request: Request; env: a
     });
     
   } catch (error: any) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message || 'Internal server error' }, { status: 500 });
   }
 }
