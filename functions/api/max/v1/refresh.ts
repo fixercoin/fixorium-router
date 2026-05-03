@@ -39,16 +39,22 @@ export async function onRequestGet({ request, env }) {
             }
         }
         
-        await env.DEVELOPERS_KV.put('all_pools', JSON.stringify({
+        const cacheData = {
             pools: allPools,
             total: allPools.length,
             lastUpdated: Date.now()
-        }));
+        };
+        
+        await env.DEVELOPERS_KV.put('all_pools', JSON.stringify(cacheData));
+        
+        // Verify it was stored
+        const verify = await env.DEVELOPERS_KV.get('all_pools');
         
         return Response.json({ 
             success: true, 
             total: allPools.length,
-            samplePool: allPools[0] || null
+            stored: !!verify,
+            verifiedSize: verify ? verify.length : 0
         });
         
     } catch (error) {
