@@ -89,17 +89,16 @@
 
     .mobile-menu-btn {
       display: none;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
+      background: transparent;
+      border: none;
       color: white;
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       cursor: pointer;
-      padding: 0.3rem 0.7rem;
+      padding: 0.3rem 0.5rem;
       margin-left: auto;
     }
 
-    /* SMARTER MOBILE DROPDOWN - NOT FULL PAGE */
+    /* SMARTER MOBILE DROPDOWN */
     .mobile-dropdown {
       display: none;
       position: fixed;
@@ -164,7 +163,7 @@
       display: flex;
     }
 
-    /* MAIN PAGE - IMPRESSIVE ANIMATION */
+    /* MAIN PAGE - ANIMATION */
     .hero-page {
       align-items: center;
       justify-content: center;
@@ -178,7 +177,7 @@
       padding-top: 55px;
     }
 
-    /* ECOSYSTEM ANIMATION - ENHANCED */
+    /* ECOSYSTEM ANIMATION - WITH CRYPTO ICON AVATARS */
     .ecosystem-container {
       width: 100%;
       max-width: 900px;
@@ -191,38 +190,14 @@
       justify-content: center;
     }
 
-    .animated-logo {
-      font-size: 4rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #FFFFFF, #00D4FF, #7B2FBE, #FFFFFF);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-transform: uppercase;
-      letter-spacing: 6px;
-      animation: gradientShift 3s ease infinite, glowPulse 2s ease-in-out infinite;
-      margin-bottom: 1rem;
-    }
+    /* NO TEXT ABOVE ANIMATION - REMOVED */
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes glowPulse {
-      0% { opacity: 0.8; filter: drop-shadow(0 0 0px rgba(0,212,255,0)); }
-      50% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0,212,255,0.6)); }
-      100% { opacity: 0.8; filter: drop-shadow(0 0 0px rgba(0,212,255,0)); }
-    }
-
-    /* ADVANCED ORBIT SYSTEM */
+    /* ADVANCED ORBIT SYSTEM WITH CRYPTO ICONS */
     .galaxy-container {
       position: relative;
       width: 320px;
       height: 320px;
-      margin: 1rem auto;
+      margin: 0.5rem auto;
     }
 
     .orbit-ring-glow {
@@ -277,20 +252,67 @@
       transform: translate(-50%, -50%);
       box-shadow: 0 0 40px rgba(0,212,255,0.8), inset 0 0 20px rgba(255,255,255,0.3);
       animation: corePulseAdvanced 1.2s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .core-icon {
+      font-size: 2.2rem;
+      filter: drop-shadow(0 0 5px white);
     }
 
     @keyframes corePulseAdvanced {
       0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; box-shadow: 0 0 20px rgba(0,212,255,0.6); }
-      50% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; box-shadow: 0 0 50px rgba(0,212,255,1); }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; box-shadow: 0 0 50px rgba(0,212,255,1); }
       100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; box-shadow: 0 0 20px rgba(0,212,255,0.6); }
     }
 
+    /* CRYPTO ICON AVATARS ON ORBITS */
+    .crypto-avatar {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border: 1px solid rgba(0,212,255,0.5);
+      box-shadow: 0 0 10px rgba(0,212,255,0.3);
+      backdrop-filter: blur(4px);
+      animation: floatAvatar 3s ease-in-out infinite;
+    }
+
+    .crypto-avatar span {
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+    }
+
+    /* Position avatars on orbit paths */
+    .avatar-1 { top: -16px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+    .avatar-2 { bottom: -16px; left: 50%; transform: translateX(-50%); animation-delay: 0.5s; }
+    .avatar-3 { left: -16px; top: 50%; transform: translateY(-50%); animation-delay: 1s; }
+    .avatar-4 { right: -16px; top: 50%; transform: translateY(-50%); animation-delay: 1.5s; }
+    .avatar-5 { top: 15%; left: 15%; animation-delay: 0.3s; }
+    .avatar-6 { bottom: 15%; right: 15%; animation-delay: 0.8s; }
+    .avatar-7 { top: 15%; right: 15%; animation-delay: 1.2s; }
+    .avatar-8 { bottom: 15%; left: 15%; animation-delay: 0.6s; }
+
+    @keyframes floatAvatar {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    /* Floating particles */
     .floating-particles {
       position: absolute;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
+      pointer-events: none;
     }
 
     .float-particle {
@@ -320,7 +342,7 @@
     }
 
     .tagline {
-      margin-top: 1.5rem;
+      margin-top: 0.8rem;
       font-size: 0.85rem;
       letter-spacing: 4px;
       color: rgba(255,255,255,0.55);
@@ -333,7 +355,7 @@
       flex-wrap: wrap;
       gap: 1rem;
       justify-content: center;
-      margin-top: 1.8rem;
+      margin-top: 1.5rem;
     }
 
     .highlight-item {
@@ -356,7 +378,7 @@
       100% { border-color: rgba(0,212,255,0.2); }
     }
 
-    /* CONTENT PAGES - REDUCED PADDING */
+    /* CONTENT PAGES */
     .content-page {
       padding: 60px 0.5rem 1.5rem 0.5rem;
       flex-direction: column;
@@ -567,15 +589,16 @@
       .header-bar { padding: 0.4rem 1rem; }
       .brand { font-size: 1rem; }
       .hero-content { padding-top: 48px; }
-      .ecosystem-container { min-height: 45vh; margin-top: -10px; }
-      .galaxy-container { width: 240px; height: 240px; margin: 0.5rem auto; }
-      .animated-logo { font-size: 2.2rem; letter-spacing: 3px; margin-bottom: 0.5rem; }
-      .tagline { font-size: 0.7rem; margin-top: 0.8rem; letter-spacing: 2px; }
+      .ecosystem-container { min-height: 40vh; margin-top: -15px; }
+      .galaxy-container { width: 260px; height: 260px; margin: 0.2rem auto; }
+      .pulsar-core { width: 50px; height: 50px; }
+      .core-icon { font-size: 1.6rem; }
+      .crypto-avatar { width: 28px; height: 28px; font-size: 1rem; }
+      .tagline { font-size: 0.65rem; margin-top: 0.5rem; letter-spacing: 2px; }
       .feature-highlights { gap: 0.6rem; margin-top: 1rem; }
       .highlight-item { font-size: 0.55rem; padding: 0.25rem 0.8rem; }
       .content-page { padding: 55px 0.3rem 1rem 0.3rem; }
       .feature-column { min-width: 100%; }
-      .pulsar-core { width: 45px; height: 45px; }
       .float-particle { width: 3px; height: 3px; }
     }
 
@@ -599,7 +622,6 @@
     <div class="mobile-menu-btn" id="mobileMenuBtn">☰</div>
   </div>
 
-  <!-- SMARTER MOBILE DROPDOWN - NOT FULL PAGE -->
   <div class="mobile-dropdown" id="mobileDropdown">
     <a class="mobile-dropdown-item" data-page="dex-service">DEX SERVICE</a>
     <a class="mobile-dropdown-item" data-page="exchange">EXCHANGE</a>
@@ -609,17 +631,23 @@
   </div>
 
   <div id="pagesContainer">
-    <!-- HOME PAGE - IMPRESSIVE ANIMATION -->
+    <!-- HOME PAGE - ANIMATION WITH CRYPTO ICON AVATARS -->
     <div id="home-page" class="page-content hero-page active">
       <div class="hero-content">
         <div class="ecosystem-container">
-          <div class="animated-logo">FIXORIUM</div>
           <div class="galaxy-container">
             <div class="orbit-ring-glow"></div>
             <div class="orbit-glow"></div>
             <div class="orbit-glow"></div>
             <div class="orbit-glow"></div>
-            <div class="pulsar-core"></div>
+            <div class="pulsar-core">
+              <span class="core-icon">🪙</span>
+            </div>
+            <!-- CRYPTO ICON AVATARS -->
+
+            <div class="crypto-avatar avatar-6"><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18.5 20.5C18.5 20.5 20.6754 20.5917 21.8377 18.0459C23 15.5 21.5 9.5 15.5 5C10.2692 1.07693 6.49995 2 5 3.5C4.10604 4.39405 2.00002 7.5 6.00001 12" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M8.41971 8.23322L11.2222 12.0777L15.5577 11.7481L12.4324 15.1018L14.2201 19.4641L9.9107 17.6453L6.37377 20.7068L6.72597 16.0056L2.71776 13.7817L6.9424 12.7555L8.41971 8.23322Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg></span></div>
+            <div class="crypto-avatar avatar-7"><span><svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M12.3661 12H4.5M8.5 5H13.5C17.366 5 20.5 8.13401 20.5 12C20.5 15.866 17.366 19 13.5 19H8.5V5Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg></span></div>
+            <div class="crypto-avatar avatar-8"><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M19 4H12M12 4H5M12 4V9M12 13V20M12 13C17 13 20 12.1046 20 11C20 9.34617 18 9.34617 16.5 9.34617M12 13C7 13 4 12.1046 4 11C4 9.68315 6 9.34617 7.5 9.34617" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg></span></div>
             <div class="floating-particles">
               <div class="float-particle"></div>
               <div class="float-particle"></div>
@@ -635,7 +663,7 @@
           </div>
           <div class="tagline">DECENTRALIZED ECOSYSTEM</div>
           <div class="feature-highlights">
-           
+          
             <span class="highlight-item">EXCHANGE</span>
             <span class="highlight-item">WALLET</span>
             <span class="highlight-item">INTEGRATION</span>
@@ -747,14 +775,12 @@
     document.querySelectorAll('#desktopMenu .header-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
     document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => item.addEventListener('click', (e) => { e.preventDefault(); showPage(item.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
     
-    // Smart mobile dropdown toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileDropdown = document.getElementById('mobileDropdown');
     mobileMenuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       mobileDropdown.classList.toggle('open');
     });
-    // Close when clicking outside
     document.addEventListener('click', (e) => {
       if (!mobileDropdown.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
         mobileDropdown.classList.remove('open');
