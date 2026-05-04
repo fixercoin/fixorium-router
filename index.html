@@ -31,7 +31,7 @@
       pointer-events: none;
     }
 
-    /* FIXED HEADER BAR - INCREASED HEIGHT */
+    /* FIXED HEADER BAR - HORIZONTAL SCROLL ON MOBILE */
     .header-bar {
       position: fixed;
       top: 0;
@@ -42,8 +42,19 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding: 1rem 2rem;
       z-index: 100;
-      display: flex;
-      justify-content: flex-start;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .header-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .header-links {
+      display: inline-flex;
       gap: 2.5rem;
     }
 
@@ -55,6 +66,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .header-link:hover {
@@ -108,7 +120,9 @@
     @media (max-width: 768px) {
       .header-bar {
         padding: 0.85rem 1.25rem;
-        gap: 1.25rem;
+      }
+      .header-links {
+        gap: 1.5rem;
       }
       .header-link {
         font-size: 13px;
@@ -119,12 +133,15 @@
 <body>
   <canvas id="particleCanvas"></canvas>
 
-  <!-- FIXED HEADER BAR - TEXT ONLY, 16px -->
+  <!-- FIXED HEADER BAR - HORIZONTAL SCROLL ON MOBILE -->
   <div class="header-bar">
-    <a href="#" class="header-link">EXCHANGE</a>
-    <a href="#" class="header-link">DEX SERVICE</a>
-    <a href="#" class="header-link">WALLET</a>
-    <a href="#" class="header-link">DOCS</a>
+    <div class="header-links">
+      <a href="#" class="header-link">EXCHANGE</a>
+      <a href="#" class="header-link">DEX SERVICE</a>
+      <a href="#" class="header-link">WALLET</a>
+      <a href="#" class="header-link">TEAM</a>
+      <a href="#" class="header-link">DOCS</a>
+    </div>
   </div>
 
   <div class="center-text">
