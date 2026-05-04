@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>FIXORIUM</title>
+  <title>FIXORIUM | HOME</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -31,31 +31,27 @@
       pointer-events: none;
     }
 
-    /* FIXED HEADER BAR - HORIZONTAL SCROLL ON MOBILE */
+    /* FIXED HEADER BAR */
     .header-bar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(10, 10, 15, 0.85);
+      background: rgba(10, 10, 15, 0.9);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 1rem 2rem;
+      padding: 1.2rem 2rem;
       z-index: 100;
-      overflow-x: auto;
-      overflow-y: hidden;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .header-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .header-links {
-      display: inline-flex;
-      gap: 2.5rem;
+    /* DESKTOP MENU */
+    .desktop-menu {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
     }
 
     .header-link {
@@ -73,6 +69,79 @@
       color: rgba(255, 255, 255, 1);
     }
 
+    /* MOBILE MENU BUTTON */
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 24px;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* MOBILE DROPDOWN OVERLAY */
+    .mobile-dropdown {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 10, 15, 0.98);
+      backdrop-filter: blur(20px);
+      z-index: 200;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding-left: 2rem;
+      gap: 1rem;
+    }
+
+    .mobile-dropdown.open {
+      display: flex;
+    }
+
+    .mobile-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.8rem 2rem;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .dropdown-icon {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .close-dropdown {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 44px;
+      cursor: pointer;
+    }
+
     /* MAIN CONTENT - CENTERED */
     .center-text {
       position: absolute;
@@ -87,7 +156,7 @@
 
     /* PREMIUM FIXORIUM TEXT */
     .fixorium-header {
-      font-size: clamp(2.5rem, 10vw, 6rem);
+      font-size: clamp(3rem, 12vw, 7rem);
       font-weight: 700;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, #FFFFFF 0%, #B8B8C8 50%, #FFFFFF 100%);
@@ -95,15 +164,15 @@
       background-clip: text;
       color: transparent;
       text-transform: uppercase;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     /* MODERN BORDER LINE */
     .border-line {
-      width: 100px;
+      width: 80px;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), rgba(0, 212, 255, 0.6), transparent);
-      margin: 2rem auto;
+      margin: 1.5rem auto;
       border-radius: 2px;
     }
 
@@ -112,20 +181,29 @@
       font-size: clamp(0.7rem, 2.5vw, 0.85rem);
       color: rgba(255, 255, 255, 0.4);
       text-transform: uppercase;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.3em;
       font-weight: 400;
     }
 
-    /* RESPONSIVE - MOBILE */
+    /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
+      .desktop-menu {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
       .header-bar {
-        padding: 0.85rem 1.25rem;
+        padding: 1rem 1.5rem;
       }
-      .header-links {
-        gap: 1.5rem;
+      .center-text {
+        padding: 2rem;
       }
-      .header-link {
-        font-size: 13px;
+    }
+
+    @media (min-width: 769px) {
+      .mobile-dropdown {
+        display: none !important;
       }
     }
   </style>
@@ -133,15 +211,30 @@
 <body>
   <canvas id="particleCanvas"></canvas>
 
-  <!-- FIXED HEADER BAR - HORIZONTAL SCROLL ON MOBILE -->
+  <!-- FIXED HEADER BAR -->
   <div class="header-bar">
-    <div class="header-links">
-      <a href="#" class="header-link">EXCHANGE</a>
-      <a href="#" class="header-link">DEX SERVICE</a>
-      <a href="#" class="header-link">WALLET</a>
-      <a href="#" class="header-link">TEAM</a>
-      <a href="#" class="header-link">DOCS</a>
+    <!-- DESKTOP MENU -->
+    <div class="desktop-menu">
+      <a href="dex-service.html" class="header-link">DEX SERVICE</a>
+      <a href="exchange.html" class="header-link">EXCHANGE</a>
+      <a href="wallet.html" class="header-link">WALLET</a>
+      <a href="team.html" class="header-link">TEAM</a>
+      <a href="docs.html" class="header-link">DOCS</a>
     </div>
+
+    <!-- MOBILE MENU BUTTON -->
+    <div style="flex: 1;"></div>
+    <div class="mobile-menu-btn" id="mobileMenuBtn">☰</div>
+  </div>
+
+  <!-- MOBILE DROPDOWN MENU -->
+  <div class="mobile-dropdown" id="mobileDropdown">
+    <button class="close-dropdown" id="closeDropdownBtn">✕</button>
+    <a href="dex-service.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> DEX SERVICE</a>
+    <a href="exchange.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> EXCHANGE</a>
+    <a href="wallet.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> WALLET</a>
+    <a href="team.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> TEAM</a>
+    <a href="docs.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> DOCS</a>
   </div>
 
   <div class="center-text">
@@ -271,6 +364,26 @@
     }
     
     animate();
+
+    // Mobile dropdown functionality
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileDropdown = document.getElementById('mobileDropdown');
+    const closeDropdownBtn = document.getElementById('closeDropdownBtn');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileDropdown.classList.add('open');
+    });
+
+    function closeDropdown() {
+      mobileDropdown.classList.remove('open');
+    }
+
+    closeDropdownBtn.addEventListener('click', closeDropdown);
+    mobileDropdown.addEventListener('click', (e) => {
+      if (e.target === mobileDropdown) {
+        closeDropdown();
+      }
+    });
   </script>
 </body>
 </html>
