@@ -91,37 +91,34 @@
       margin-bottom: 0.5rem;
     }
 
-    /* IMAGE CARD - REPLACES TEXT */
-    .fixorium-card {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
+    /* IMAGE CONTAINER - NO CARD, DECREASED SIZE */
+    .image-container {
       text-align: center;
+      margin: 2rem auto;
     }
 
     .fixorium-image {
-      max-width: 100%;
+      max-width: 200px;
+      width: 100%;
       height: auto;
-      display: block;
-      margin: 0 auto;
+      display: inline-block;
     }
 
-    /* SINGLE LINE FEATURE */
-    .single-feature {
-      text-align: center;
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* SEPARATOR LINE */
+    .separator {
+      width: 80px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.3);
+      margin: 1.5rem auto;
     }
 
-    .single-feature span {
+    /* TEXT UNDER IMAGE */
+    .under-image-text {
       font-size: 11px;
       text-transform: uppercase;
       color: #ffffff;
       letter-spacing: 2px;
+      text-align: center;
     }
 
     .tabs-container {
@@ -431,6 +428,17 @@
       letter-spacing: 2px;
     }
 
+    /* DESKTOP: IMAGE WIDTH NOT EXCEEDING BUTTON WIDTH */
+    @media (min-width: 769px) {
+      .mobile-bottom-nav {
+        display: none;
+      }
+      
+      .fixorium-image {
+        max-width: 150px;
+      }
+    }
+
     @media (max-width: 768px) {
       body {
         padding-bottom: 90px;
@@ -446,9 +454,8 @@
         display: block;
       }
       
-      .fixorium-card {
-        margin: 1rem auto;
-        padding: 1rem;
+      .fixorium-image {
+        max-width: 120px;
       }
       
       .content-section {
@@ -459,12 +466,6 @@
       .page-header {
         padding: 1rem;
         margin-bottom: 1rem;
-      }
-    }
-
-    @media (min-width: 769px) {
-      .mobile-bottom-nav {
-        display: none;
       }
     }
   </style>
@@ -484,14 +485,16 @@
           <div class="fixorium-subtitle">POWERED BY FIXORIUM</div>
         </div>
 
-        <!-- IMAGE CARD - REPLACES ALL TEXT -->
-        <div class="fixorium-card">
+        <!-- IMAGE - NO CARD, DECREASED SIZE -->
+        <div class="image-container">
           <img src="https://i.postimg.cc/pL2JMyHv/connectpie-favicon-t.png" alt="FIXORIUM" class="fixorium-image">
-          <!-- SINGLE LINE FEATURE - REPLACES THE 4 BADGES -->
-          <div class="single-feature">
-            <span>DECENTRALIZED FINANCE</span>
-          </div>
         </div>
+
+        <!-- SEPARATOR LINE -->
+        <div class="separator"></div>
+
+        <!-- TEXT UNDER IMAGE -->
+        <div class="under-image-text">DECENTRALIZED FINANCE</div>
       </div>
 
       <div class="tabs-container">
@@ -504,7 +507,10 @@
 
     <!-- Exchange Page -->
     <div class="page-content" id="exchange-page">
-     
+      <div class="page-header">
+        <h1>EXCHANGE</h1>
+        <p>CROSS-CHAIN DECENTRALIZED EXCHANGE PROTOCOL</p>
+      </div>
 
       <div class="content-section">
         <h2>CROSS-CHAIN SWAP ENGINE</h2>
@@ -536,7 +542,10 @@
 
     <!-- Wallet Page -->
     <div class="page-content" id="wallet-page">
-     
+      <div class="page-header">
+        <h1>WALLET</h1>
+        <p>NON-CUSTODIAL MULTI-CHAIN WALLET</p>
+      </div>
 
       <div class="content-section">
         <h2>SECURE SELF-CUSTODY WALLET</h2>
@@ -569,7 +578,10 @@
 
     <!-- DEX Service Page -->
     <div class="page-content" id="dex-service-page">
-     
+      <div class="page-header">
+        <h1>DEX SERVICE</h1>
+        <p>WHITE-LABEL DEX SOLUTIONS</p>
+      </div>
 
       <div class="content-section">
         <h2>MINTME DEX ROUTER ACTIVE</h2>
