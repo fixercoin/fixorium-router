@@ -91,6 +91,7 @@
       margin-bottom: 0.5rem;
     }
 
+    /* IMAGE CARD - REPLACES TEXT */
     .fixorium-card {
       max-width: 900px;
       margin: 2rem auto;
@@ -101,29 +102,26 @@
       text-align: center;
     }
 
-    .fixorium-card p {
-      font-size: 11px;
-      color: #ffffff;
-      line-height: 1.8;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
+    .fixorium-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
     }
 
-    .card-features {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
+    /* SINGLE LINE FEATURE */
+    .single-feature {
+      text-align: center;
       margin-top: 1.5rem;
       padding-top: 1rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .card-feature {
+    .single-feature span {
       font-size: 11px;
       text-transform: uppercase;
       color: #ffffff;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
 
     .tabs-container {
@@ -196,7 +194,7 @@
       margin-bottom: 0;
     }
 
-    /* MOBILE BOTTOM NAVIGATION BAR - DOUBLED HEIGHT */
+    /* MOBILE BOTTOM NAVIGATION BAR */
     .mobile-bottom-nav {
       display: none;
       position: fixed;
@@ -453,14 +451,6 @@
         padding: 1rem;
       }
       
-      .fixorium-card p {
-        font-size: 10px;
-      }
-      
-      .card-feature {
-        font-size: 9px;
-      }
-
       .content-section {
         padding: 1rem;
         margin-bottom: 0.35rem;
@@ -494,15 +484,12 @@
           <div class="fixorium-subtitle">POWERED BY FIXORIUM</div>
         </div>
 
+        <!-- IMAGE CARD - REPLACES ALL TEXT -->
         <div class="fixorium-card">
-          <p>FIXORIUM IS A NEXT-GENERATION DECENTRALIZED FINANCE PLATFORM BUILT ON SOLANA BLOCKCHAIN.</p>
-          <p>WE PROVIDE EXCHANGE, WALLET, MINTME DEX ROUTER, AND SOLANA DEX ROUTER WITH ADVANCED MEV PROTECTION, CROSS-CHAIN SWAP ENGINE, AND NON-CUSTODIAL MULTI-CHAIN WALLET SOLUTIONS.</p>
-          <p>OUR PLATFORM AGGREGATES LIQUIDITY FROM 15+ DEXES INCLUDING RAYDIUM, ORCA, METEORA, PUMP.FUN, UNISWAP, AND PANCAKESWAP ACROSS SOLANA, ETHEREUM, BSC, ARBITRUM, AND POLYGON NETWORKS.</p>
-          <div class="card-features">
-            <span class="card-feature">0.01% FEE</span>
-            <span class="card-feature">MEV PROTECTED</span>
-            <span class="card-feature">CROSS-CHAIN</span>
-            <span class="card-feature">NON-CUSTODIAL</span>
+          <img src="https://i.postimg.cc/pL2JMyHv/connectpie-favicon-t.png" alt="FIXORIUM" class="fixorium-image">
+          <!-- SINGLE LINE FEATURE - REPLACES THE 4 BADGES -->
+          <div class="single-feature">
+            <span>DECENTRALIZED FINANCE</span>
           </div>
         </div>
       </div>
@@ -630,7 +617,7 @@
     </div>
   </div>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR - DOUBLED HEIGHT -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
   <div class="mobile-bottom-nav">
     <div class="mobile-nav-items">
       <button class="mobile-nav-item" data-page="exchange">EXCHANGE</button>
