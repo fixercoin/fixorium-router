@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>FIXORIUM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -11,29 +12,248 @@
       box-sizing: border-box;
     }
 
-    html {
-      height: 100%;
-    }
-
     body {
-      min-height: 100%;
-      min-height: -webkit-fill-available;
-      background-image: url('https://i.postimg.cc/wxLv5Vsj/safe.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: scroll;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0A0A0F 0%, #13131F 100%);
+      position: relative;
+      overflow-x: hidden;
     }
 
-    /* FOR MOBILE SAFE AREA */
-    @supports (padding: max(0px)) {
-      body {
-        min-height: 100vh;
-        min-height: -webkit-fill-available;
+    /* PARTICLE CANVAS BACKGROUND */
+    #particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* FIXED HEADER BAR - INCREASED HEIGHT */
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem 2rem;
+      z-index: 100;
+      display: flex;
+      justify-content: flex-start;
+      gap: 2.5rem;
+    }
+
+    .header-link {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+    }
+
+    .header-link:hover {
+      color: rgba(255, 255, 255, 1);
+    }
+
+    /* MAIN CONTENT - CENTERED */
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    /* PREMIUM FIXORIUM TEXT */
+    .fixorium-header {
+      font-size: clamp(2.5rem, 10vw, 6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #FFFFFF 0%, #B8B8C8 50%, #FFFFFF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    /* MODERN BORDER LINE */
+    .border-line {
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), rgba(0, 212, 255, 0.6), transparent);
+      margin: 2rem auto;
+      border-radius: 2px;
+    }
+
+    /* SUBTITLE */
+    .decentralized-sub {
+      font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-weight: 400;
+    }
+
+    /* RESPONSIVE - MOBILE */
+    @media (max-width: 768px) {
+      .header-bar {
+        padding: 0.85rem 1.25rem;
+        gap: 1.25rem;
+      }
+      .header-link {
+        font-size: 13px;
       }
     }
   </style>
 </head>
 <body>
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- FIXED HEADER BAR - TEXT ONLY, 16px -->
+  <div class="header-bar">
+    <a href="#" class="header-link">EXCHANGE</a>
+    <a href="#" class="header-link">DEX SERVICE</a>
+    <a href="#" class="header-link">WALLET</a>
+    <a href="#" class="header-link">DOCS</a>
+  </div>
+
+  <div class="center-text">
+    <div class="fixorium-header">FIXORIUM</div>
+    <div class="border-line"></div>
+    <div class="decentralized-sub">DECENTRALIZED FINANCE</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let particles = [];
+    
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    const PARTICLE_COUNT = 100;
+    const MAX_SPEED = 0.5;
+    const MIN_RADIUS = 1;
+    const MAX_RADIUS = 2;
+    
+    const colors = [
+      'rgba(255, 255, 255, 0.2)',
+      'rgba(255, 255, 255, 0.12)',
+      'rgba(0, 212, 255, 0.15)',
+      'rgba(200, 200, 220, 0.12)'
+    ];
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.radius = Math.random() * (MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS;
+        this.speedX = (Math.random() - 0.5) * MAX_SPEED;
+        this.speedY = (Math.random() - 0.5) * MAX_SPEED;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        if (this.x < 0) this.x = width;
+        if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        if (this.y > height) this.y = 0;
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+    
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 100) {
+            const opacity = (1 - distance / 100) * 0.06;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0, 212, 255, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new Particle());
+    }
+    
+    let mouseX = null;
+    let mouseY = null;
+    
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      for (let p of particles) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 100) {
+          const angle = Math.atan2(dy, dx);
+          const force = (100 - distance) / 100 * 1;
+          p.x += Math.cos(angle) * force;
+          p.y += Math.sin(angle) * force;
+        }
+      }
+      
+      setTimeout(() => {
+        mouseX = null;
+        mouseY = null;
+      }, 50);
+    });
+    
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      
+      for (let p of particles) {
+        p.update();
+        p.draw();
+      }
+      
+      drawConnections();
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  </script>
 </body>
 </html>
