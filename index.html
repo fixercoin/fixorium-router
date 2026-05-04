@@ -269,70 +269,100 @@
       height: 100%;
       top: 0;
       left: 0;
-      animation: rotate-avatars 20s linear infinite;
-    }
-
-    @keyframes rotate-avatars {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      perspective: 1000px;
     }
 
     .crypto-avatar {
       position: absolute;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      border: 2px solid rgba(0, 212, 255, 0.7);
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.8rem;
-      border: 2px solid rgba(0, 212, 255, 0.5);
-      background: rgba(0, 0, 0, 0.4);
-      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-      animation: float-pulse 3s ease-in-out infinite;
-    }
-
-    @keyframes float-pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), inset 0 0 20px rgba(0, 212, 255, 0.1);
     }
 
     .crypto-avatar:nth-child(1) {
-      top: 10%;
+      top: 5%;
       left: 50%;
       transform: translateX(-50%);
-      animation-delay: 0s;
+      animation: cube-float-1 4s ease-in-out infinite;
     }
 
     .crypto-avatar:nth-child(2) {
-      top: 30%;
-      right: 15%;
-      animation-delay: 0.5s;
+      top: 25%;
+      right: 12%;
+      animation: cube-float-2 5s ease-in-out infinite;
     }
 
     .crypto-avatar:nth-child(3) {
-      bottom: 30%;
-      right: 15%;
-      animation-delay: 1s;
+      bottom: 25%;
+      right: 12%;
+      animation: cube-float-3 6s ease-in-out infinite;
     }
 
     .crypto-avatar:nth-child(4) {
-      bottom: 10%;
+      bottom: 5%;
       left: 50%;
       transform: translateX(-50%);
-      animation-delay: 1.5s;
+      animation: cube-float-4 4.5s ease-in-out infinite;
     }
 
     .crypto-avatar:nth-child(5) {
-      bottom: 30%;
-      left: 15%;
-      animation-delay: 2s;
+      bottom: 25%;
+      left: 12%;
+      animation: cube-float-5 5.5s ease-in-out infinite;
     }
 
     .crypto-avatar:nth-child(6) {
-      top: 30%;
-      left: 15%;
-      animation-delay: 2.5s;
+      top: 25%;
+      left: 12%;
+      animation: cube-float-6 6.5s ease-in-out infinite;
+    }
+
+    @keyframes cube-float-1 {
+      0%, 100% { transform: translateX(-50%) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: translateX(-50%) translateY(-15px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
+      50% { transform: translateX(-50%) translateY(0) rotateX(90deg) rotateY(90deg) rotateZ(90deg); }
+      75% { transform: translateX(-50%) translateY(-15px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
+    }
+
+    @keyframes cube-float-2 {
+      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: translateX(10px) translateY(-12px) rotateX(45deg) rotateY(-45deg) rotateZ(45deg); }
+      50% { transform: translateX(0) translateY(0) rotateX(90deg) rotateY(-90deg) rotateZ(90deg); }
+      75% { transform: translateX(10px) translateY(-12px) rotateX(45deg) rotateY(-45deg) rotateZ(45deg); }
+    }
+
+    @keyframes cube-float-3 {
+      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: translateX(10px) translateY(12px) rotateX(-45deg) rotateY(-45deg) rotateZ(45deg); }
+      50% { transform: translateX(0) translateY(0) rotateX(-90deg) rotateY(-90deg) rotateZ(90deg); }
+      75% { transform: translateX(10px) translateY(12px) rotateX(-45deg) rotateY(-45deg) rotateZ(45deg); }
+    }
+
+    @keyframes cube-float-4 {
+      0%, 100% { transform: translateX(-50%) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: translateX(-50%) translateY(15px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
+      50% { transform: translateX(-50%) translateY(0) rotateX(-90deg) rotateY(90deg) rotateZ(90deg); }
+      75% { transform: translateX(-50%) translateY(15px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
+    }
+
+    @keyframes cube-float-5 {
+      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: translateX(-10px) translateY(12px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
+      50% { transform: translateX(0) translateY(0) rotateX(-90deg) rotateY(90deg) rotateZ(90deg); }
+      75% { transform: translateX(-10px) translateY(12px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
+    }
+
+    @keyframes cube-float-6 {
+      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: translateX(-10px) translateY(-12px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
+      50% { transform: translateX(0) translateY(0) rotateX(90deg) rotateY(90deg) rotateZ(90deg); }
+      75% { transform: translateX(-10px) translateY(-12px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
     }
 
     .tagline {
@@ -583,13 +613,13 @@
       .mobile-menu-btn { display: block; }
       .header-bar { padding: 0.4rem 1rem; }
       .brand { font-size: 1rem; }
-      .hero-content { padding-top: 48px; }
-      .ecosystem-container { min-height: 40vh; margin-top: -15px; }
-      .galaxy-container { width: 260px; height: 260px; margin: 0.2rem auto; }
-      .pulsar-core { width: 50px; height: 50px; }
-      .core-icon { font-size: 1.6rem; }
-      .crypto-avatar { width: 28px; height: 28px; font-size: 1rem; }
-      .tagline { font-size: 0.65rem; margin-top: 0.5rem; letter-spacing: 2px; }
+      .hero-content { padding-top: 8px; }
+      .ecosystem-container { min-height: 35vh; margin-top: 0; }
+      .galaxy-container { width: 220px; height: 220px; margin: 0 auto; }
+      .pulsar-core { width: 45px; height: 45px; }
+      .core-icon { font-size: 1.4rem; }
+      .crypto-avatar { width: 40px; height: 40px; font-size: 1.2rem; }
+      .tagline { font-size: 0.65rem; margin-top: 0.8rem; letter-spacing: 2px; }
       .feature-highlights { gap: 0.6rem; margin-top: 1rem; }
       .highlight-item { font-size: 0.55rem; padding: 0.25rem 0.8rem; }
       .content-page { padding: 55px 0.3rem 1rem 0.3rem; }
