@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>FIXORIUM</title>
+  <title>FIXORIUM — MPC Hybrid Exchange</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -167,7 +167,7 @@
       display: flex;
     }
 
-    /* HERO PAGES (home, team, docs, etc) */
+    /* HERO PAGES (home, team, docs) */
     .hero-page {
       align-items: center;
       justify-content: center;
@@ -210,7 +210,7 @@
       line-height: 1.6;
     }
 
-    /* CONTENT PAGES (wallet) */
+    /* CONTENT PAGES (wallet + exchange) */
     .content-page {
       padding: 100px 1rem 2rem 1rem;
       flex-direction: column;
@@ -218,13 +218,14 @@
     }
 
     .content-card {
-      max-width: 1200px;
+      max-width: 1300px;
       width: 100%;
       background: rgba(20, 20, 30, 0.6);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
+      border-radius: 28px;
       padding: 2rem;
+      transition: all 0.2s ease;
     }
 
     .card-header {
@@ -233,10 +234,11 @@
     }
 
     .card-sub {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.4);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.45);
       text-transform: uppercase;
       letter-spacing: 0.3em;
+      margin-top: 0.5rem;
     }
 
     .features-grid {
@@ -248,18 +250,24 @@
 
     .feature-column {
       flex: 1;
-      min-width: 250px;
+      min-width: 260px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+      padding: 1rem 1rem 1rem 0;
     }
 
     .feature-title {
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       color: #00D4FF;
       margin-bottom: 1rem;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .feature-list {
@@ -268,17 +276,20 @@
 
     .feature-list li {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.7);
-      padding: 0.6rem 0;
+      color: rgba(255, 255, 255, 0.75);
+      padding: 0.75rem 0;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      line-height: 1.4;
     }
 
     .tick {
       color: #00D4FF;
       font-weight: bold;
+      font-size: 16px;
+      min-width: 22px;
     }
 
     .badge-container {
@@ -292,13 +303,16 @@
     }
 
     .badge {
-      background: transparent;
-      border: none;
-      padding: 0.3rem 0.8rem;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.5);
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #C0E8FF;
       text-transform: uppercase;
       letter-spacing: 1px;
+      backdrop-filter: blur(2px);
     }
 
     .availability-text {
@@ -306,6 +320,7 @@
       margin-top: 2rem;
       font-size: 12px;
       color: rgba(255, 255, 255, 0.3);
+      font-weight: 400;
     }
 
     @media (max-width: 768px) {
@@ -330,12 +345,13 @@
       }
       .feature-column {
         min-width: 100%;
+        padding: 0.5rem;
       }
       .feature-list li {
         font-size: 12px;
       }
       .badge {
-        font-size: 10px;
+        font-size: 9px;
       }
     }
 
@@ -344,7 +360,7 @@
         display: none !important;
       }
       .content-page {
-        padding: 100px 2rem 2rem 2rem;
+        padding: 100px 2rem 3rem 2rem;
       }
     }
   </style>
@@ -376,7 +392,7 @@
     <a class="mobile-dropdown-item" data-page="docs"><span class="dropdown-icon">★</span> DOCS</a>
   </div>
 
-  <!-- PAGE CONTAINER -->
+  <!-- PAGES CONTAINER -->
   <div id="pagesContainer">
     <!-- HOME PAGE -->
     <div id="home-page" class="page-content hero-page active">
@@ -396,25 +412,121 @@
       </div>
     </div>
 
-    <!-- EXCHANGE PAGE -->
-    <div id="exchange-page" class="page-content hero-page">
-      <div class="hero-content">
-        <div class="page-title">EXCHANGE</div>
-        <div class="border-line"></div>
-        <div class="page-description">Cross-chain decentralized exchange with intelligent order routing. Swap tokens across 8 blockchains with minimal slippage, MEV protection, and the lowest 0.01% fee.</div>
+    <!-- EXCHANGE PAGE — UPDATED WITH MPC HYBRID + FULL SECURITY DETAILS (SAME STYLE AS WALLET) -->
+    <div id="exchange-page" class="page-content content-page">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="page-title">HYBRID MPC EXCHANGE</div>
+          <div class="card-sub">SERVER+USER MPC | MULTI-PARTY CONTROL | CROSS-CHAIN DEX</div>
+        </div>
+
+        <div class="features-grid">
+          <!-- CORE MPC & SECURITY ARCHITECTURE -->
+          <div class="feature-column">
+            <div class="feature-title"><span class="tick">⚡</span> MPC HYBRID RULE</div>
+            <ul class="feature-list">
+              <li><span class="tick">◈</span> Server+User multi‑party control system (next‑gen MPC)</li>
+              <li><span class="tick">◈</span> Half key secured by FIXORIUM vault — half key controlled only by user</li>
+              <li><span class="tick">◈</span> No operation possible without user-controlled key fragment</li>
+              <li><span class="tick">◈</span> User receives unique half‑key during signup (store offline)</li>
+              <li><span class="tick">◈</span> Every trade & withdrawal requires user key + password decryption</li>
+              <li><span class="tick">◈</span> True decentralization + institutional MPC security</li>
+            </ul>
+          </div>
+
+          <!-- WITHDRAWAL & 2FA / ADMIN CONTROL -->
+          <div class="feature-column">
+            <div class="feature-title"><span class="tick">🛡️</span> WITHDRAWAL PROTOCOL</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> Multi‑party signing system (2‑admin approval flow)</li>
+              <li><span class="tick">✓</span> Advanced rate limiting & anti‑abuse mechanisms</li>
+              <li><span class="tick">✓</span> Google 2FA + password decryption system mandatory</li>
+              <li><span class="tick">✓</span> Half‑user key required for each withdrawal request</li>
+              <li><span class="tick">✓</span> Server side enforces admin multi‑sig co‑sign</li>
+              <li><span class="tick">✓</span> Real‑time alerts + withdrawal cooldown (optional whitelist)</li>
+            </ul>
+          </div>
+
+          <!-- TRADING & TOKEN SWAP RULES -->
+          <div class="feature-column">
+            <div class="feature-title"><span class="tick">🔄</span> TRADING & SWAP ENGINE</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> User key asked for EVERY trade — password required to decrypt</li>
+              <li><span class="tick">✓</span> Decentralized order book + on‑chain settlement</li>
+              <li><span class="tick">✓</span> Cross‑chain token conversion system (EVM + Solana + MintMe)</li>
+              <li><span class="tick">✓</span> All major DEX tokens listed across networks</li>
+              <li><span class="tick">✓</span> MEV protection & minimal slippage routing</li>
+              <li><span class="tick">✓</span> 0.01% base fee, zero hidden costs</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- second row: MULTI‑CHAIN SUPPORT + TOKEN LIBRARY -->
+        <div class="features-grid" style="margin-top: 1rem;">
+          <div class="feature-column">
+            <div class="feature-title"><span class="tick">🌐</span> MULTI‑CHAIN ECOSYSTEM</div>
+            <ul class="feature-list">
+              <li><span class="tick">◆</span> Solana + Ethereum + BNB Chain + Polygon + Arbitrum</li>
+              <li><span class="tick">◆</span> MintMe blockchain native integration (token pools & LP)</li>
+              <li><span class="tick">◆</span> Convert any token from any supported chain seamlessly</li>
+              <li><span class="tick">◆</span> Bridge‑less aggregation using cross‑chain intents</li>
+              <li><span class="tick">◆</span> Unified balance dashboard across 8+ networks</li>
+              <li><span class="tick">◆</span> Best swap routes aggregated from 20+ DEX sources</li>
+            </ul>
+          </div>
+
+          <div class="feature-column">
+            <div class="feature-title"><span class="tick">🏦</span> LISTED ASSETS & LIQUIDITY</div>
+            <ul class="feature-list">
+              <li><span class="tick">★</span> All best DEX tokens — Raydium, Orca, Jupiter, Uniswap, Pancake</li>
+              <li><span class="tick">★</span> Native $FIXORIUM governance token (0% lock, instant rewards)</li>
+              <li><span class="tick">★</span> Stable pools & volatile pairs with deep liquidity</li>
+              <li><span class="tick">★</span> Real-time price feeds via Chainlink + Pyth</li>
+              <li><span class="tick">★</span> Permissionless token listing for verified projects</li>
+              <li><span class="tick">★</span> Non‑custodial trading but with MPC hybrid safety nets</li>
+            </ul>
+          </div>
+
+          <div class="feature-column">
+            <div class="feature-title"><span class="tick">🔐</span> USER KEY MANAGEMENT</div>
+            <ul class="feature-list">
+              <li><span class="tick">⛓️</span> On signup: generate & securely download half‑key file</li>
+              <li><span class="tick">⛓️</span> Server never stores full private key (split entropy)</li>
+              <li><span class="tick">⛓️</span> Password + half‑key = full signing authority</li>
+              <li><span class="tick">⛓️</span> Encrypted local storage for session (optional hardware wallet)</li>
+              <li><span class="tick">⛓️</span> Re‑encryption on each sensitive action</li>
+              <li><span class="tick">⛓️</span> Emergency revoke: deactivate compromised half‑key</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- BADGES & HIGHLIGHTS -->
+        <div class="badge-container">
+          <span class="badge">MPC HYBRID</span>
+          <span class="badge">USER + SERVER KEYS</span>
+          <span class="badge">2‑ADMIN MULTI-SIG</span>
+          <span class="badge">2FA + PASSWORD DECRYPT</span>
+          <span class="badge">CROSS-CHAIN SWAPS</span>
+          <span class="badge">RATE LIMITING</span>
+          <span class="badge">NON-CUSTODIAL MPC</span>
+          <span class="badge">ALL DEX TOKENS</span>
+        </div>
+
+        <div class="availability-text">
+          ✅ Fully functional web exchange — beta available. Each trade validates user half‑key & password. <br>
+          🔐 “Without your key fragment — no transaction, no withdrawal, no swap.”  |  Android app (Play Store) Q4 2025
+        </div>
       </div>
     </div>
 
-    <!-- WALLET PAGE -->
+    <!-- WALLET PAGE (unchanged) -->
     <div id="wallet-page" class="page-content content-page">
       <div class="content-card">
         <div class="card-header">
           <div class="page-title">FIXORIUM WALLET</div>
           <div class="card-sub">FULLY ENCRYPTED | NON-CUSTODIAL | MULTI-CHAIN</div>
         </div>
-
         <div class="features-grid">
-          <!-- SECURITY FEATURES -->
           <div class="feature-column">
             <div class="feature-title">SECURITY</div>
             <ul class="feature-list">
@@ -426,8 +538,6 @@
               <li><span class="tick">✓</span> Non-custodial - you own your keys</li>
             </ul>
           </div>
-
-          <!-- MINTME BLOCKCHAIN FEATURES -->
           <div class="feature-column">
             <div class="feature-title">MINTME BLOCKCHAIN</div>
             <ul class="feature-list">
@@ -439,8 +549,6 @@
               <li><span class="tick">✓</span> Smart contract deployed on MintMe blockchain</li>
             </ul>
           </div>
-
-          <!-- SOLANA FEATURES -->
           <div class="feature-column">
             <div class="feature-title">SOLANA NETWORK</div>
             <ul class="feature-list">
@@ -453,7 +561,6 @@
             </ul>
           </div>
         </div>
-
         <div class="badge-container">
           <span class="badge">NON-CUSTODIAL</span>
           <span class="badge">FULLY ENCRYPTED</span>
@@ -462,10 +569,7 @@
           <span class="badge">0% WITHDRAWAL FEE</span>
           <span class="badge">2FA + PASSWORD</span>
         </div>
-
-        <div class="availability-text">
-          WEB VERSION AVAILABLE | ANDROID APP COMING SOON ON PLAY STORE
-        </div>
+        <div class="availability-text">WEB VERSION AVAILABLE | ANDROID APP COMING SOON ON PLAY STORE</div>
       </div>
     </div>
 
@@ -489,7 +593,7 @@
   </div>
 
   <script>
-    // PARTICLE ANIMATION
+    // animated particles (same as original)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let width = window.innerWidth, height = window.innerHeight, particles = [];
@@ -586,101 +690,55 @@
     }
     animate();
 
-    // ROUTING SYSTEM
+    // ROUTING (identical)
     const pages = ['home', 'dex-service', 'exchange', 'wallet', 'team', 'docs'];
     
     function showPage(pageId) {
-      // Hide all pages
       pages.forEach(p => {
         const pageElement = document.getElementById(`${p}-page`);
-        if (pageElement) {
-          pageElement.classList.remove('active');
-        }
+        if (pageElement) pageElement.classList.remove('active');
       });
-      
-      // Show selected page
       const activePage = document.getElementById(`${pageId}-page`);
-      if (activePage) {
-        activePage.classList.add('active');
-      }
+      if (activePage) activePage.classList.add('active');
       
-      // Update active state in desktop menu
       document.querySelectorAll('#desktopMenu .header-link').forEach(link => {
-        if (link.getAttribute('data-page') === pageId) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
+        if (link.getAttribute('data-page') === pageId) link.classList.add('active');
+        else link.classList.remove('active');
       });
-      
-      // Update active state in mobile dropdown
       document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => {
-        if (item.getAttribute('data-page') === pageId) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
+        if (item.getAttribute('data-page') === pageId) item.classList.add('active');
+        else item.classList.remove('active');
       });
-      
-      // Update browser history
       window.history.pushState({ page: pageId }, `${pageId} - FIXORIUM`, `?page=${pageId}`);
     }
     
-    // Add click handlers to desktop menu
     document.querySelectorAll('#desktopMenu .header-link').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        const page = link.getAttribute('data-page');
-        showPage(page);
+        showPage(link.getAttribute('data-page'));
         document.getElementById('mobileDropdown').classList.remove('open');
       });
     });
-    
-    // Add click handlers to mobile dropdown items
     document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        const page = item.getAttribute('data-page');
-        showPage(page);
+        showPage(item.getAttribute('data-page'));
         document.getElementById('mobileDropdown').classList.remove('open');
       });
     });
-    
-    // Mobile menu toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileDropdown = document.getElementById('mobileDropdown');
     const closeDropdownBtn = document.getElementById('closeDropdownBtn');
-    
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileDropdown.classList.add('open');
-    });
-    closeDropdownBtn.addEventListener('click', () => {
-      mobileDropdown.classList.remove('open');
-    });
-    mobileDropdown.addEventListener('click', (e) => {
-      if (e.target === mobileDropdown) {
-        mobileDropdown.classList.remove('open');
-      }
-    });
-
-    // Brand click to go home
-    document.getElementById('brand').addEventListener('click', () => {
-      showPage('home');
-      document.getElementById('mobileDropdown').classList.remove('open');
-    });
-
-    // Load page from URL query parameter on page load
+    mobileMenuBtn.addEventListener('click', () => mobileDropdown.classList.add('open'));
+    closeDropdownBtn.addEventListener('click', () => mobileDropdown.classList.remove('open'));
+    mobileDropdown.addEventListener('click', (e) => { if (e.target === mobileDropdown) mobileDropdown.classList.remove('open'); });
+    document.getElementById('brand').addEventListener('click', () => { showPage('home'); mobileDropdown.classList.remove('open'); });
     window.addEventListener('load', () => {
       const params = new URLSearchParams(window.location.search);
       const pageId = params.get('page') || 'home';
       showPage(pageId);
     });
-
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', (e) => {
-      const pageId = e.state?.page || 'home';
-      showPage(pageId);
-    });
+    window.addEventListener('popstate', (e) => { const pageId = e.state?.page || 'home'; showPage(pageId); });
   </script>
 </body>
 </html>
