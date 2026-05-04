@@ -372,6 +372,7 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       font-weight: 500;
+      animation: slideUpFade 0.8s ease-out 0.4s both;
     }
 
     .feature-highlights {
@@ -391,12 +392,36 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       transition: all 0.3s ease;
+      animation: slideUpFade 0.8s ease-out both;
+    }
+
+    .highlight-item:nth-child(1) {
+      animation-delay: 0.6s;
+    }
+
+    .highlight-item:nth-child(2) {
+      animation-delay: 0.8s;
+    }
+
+    .highlight-item:nth-child(3) {
+      animation-delay: 1s;
     }
 
     .highlight-item:hover {
       color: #00D4FF;
       border-color: rgba(0, 212, 255, 0.6);
       box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+    }
+
+    @keyframes slideUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* NO TEXT ABOVE ANIMATION - REMOVED */
@@ -619,9 +644,12 @@
       .pulsar-core { width: 45px; height: 45px; }
       .core-icon { font-size: 1.4rem; }
       .crypto-avatar { width: 40px; height: 40px; font-size: 1.2rem; }
-      .tagline { font-size: 0.65rem; margin-top: 0.8rem; letter-spacing: 2px; }
+      .tagline { font-size: 0.65rem; margin-top: 0.8rem; letter-spacing: 2px; animation: slideUpFade 0.8s ease-out 0.4s both; }
       .feature-highlights { gap: 0.6rem; margin-top: 1rem; }
-      .highlight-item { font-size: 0.55rem; padding: 0.25rem 0.8rem; }
+      .highlight-item { font-size: 0.55rem; padding: 0.25rem 0.8rem; animation: slideUpFade 0.8s ease-out both; }
+      .highlight-item:nth-child(1) { animation-delay: 0.6s; }
+      .highlight-item:nth-child(2) { animation-delay: 0.8s; }
+      .highlight-item:nth-child(3) { animation-delay: 1s; }
       .content-page { padding: 55px 0.3rem 1rem 0.3rem; }
       .feature-column { min-width: 100%; }
       .float-particle { width: 3px; height: 3px; }
