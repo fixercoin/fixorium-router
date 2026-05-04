@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>FIXORIUM | DEFI ECOSYSTEM| </title>
+  <title>FIXORIUM | DEFI ECOSYSTEM</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -43,9 +43,8 @@
       padding: 1.2rem 2rem;
       z-index: 100;
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
-      gap: 1.2rem;
     }
 
     .brand {
@@ -68,7 +67,7 @@
       display: flex;
       gap: 2rem;
       align-items: center;
-      margin-left: auto;
+      margin-left: 2rem;
     }
 
     .header-link {
@@ -95,6 +94,7 @@
       font-size: 2.2rem;
       cursor: pointer;
       padding: 0.4rem 0.6rem;
+      margin-left: auto;
     }
 
     .mobile-dropdown {
@@ -366,6 +366,14 @@
       letter-spacing: 0.3px;
     }
 
+    /* 8px text for addresses */
+    .address-text {
+      font-size: 0.8rem;
+      font-family: monospace;
+      word-break: break-all;
+      letter-spacing: 0.2px;
+    }
+
     @media (max-width: 768px) {
       .desktop-menu {
         display: none;
@@ -375,10 +383,6 @@
       }
       .header-bar {
         padding: 1rem 1.5rem;
-        gap: 1rem;
-      }
-      .header-bar > div:nth-child(2) {
-        display: none;
       }
       .content-page {
         padding: 90px 1rem 2rem 1rem;
@@ -523,7 +527,7 @@
           <div class="feature-column">
             <div class="feature-title">TOKEN DETAILS</div>
             <ul class="feature-list">
-              <li><span class="tick">✓</span> FIXERCOIN (FIXERCOIN) — TOTAL SUPPLY: 100,000,000 | LISTED ON RAYDIUM, ORCA, MINTME DEX,PUMPFUN</li>
+              <li><span class="tick">✓</span> FIXERCOIN (FIXERCOIN) — TOTAL SUPPLY: 100,000,000 | LISTED ON RAYDIUM, ORCA, MINTME DEX, PUMPFUN</li>
               <li><span class="tick">✓</span> LOCKER (LOCKER) — TOTAL SUPPLY: 50,000,000 | USED FOR LIQUIDITY LOCKING REWARDS</li>
               <li><span class="tick">✓</span> PINGX (PINGX) — TOTAL SUPPLY: 1,000,000,000 | SOCIAL MEDIA AIRDROP TOKENS</li>
               <li><span class="tick">✓</span> FXM (FXM) — TOTAL SUPPLY: 10,000,000 | FIXORIUM ECOSYSTEM GOVERNANCE</li>
@@ -532,11 +536,11 @@
           <div class="feature-column">
             <div class="feature-title">SMART CONTRACT ADDRESSES</div>
             <ul class="feature-list">
-              <li><span class="tick">✓</span> FIXERCOIN (SOLANA):H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump</li>
-              <li><span class="tick"> </span> FIXERCOIN (MINTME):0x091da08c5bf888252ed1ab3e44246cbf72d63307</li>
-              <li><span class="tick">✓</span> LOCKER (SOLANA): EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump</li>
-              <li><span class="tick">✓</span> PINGX (SOLANA): 7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump</li>
-              <li><span class="tick">✓</span> FXM (SOLANA): 7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump</li>
+              <li><span class="tick">✓</span> FIXERCOIN (SOLANA): <span class="address-text">H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump</span></li>
+              <li><span class="tick">✓</span> FIXERCOIN (MINTME): <span class="address-text">0x091da08c5bf888252ed1ab3e44246cbf72d63307</span></li>
+              <li><span class="tick">✓</span> LOCKER (SOLANA): <span class="address-text">EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump</span></li>
+              <li><span class="tick">✓</span> PINGX (SOLANA): <span class="address-text">7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump</span></li>
+              <li><span class="tick">✓</span> FXM (SOLANA): <span class="address-text">7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump</span></li>
             </ul>
           </div>
           <div class="feature-column">
@@ -544,8 +548,8 @@
             <ul class="feature-list">
               <li><span class="tick">✓</span> API REFERENCES FOR DEX AGGREGATOR</li>
               <li><span class="tick">✓</span> SDK INTEGRATION (JAVASCRIPT / PYTHON)</li>
-              <li><span class="tick">✓</span> MINTME PROGRAM ID: 0x33C60168F237146647891BAAE4CA4DF8AC58D03E</li>
-              <li><span class="tick">✓</span> SOLANA PROGRAM ID: EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</li>
+              <li><span class="tick">✓</span> MINTME PROGRAM ID: <span class="address-text">0x33C60168F237146647891BAAE4CA4DF8AC58D03E</span></li>
+              <li><span class="tick">✓</span> SOLANA PROGRAM ID: <span class="address-text">EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</span></li>
               <li><span class="tick">✓</span> CREATE POOLS, ADD LIQUIDITY, DEPLOY TOKENS — FULL TUTORIAL</li>
             </ul>
           </div>
