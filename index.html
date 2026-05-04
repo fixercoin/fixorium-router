@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>FIXORIUM | HOME</title>
+  <title>FIXORIUM</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -20,7 +20,6 @@
       overflow-x: hidden;
     }
 
-    /* PARTICLE CANVAS BACKGROUND */
     #particleCanvas {
       position: fixed;
       top: 0;
@@ -31,7 +30,6 @@
       pointer-events: none;
     }
 
-    /* FIXED HEADER BAR */
     .header-bar {
       position: fixed;
       top: 0;
@@ -47,7 +45,6 @@
       align-items: center;
     }
 
-    /* DESKTOP MENU */
     .desktop-menu {
       display: flex;
       gap: 2rem;
@@ -63,13 +60,13 @@
       letter-spacing: 0.5px;
       transition: all 0.2s ease;
       white-space: nowrap;
+      cursor: pointer;
     }
 
-    .header-link:hover {
+    .header-link:hover, .header-link.active {
       color: rgba(255, 255, 255, 1);
     }
 
-    /* MOBILE MENU BUTTON */
     .mobile-menu-btn {
       display: none;
       background: rgba(255, 255, 255, 0.1);
@@ -81,7 +78,6 @@
       cursor: pointer;
     }
 
-    /* MOBILE DROPDOWN OVERLAY */
     .mobile-dropdown {
       display: none;
       position: fixed;
@@ -116,6 +112,7 @@
       padding: 0.8rem 2rem;
       border-radius: 12px;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
 
     .mobile-dropdown-item:hover {
@@ -142,8 +139,8 @@
       cursor: pointer;
     }
 
-    /* MAIN CONTENT - CENTERED */
-    .center-text {
+    /* PAGE CONTENT */
+    .page-content {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -152,11 +149,15 @@
       z-index: 10;
       width: 100%;
       padding: 2rem;
+      display: none;
     }
 
-    /* PREMIUM FIXORIUM TEXT */
-    .fixorium-header {
-      font-size: clamp(3rem, 12vw, 7rem);
+    .page-content.active {
+      display: block;
+    }
+
+    .page-title {
+      font-size: clamp(2rem, 8vw, 4rem);
       font-weight: 700;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, #FFFFFF 0%, #B8B8C8 50%, #FFFFFF 100%);
@@ -167,7 +168,6 @@
       margin-bottom: 1rem;
     }
 
-    /* MODERN BORDER LINE */
     .border-line {
       width: 80px;
       height: 1px;
@@ -176,214 +176,212 @@
       border-radius: 2px;
     }
 
-    /* SUBTITLE */
-    .decentralized-sub {
-      font-size: clamp(0.7rem, 2.5vw, 0.85rem);
-      color: rgba(255, 255, 255, 0.4);
+    .page-description {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.5);
       text-transform: uppercase;
-      letter-spacing: 0.3em;
-      font-weight: 400;
+      letter-spacing: 0.2em;
+      max-width: 600px;
+      margin: 1rem auto 0;
+      line-height: 1.6;
     }
 
-    /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
-      .desktop-menu {
-        display: none;
-      }
-      .mobile-menu-btn {
-        display: block;
-      }
-      .header-bar {
-        padding: 1rem 1.5rem;
-      }
-      .center-text {
-        padding: 2rem;
-      }
-    }
-
-    @media (min-width: 769px) {
-      .mobile-dropdown {
-        display: none !important;
-      }
+      .desktop-menu { display: none; }
+      .mobile-menu-btn { display: block; }
+      .header-bar { padding: 1rem 1.5rem; }
+      .page-description { font-size: 12px; padding: 0 1rem; }
     }
   </style>
 </head>
 <body>
   <canvas id="particleCanvas"></canvas>
 
-  <!-- FIXED HEADER BAR -->
   <div class="header-bar">
-    <!-- DESKTOP MENU -->
     <div class="desktop-menu">
-      <a href="dex-service.html" class="header-link">DEX SERVICE</a>
-      <a href="exchange.html" class="header-link">EXCHANGE</a>
-      <a href="wallet.html" class="header-link">WALLET</a>
-      <a href="team.html" class="header-link">TEAM</a>
-      <a href="docs.html" class="header-link">DOCS</a>
+      <a class="header-link" data-page="dex-service">DEX SERVICE</a>
+      <a class="header-link" data-page="exchange">EXCHANGE</a>
+      <a class="header-link" data-page="wallet">WALLET</a>
+      <a class="header-link" data-page="team">TEAM</a>
+      <a class="header-link" data-page="docs">DOCS</a>
     </div>
-
-    <!-- MOBILE MENU BUTTON -->
-    <div style="flex: 1;"></div>
+    <div style="flex:1;"></div>
     <div class="mobile-menu-btn" id="mobileMenuBtn">☰</div>
   </div>
 
-  <!-- MOBILE DROPDOWN MENU -->
   <div class="mobile-dropdown" id="mobileDropdown">
     <button class="close-dropdown" id="closeDropdownBtn">✕</button>
-    <a href="dex-service.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> DEX SERVICE</a>
-    <a href="exchange.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> EXCHANGE</a>
-    <a href="wallet.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> WALLET</a>
-    <a href="team.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> TEAM</a>
-    <a href="docs.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> DOCS</a>
+    <a class="mobile-dropdown-item" data-page="dex-service"><span class="dropdown-icon">★</span> DEX SERVICE</a>
+    <a class="mobile-dropdown-item" data-page="exchange"><span class="dropdown-icon">★</span> EXCHANGE</a>
+    <a class="mobile-dropdown-item" data-page="wallet"><span class="dropdown-icon">★</span> WALLET</a>
+    <a class="mobile-dropdown-item" data-page="team"><span class="dropdown-icon">★</span> TEAM</a>
+    <a class="mobile-dropdown-item" data-page="docs"><span class="dropdown-icon">★</span> DOCS</a>
   </div>
 
-  <div class="center-text">
-    <div class="fixorium-header">FIXORIUM</div>
+  <!-- HOME PAGE -->
+  <div id="home-page" class="page-content active">
+    <div class="page-title">FIXORIUM</div>
     <div class="border-line"></div>
-    <div class="decentralized-sub">DECENTRALIZED FINANCE</div>
+    <div class="page-description">DECENTRALIZED FINANCE</div>
+  </div>
+
+  <!-- DEX SERVICE PAGE -->
+  <div id="dex-service-page" class="page-content">
+    <div class="page-title">DEX SERVICE</div>
+    <div class="border-line"></div>
+    <div class="page-description">Advanced decentralized exchange aggregation service. Access liquidity from 15+ DEXes including Raydium, Orca, Meteora, and Pump.fun with MEV protection and optimal price routing.</div>
+  </div>
+
+  <!-- EXCHANGE PAGE -->
+  <div id="exchange-page" class="page-content">
+    <div class="page-title">EXCHANGE</div>
+    <div class="border-line"></div>
+    <div class="page-description">Cross-chain decentralized exchange with intelligent order routing. Swap tokens across 8 blockchains with minimal slippage, MEV protection, and the lowest 0.01% fee.</div>
+  </div>
+
+  <!-- WALLET PAGE -->
+  <div id="wallet-page" class="page-content">
+    <div class="page-title">WALLET</div>
+    <div class="border-line"></div>
+    <div class="page-description">Non-custodial multi-chain wallet with BIP-39 seed phrase, multi-signature support, hardware wallet integration, and biometric authentication. Full control over your digital assets.</div>
+  </div>
+
+  <!-- TEAM PAGE -->
+  <div id="team-page" class="page-content">
+    <div class="page-title">TEAM</div>
+    <div class="border-line"></div>
+    <div class="page-description">Experienced team of blockchain developers, DeFi experts, and security researchers dedicated to building the most accessible decentralized finance platform on Solana.</div>
+  </div>
+
+  <!-- DOCS PAGE -->
+  <div id="docs-page" class="page-content">
+    <div class="page-title">DOCS</div>
+    <div class="border-line"></div>
+    <div class="page-description">Comprehensive documentation for developers and users. API references, SDK integration guides, smart contract addresses, and technical specifications for the Fixorium platform.</div>
   </div>
 
   <script>
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
+    let width = window.innerWidth, height = window.innerHeight, particles = [];
     
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let particles = [];
-    
-    function resizeCanvas() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    }
-    
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
     
     const PARTICLE_COUNT = 100;
-    const MAX_SPEED = 0.5;
-    const MIN_RADIUS = 1;
-    const MAX_RADIUS = 2;
-    
-    const colors = [
-      'rgba(255, 255, 255, 0.2)',
-      'rgba(255, 255, 255, 0.12)',
-      'rgba(0, 212, 255, 0.15)',
-      'rgba(200, 200, 220, 0.12)'
-    ];
+    const colors = ['rgba(255,255,255,0.2)','rgba(255,255,255,0.12)','rgba(0,212,255,0.15)','rgba(200,200,220,0.12)'];
     
     class Particle {
       constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.radius = Math.random() * (MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS;
-        this.speedX = (Math.random() - 0.5) * MAX_SPEED;
-        this.speedY = (Math.random() - 0.5) * MAX_SPEED;
+        this.x = Math.random() * width; this.y = Math.random() * height;
+        this.radius = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.5; this.speedY = (Math.random() - 0.5) * 0.5;
         this.color = colors[Math.floor(Math.random() * colors.length)];
       }
-      
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        
-        if (this.x < 0) this.x = width;
-        if (this.x > width) this.x = 0;
-        if (this.y < 0) this.y = height;
-        if (this.y > height) this.y = 0;
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.x < 0) this.x = width; if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height; if (this.y > height) this.y = 0;
       }
-      
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-      }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); }
     }
     
     function drawConnections() {
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 100) {
-            const opacity = (1 - distance / 100) * 0.06;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0, 212, 255, ${opacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+          const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 100) { const opacity = (1 - distance / 100) * 0.06;
+            ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0,212,255,${opacity})`; ctx.lineWidth = 0.5; ctx.stroke();
           }
         }
       }
     }
     
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push(new Particle());
-    }
+    for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
     
-    let mouseX = null;
-    let mouseY = null;
-    
+    let mouseX = null, mouseY = null;
     window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      
+      mouseX = e.clientX; mouseY = e.clientY;
       for (let p of particles) {
-        const dx = p.x - mouseX;
-        const dy = p.y - mouseY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
+        const dx = p.x - mouseX, dy = p.y - mouseY, distance = Math.sqrt(dx * dx + dy * dy);
         if (distance < 100) {
-          const angle = Math.atan2(dy, dx);
-          const force = (100 - distance) / 100 * 1;
-          p.x += Math.cos(angle) * force;
-          p.y += Math.sin(angle) * force;
+          const angle = Math.atan2(dy, dx), force = (100 - distance) / 100 * 1;
+          p.x += Math.cos(angle) * force; p.y += Math.sin(angle) * force;
         }
       }
-      
-      setTimeout(() => {
-        mouseX = null;
-        mouseY = null;
-      }, 50);
+      setTimeout(() => { mouseX = null; mouseY = null; }, 50);
     });
     
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      
-      for (let p of particles) {
-        p.update();
-        p.draw();
-      }
-      
-      drawConnections();
-      requestAnimationFrame(animate);
-    }
-    
+    function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); drawConnections(); requestAnimationFrame(animate); }
     animate();
 
-    // Mobile dropdown functionality
+    // PAGE ROUTING FUNCTION
+    const pages = ['home', 'dex-service', 'exchange', 'wallet', 'team', 'docs'];
+    
+    function showPage(pageId) {
+      // Hide all pages
+      pages.forEach(p => {
+        const pageElement = document.getElementById(`${p}-page`);
+        if (pageElement) pageElement.classList.remove('active');
+      });
+      
+      // Show selected page
+      const activePage = document.getElementById(`${pageId}-page`);
+      if (activePage) activePage.classList.add('active');
+      
+      // Update active state in desktop menu
+      document.querySelectorAll('.desktop-menu .header-link').forEach(link => {
+        if (link.getAttribute('data-page') === pageId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+      
+      // Update active state in mobile dropdown
+      document.querySelectorAll('.mobile-dropdown-item').forEach(item => {
+        if (item.getAttribute('data-page') === pageId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+    
+    // Add click handlers to desktop menu
+    document.querySelectorAll('.desktop-menu .header-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        showPage(page);
+        // Close mobile dropdown if open
+        document.getElementById('mobileDropdown').classList.remove('open');
+      });
+    });
+    
+    // Add click handlers to mobile dropdown items
+    document.querySelectorAll('.mobile-dropdown-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = item.getAttribute('data-page');
+        showPage(page);
+        document.getElementById('mobileDropdown').classList.remove('open');
+      });
+    });
+    
+    // Mobile dropdown toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileDropdown = document.getElementById('mobileDropdown');
     const closeDropdownBtn = document.getElementById('closeDropdownBtn');
-
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileDropdown.classList.add('open');
-    });
-
-    function closeDropdown() {
-      mobileDropdown.classList.remove('open');
-    }
-
-    closeDropdownBtn.addEventListener('click', closeDropdown);
-    mobileDropdown.addEventListener('click', (e) => {
-      if (e.target === mobileDropdown) {
-        closeDropdown();
-      }
-    });
+    
+    mobileMenuBtn.addEventListener('click', () => mobileDropdown.classList.add('open'));
+    closeDropdownBtn.addEventListener('click', () => mobileDropdown.classList.remove('open'));
+    mobileDropdown.addEventListener('click', (e) => { if (e.target === mobileDropdown) mobileDropdown.classList.remove('open'); });
+    
+    // Home link from brand - show home page
+    const brand = document.querySelector('.header-bar');
+    // Not needed, just keeping the routing intact
   </script>
 </body>
 </html>
