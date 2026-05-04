@@ -190,6 +190,185 @@
       justify-content: center;
     }
 
+    .galaxy-container {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      margin: 0 auto;
+    }
+
+    .orbit-ring-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 280px;
+      height: 280px;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.1), inset 0 0 30px rgba(0, 212, 255, 0.05);
+    }
+
+    .orbit-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border: 1px solid rgba(0, 212, 255, 0.08);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.03);
+    }
+
+    .orbit-glow:nth-child(2) {
+      width: 350px;
+      height: 350px;
+    }
+
+    .orbit-glow:nth-child(3) {
+      width: 320px;
+      height: 320px;
+    }
+
+    .orbit-glow:nth-child(4) {
+      width: 380px;
+      height: 380px;
+    }
+
+    .pulsar-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(0, 212, 255, 0.4), rgba(0, 212, 255, 0.1));
+      border: 2px solid rgba(0, 212, 255, 0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 0 40px rgba(0, 212, 255, 0.3), 0 0 80px rgba(0, 212, 255, 0.15);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.3), 0 0 80px rgba(0, 212, 255, 0.15); }
+      50% { box-shadow: 0 0 60px rgba(0, 212, 255, 0.5), 0 0 100px rgba(0, 212, 255, 0.25); }
+    }
+
+    .core-icon {
+      font-size: 2rem;
+      color: #00D4FF;
+      font-weight: 700;
+    }
+
+    .crypto-avatars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      animation: rotate-avatars 20s linear infinite;
+    }
+
+    @keyframes rotate-avatars {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .crypto-avatar {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      border: 2px solid rgba(0, 212, 255, 0.5);
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+      animation: float-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes float-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .crypto-avatar:nth-child(1) {
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: 0s;
+    }
+
+    .crypto-avatar:nth-child(2) {
+      top: 30%;
+      right: 15%;
+      animation-delay: 0.5s;
+    }
+
+    .crypto-avatar:nth-child(3) {
+      bottom: 30%;
+      right: 15%;
+      animation-delay: 1s;
+    }
+
+    .crypto-avatar:nth-child(4) {
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: 1.5s;
+    }
+
+    .crypto-avatar:nth-child(5) {
+      bottom: 30%;
+      left: 15%;
+      animation-delay: 2s;
+    }
+
+    .crypto-avatar:nth-child(6) {
+      top: 30%;
+      left: 15%;
+      animation-delay: 2.5s;
+    }
+
+    .tagline {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 1.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .feature-highlights {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .highlight-item {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .highlight-item:hover {
+      color: #00D4FF;
+      border-color: rgba(0, 212, 255, 0.6);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+    }
+
     /* NO TEXT ABOVE ANIMATION - REMOVED */
 
     
@@ -460,8 +639,14 @@
               <span class="core-icon">MAX</span>
             </div>
             <!-- CRYPTO ICON AVATARS -->
-
-           
+            <div class="crypto-avatars">
+              <div class="crypto-avatar">₿</div>
+              <div class="crypto-avatar">Ξ</div>
+              <div class="crypto-avatar">◆</div>
+              <div class="crypto-avatar">🪙</div>
+              <div class="crypto-avatar">⚡</div>
+              <div class="crypto-avatar">🔗</div>
+            </div>
           </div>
           <P></P>
           <div class="tagline">DECENTRALIZED ECOSYSTEM</div>
