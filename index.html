@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>FIXORIUM — MPC Hybrid Exchange</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <title>FIXORIUM | DEFI ECOSYSTEM| </title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -18,6 +18,7 @@
       background: linear-gradient(135deg, #0A0A0F 0%, #13131F 100%);
       position: relative;
       overflow-x: hidden;
+      font-size: 10px;
     }
 
     #particleCanvas {
@@ -35,8 +36,8 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(10, 10, 15, 0.9);
-      backdrop-filter: blur(12px);
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding: 1.2rem 2rem;
       z-index: 100;
@@ -46,7 +47,7 @@
     }
 
     .brand {
-      font-size: 18px;
+      font-size: 1.6rem;
       font-weight: 700;
       color: #FFFFFF;
       text-decoration: none;
@@ -62,14 +63,14 @@
 
     .desktop-menu {
       display: flex;
-      gap: 2rem;
+      gap: 2.4rem;
       align-items: center;
     }
 
     .header-link {
-      font-size: 16px;
+      font-size: 1.2rem;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255, 255, 255, 0.65);
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -84,13 +85,12 @@
 
     .mobile-menu-btn {
       display: none;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
+      border: none;
       color: white;
-      font-size: 24px;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
+      font-size: 2.2rem;
       cursor: pointer;
+      padding: 0.4rem 0.6rem;
     }
 
     .mobile-dropdown {
@@ -118,7 +118,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 18px;
+      font-size: 1.4rem;
       font-weight: 500;
       color: rgba(255, 255, 255, 0.7);
       text-decoration: none;
@@ -135,26 +135,20 @@
       color: white;
     }
 
-    .dropdown-icon {
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
     .close-dropdown {
       position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      top: 1.8rem;
+      right: 1.8rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
       color: white;
-      font-size: 24px;
-      width: 44px;
-      height: 44px;
-      border-radius: 44px;
+      font-size: 2rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 40px;
       cursor: pointer;
     }
 
-    /* PAGE CONTENT */
     .page-content {
       position: relative;
       z-index: 10;
@@ -167,7 +161,6 @@
       display: flex;
     }
 
-    /* HERO PAGES (home, team, docs) */
     .hero-page {
       align-items: center;
       justify-content: center;
@@ -177,11 +170,11 @@
 
     .hero-content {
       width: 100%;
-      padding-top: 60px;
+      padding-top: 70px;
     }
 
     .page-title {
-      font-size: clamp(2rem, 8vw, 4rem);
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
       font-weight: 700;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, #FFFFFF 0%, #B8B8C8 50%, #FFFFFF 100%);
@@ -201,16 +194,15 @@
     }
 
     .page-description {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.55);
       text-transform: uppercase;
       letter-spacing: 0.2em;
-      max-width: 600px;
+      max-width: 700px;
       margin: 1rem auto 0;
       line-height: 1.6;
     }
 
-    /* CONTENT PAGES (wallet + exchange) */
     .content-page {
       padding: 100px 1rem 2rem 1rem;
       flex-direction: column;
@@ -218,14 +210,13 @@
     }
 
     .content-card {
-      max-width: 1300px;
+      max-width: 1400px;
       width: 100%;
       background: rgba(20, 20, 30, 0.6);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 28px;
       padding: 2rem;
-      transition: all 0.2s ease;
     }
 
     .card-header {
@@ -234,11 +225,13 @@
     }
 
     .card-sub {
-      font-size: 13px;
+      font-size: 1.1rem;
       color: rgba(255, 255, 255, 0.45);
       text-transform: uppercase;
       letter-spacing: 0.3em;
       margin-top: 0.5rem;
+      font-family: monospace;
+      word-break: break-all;
     }
 
     .features-grid {
@@ -250,14 +243,14 @@
 
     .feature-column {
       flex: 1;
-      min-width: 260px;
+      min-width: 280px;
       background: rgba(0, 0, 0, 0.2);
       border-radius: 20px;
       padding: 1rem 1rem 1rem 0;
     }
 
     .feature-title {
-      font-size: 18px;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #00D4FF;
       margin-bottom: 1rem;
@@ -265,9 +258,6 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       text-transform: uppercase;
       letter-spacing: 1.2px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .feature-list {
@@ -275,20 +265,21 @@
     }
 
     .feature-list li {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.75);
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
       padding: 0.75rem 0;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       line-height: 1.4;
+      text-transform: uppercase;
     }
 
     .tick {
-      color: #00D4FF;
-      font-weight: bold;
-      font-size: 16px;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 1.2rem;
       min-width: 22px;
     }
 
@@ -303,24 +294,73 @@
     }
 
     .badge {
-      background: rgba(0, 212, 255, 0.08);
-      border: 1px solid rgba(0, 212, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 0.4rem 1.2rem;
       border-radius: 40px;
-      font-size: 11px;
+      font-size: 1rem;
       font-weight: 600;
-      color: #C0E8FF;
+      color: #DDDDFF;
       text-transform: uppercase;
       letter-spacing: 1px;
-      backdrop-filter: blur(2px);
+    }
+
+    .program-id-box {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 16px;
+      padding: 0.8rem 1.2rem;
+      margin: 0.5rem 0;
+      font-family: 'monospace';
+      font-size: 1.1rem;
+      color: #88ddff;
+      border-left: 3px solid #00D4FF;
+      word-break: break-all;
+      text-transform: none;
     }
 
     .availability-text {
       text-align: center;
       margin-top: 2rem;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.3);
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.4);
       font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .token-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .token-card {
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 20px;
+      padding: 1.2rem;
+      flex: 1;
+      min-width: 180px;
+      text-align: center;
+    }
+    .token-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .token-symbol {
+      font-size: 1rem;
+      color: #00D4FF;
+      margin-top: 0.4rem;
+      text-transform: uppercase;
+    }
+    .token-desc {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.6rem;
+      text-transform: uppercase;
     }
 
     @media (max-width: 768px) {
@@ -333,10 +373,6 @@
       .header-bar {
         padding: 1rem 1.5rem;
       }
-      .page-description {
-        font-size: 12px;
-        padding: 0 1rem;
-      }
       .content-page {
         padding: 90px 1rem 2rem 1rem;
       }
@@ -345,13 +381,12 @@
       }
       .feature-column {
         min-width: 100%;
-        padding: 0.5rem;
       }
       .feature-list li {
-        font-size: 12px;
+        font-size: 1rem;
       }
       .badge {
-        font-size: 9px;
+        font-size: 0.85rem;
       }
     }
 
@@ -368,7 +403,6 @@
 <body>
   <canvas id="particleCanvas"></canvas>
 
-  <!-- HEADER -->
   <div class="header-bar">
     <div class="brand" id="brand">FIXORIUM</div>
     <div class="desktop-menu" id="desktopMenu">
@@ -376,199 +410,76 @@
       <a class="header-link" data-page="exchange">EXCHANGE</a>
       <a class="header-link" data-page="wallet">WALLET</a>
       <a class="header-link" data-page="team">TEAM</a>
-      <a class="header-link" data-page="docs">DOCS</a>
+      <a class="header-link active" data-page="docs">DOCS</a>
     </div>
     <div style="flex:1;"></div>
     <div class="mobile-menu-btn" id="mobileMenuBtn">☰</div>
   </div>
 
-  <!-- MOBILE MENU -->
   <div class="mobile-dropdown" id="mobileDropdown">
     <button class="close-dropdown" id="closeDropdownBtn">✕</button>
-    <a class="mobile-dropdown-item" data-page="dex-service"><span class="dropdown-icon">★</span> DEX SERVICE</a>
-    <a class="mobile-dropdown-item" data-page="exchange"><span class="dropdown-icon">★</span> EXCHANGE</a>
-    <a class="mobile-dropdown-item" data-page="wallet"><span class="dropdown-icon">★</span> WALLET</a>
-    <a class="mobile-dropdown-item" data-page="team"><span class="dropdown-icon">★</span> TEAM</a>
-    <a class="mobile-dropdown-item" data-page="docs"><span class="dropdown-icon">★</span> DOCS</a>
+    <a class="mobile-dropdown-item" data-page="dex-service">DEX SERVICE</a>
+    <a class="mobile-dropdown-item" data-page="exchange">EXCHANGE</a>
+    <a class="mobile-dropdown-item" data-page="wallet">WALLET</a>
+    <a class="mobile-dropdown-item" data-page="team">TEAM</a>
+    <a class="mobile-dropdown-item active" data-page="docs">DOCS</a>
   </div>
 
-  <!-- PAGES CONTAINER -->
   <div id="pagesContainer">
     <!-- HOME PAGE -->
-    <div id="home-page" class="page-content hero-page active">
+    <div id="home-page" class="page-content hero-page">
       <div class="hero-content">
         <div class="page-title">FIXORIUM</div>
         <div class="border-line"></div>
-        <div class="page-description">DECENTRALIZED FINANCE</div>
+        <div class="page-description">DECENTRALIZED FINANCE ECOSYSTEM</div>
       </div>
     </div>
 
-    <!-- DEX SERVICE PAGE -->
-    <div id="dex-service-page" class="page-content hero-page">
-      <div class="hero-content">
-        <div class="page-title">DEX SERVICE</div>
-        <div class="border-line"></div>
-        <div class="page-description">Advanced decentralized exchange aggregation service. Access liquidity from 15+ DEXes including Raydium, Orca, Meteora, and Pump.fun with MEV protection and optimal price routing.</div>
+    <!-- DEX SERVICE PAGE (FULL ONCHAIN) -->
+    <div id="dex-service-page" class="page-content content-page">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="page-title">DEX SERVICE</div>
+          <div class="card-sub">100% ONCHAIN AGGREGATOR | MINTME + SOLANA</div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+          <div class="program-id-box">MINTME PROGRAM ID: 0x33C60168F237146647891BAAE4CA4DF8AC58D03E</div>
+          <div class="program-id-box">SOLANA PROGRAM ID: EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</div>
+        </div>
+        <div class="features-grid">
+          <div class="feature-column"><div class="feature-title">MINTME BLOCKCHAIN</div><ul class="feature-list"><li><span class="tick">✓</span> OFFICIAL PROGRAM ID INTEGRATION</li><li><span class="tick">✓</span> CREATE TOKEN POOLS DIRECTLY VIA FIXORIUM WALLET</li><li><span class="tick">✓</span> ADD LIQUIDITY / WITHDRAW LIQUIDITY (ONCHAIN)</li><li><span class="tick">✓</span> EMERGENCY TOKENS WITHDRAWAL FUNCTION</li><li><span class="tick">✓</span> SWAP MINTME NATIVE TOKENS</li><li><span class="tick">✓</span> 100% ONCHAIN EXECUTION — NO OFFLINE SYSTEM</li></ul></div>
+          <div class="feature-column"><div class="feature-title">SOLANA DEX MAX</div><ul class="feature-list"><li><span class="tick">✓</span> PROGRAM ID: EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</li><li><span class="tick">✓</span> CREATE LIQUIDITY POOLS, ADD/WITHDRAW LIQUIDITY</li><li><span class="tick">✓</span> DEPLOY TOKENS: FREEZE AUTHORITY DISABLED, NON-TRANSFERABLE, NON-MINTABLE</li><li><span class="tick">✓</span> POOLS CREATION FULLY FUNCTIONAL WITH PERMANENT LOCK</li><li><span class="tick">✓</span> LIQUIDITY LOCKED COMPLETELY (NO RUG-PULL)</li><li><span class="tick">✓</span> SWAP ANY SOLANA TOKEN — MAX STANDALONE AGGREGATOR ACTIVE</li></ul></div>
+          <div class="feature-column"><div class="feature-title">FIXORIUM WALLET INTEGRATION</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE MINTME POOLS, ADD/REMOVE LIQUIDITY, TOKEN SWAPS</li><li><span class="tick">✓</span> SOLANA: CREATE POOLS, DEPOSIT LP, WITHDRAW LP TOKENS</li><li><span class="tick">✓</span> DEPLOY CUSTOM TOKENS (FIXED SUPPLY, IMMUTABLE)</li><li><span class="tick">✓</span> EMERGENCY TOKEN WITHDRAW (MINTME)</li><li><span class="tick">✓</span> FULL ONCHAIN NON-CUSTODIAL SYSTEM</li></ul></div>
+        </div>
+        <div class="badge-container"><span class="badge">ONCHAIN NATIVE</span><span class="badge">MINTME PROGRAM</span><span class="badge">SOLANA PROGRAM</span><span class="badge">CREATE POOLS</span><span class="badge">LOCKED LIQUIDITY</span><span class="badge">MAX AGGREGATOR</span></div>
+        <div class="availability-text">NEXT MAJOR AGGREGATOR UPDATE COMING SOON — STAY TUNED</div>
       </div>
     </div>
 
-    <!-- EXCHANGE PAGE — UPDATED WITH MPC HYBRID + FULL SECURITY DETAILS (SAME STYLE AS WALLET) -->
+    <!-- EXCHANGE PAGE (MPC HYBRID) -->
     <div id="exchange-page" class="page-content content-page">
       <div class="content-card">
-        <div class="card-header">
-          <div class="page-title">HYBRID MPC EXCHANGE</div>
-          <div class="card-sub">SERVER+USER MPC | MULTI-PARTY CONTROL | CROSS-CHAIN DEX</div>
-        </div>
-
+        <div class="card-header"><div class="page-title">HYBRID MPC EXCHANGE</div><div class="card-sub">SERVER+USER MPC | MULTI-PARTY CONTROL | CROSS-CHAIN DEX</div></div>
         <div class="features-grid">
-          <!-- CORE MPC & SECURITY ARCHITECTURE -->
-          <div class="feature-column">
-            <div class="feature-title"><span class="tick">⚡</span> MPC HYBRID RULE</div>
-            <ul class="feature-list">
-              <li><span class="tick">◈</span> Server+User multi‑party control system (next‑gen MPC)</li>
-              <li><span class="tick">◈</span> Half key secured by FIXORIUM vault — half key controlled only by user</li>
-              <li><span class="tick">◈</span> No operation possible without user-controlled key fragment</li>
-              <li><span class="tick">◈</span> User receives unique half‑key during signup (store offline)</li>
-              <li><span class="tick">◈</span> Every trade & withdrawal requires user key + password decryption</li>
-              <li><span class="tick">◈</span> True decentralization + institutional MPC security</li>
-            </ul>
-          </div>
-
-          <!-- WITHDRAWAL & 2FA / ADMIN CONTROL -->
-          <div class="feature-column">
-            <div class="feature-title"><span class="tick">🛡️</span> WITHDRAWAL PROTOCOL</div>
-            <ul class="feature-list">
-              <li><span class="tick">✓</span> Multi‑party signing system (2‑admin approval flow)</li>
-              <li><span class="tick">✓</span> Advanced rate limiting & anti‑abuse mechanisms</li>
-              <li><span class="tick">✓</span> Google 2FA + password decryption system mandatory</li>
-              <li><span class="tick">✓</span> Half‑user key required for each withdrawal request</li>
-              <li><span class="tick">✓</span> Server side enforces admin multi‑sig co‑sign</li>
-              <li><span class="tick">✓</span> Real‑time alerts + withdrawal cooldown (optional whitelist)</li>
-            </ul>
-          </div>
-
-          <!-- TRADING & TOKEN SWAP RULES -->
-          <div class="feature-column">
-            <div class="feature-title"><span class="tick">🔄</span> TRADING & SWAP ENGINE</div>
-            <ul class="feature-list">
-              <li><span class="tick">✓</span> User key asked for EVERY trade — password required to decrypt</li>
-              <li><span class="tick">✓</span> Decentralized order book + on‑chain settlement</li>
-              <li><span class="tick">✓</span> Cross‑chain token conversion system (EVM + Solana + MintMe)</li>
-              <li><span class="tick">✓</span> All major DEX tokens listed across networks</li>
-              <li><span class="tick">✓</span> MEV protection & minimal slippage routing</li>
-              <li><span class="tick">✓</span> 0.01% base fee, zero hidden costs</li>
-            </ul>
-          </div>
+          <div class="feature-column"><div class="feature-title">MPC HYBRID RULE</div><ul class="feature-list"><li><span class="tick">✓</span> SERVER+USER MULTI-PARTY CONTROL SYSTEM</li><li><span class="tick">✓</span> HALF KEY STORED AT SERVER SIDE — HALF KEY CONTROLLED BY USER</li><li><span class="tick">✓</span> NO OPERATION WITHOUT USER-CONTROLLED KEY FRAGMENT</li><li><span class="tick">✓</span> USER RECEIVES UNIQUE HALF-KEY DURING SIGNUP</li><li><span class="tick">✓</span> EVERY TRADE REQUIRES PASSWORD DECRYPTION</li></ul></div>
+          <div class="feature-column"><div class="feature-title">WITHDRAWAL PROTOCOL</div><ul class="feature-list"><li><span class="tick">✓</span> MULTI-PARTY SIGNING SYSTEM (2-ADMIN APPROVAL)</li><li><span class="tick">✓</span> RATE LIMITING + 2FA PROTECTION + PASSWORD DECRYPTION</li><li><span class="tick">✓</span> HALF-USER KEY REQUIRED FOR EACH WITHDRAWAL</li><li><span class="tick">✓</span> SERVER SIDE ENFORCES ADMIN MULTI-SIG CO-SIGN</li></ul></div>
+          <div class="feature-column"><div class="feature-title">CROSS-CHAIN TOKEN SWAP</div><ul class="feature-list"><li><span class="tick">✓</span> USER KEY ASKED FOR EVERY TRADE — PASSWORD REQUIRED</li><li><span class="tick">✓</span> CROSS-CHAIN TOKEN CONVERSION SYSTEM</li><li><span class="tick">✓</span> ALL BEST DEX TOKENS AT MAJOR NETWORKS LISTED</li><li><span class="tick">✓</span> TRADE ANY TOKEN WITH FULL SECURITY</li><li><span class="tick">✓</span> 0.01% BASE FEE, MEV PROTECTION</li></ul></div>
         </div>
-
-        <!-- second row: MULTI‑CHAIN SUPPORT + TOKEN LIBRARY -->
-        <div class="features-grid" style="margin-top: 1rem;">
-          <div class="feature-column">
-            <div class="feature-title"><span class="tick">🌐</span> MULTI‑CHAIN ECOSYSTEM</div>
-            <ul class="feature-list">
-              <li><span class="tick">◆</span> Solana + Ethereum + BNB Chain + Polygon + Arbitrum</li>
-              <li><span class="tick">◆</span> MintMe blockchain native integration (token pools & LP)</li>
-              <li><span class="tick">◆</span> Convert any token from any supported chain seamlessly</li>
-              <li><span class="tick">◆</span> Bridge‑less aggregation using cross‑chain intents</li>
-              <li><span class="tick">◆</span> Unified balance dashboard across 8+ networks</li>
-              <li><span class="tick">◆</span> Best swap routes aggregated from 20+ DEX sources</li>
-            </ul>
-          </div>
-
-          <div class="feature-column">
-            <div class="feature-title"><span class="tick">🏦</span> LISTED ASSETS & LIQUIDITY</div>
-            <ul class="feature-list">
-              <li><span class="tick">★</span> All best DEX tokens — Raydium, Orca, Jupiter, Uniswap, Pancake</li>
-              <li><span class="tick">★</span> Native $FIXORIUM governance token (0% lock, instant rewards)</li>
-              <li><span class="tick">★</span> Stable pools & volatile pairs with deep liquidity</li>
-              <li><span class="tick">★</span> Real-time price feeds via Chainlink + Pyth</li>
-              <li><span class="tick">★</span> Permissionless token listing for verified projects</li>
-              <li><span class="tick">★</span> Non‑custodial trading but with MPC hybrid safety nets</li>
-            </ul>
-          </div>
-
-          <div class="feature-column">
-            <div class="feature-title"><span class="tick">🔐</span> USER KEY MANAGEMENT</div>
-            <ul class="feature-list">
-              <li><span class="tick">⛓️</span> On signup: generate & securely download half‑key file</li>
-              <li><span class="tick">⛓️</span> Server never stores full private key (split entropy)</li>
-              <li><span class="tick">⛓️</span> Password + half‑key = full signing authority</li>
-              <li><span class="tick">⛓️</span> Encrypted local storage for session (optional hardware wallet)</li>
-              <li><span class="tick">⛓️</span> Re‑encryption on each sensitive action</li>
-              <li><span class="tick">⛓️</span> Emergency revoke: deactivate compromised half‑key</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- BADGES & HIGHLIGHTS -->
-        <div class="badge-container">
-          <span class="badge">MPC HYBRID</span>
-          <span class="badge">USER + SERVER KEYS</span>
-          <span class="badge">2‑ADMIN MULTI-SIG</span>
-          <span class="badge">2FA + PASSWORD DECRYPT</span>
-          <span class="badge">CROSS-CHAIN SWAPS</span>
-          <span class="badge">RATE LIMITING</span>
-          <span class="badge">NON-CUSTODIAL MPC</span>
-          <span class="badge">ALL DEX TOKENS</span>
-        </div>
-
-        <div class="availability-text">
-          ✅ Fully functional web exchange — beta available. Each trade validates user half‑key & password. <br>
-          🔐 “Without your key fragment — no transaction, no withdrawal, no swap.”  |  Android app (Play Store) Q4 2025
-        </div>
+        <div class="badge-container"><span class="badge">MPC HYBRID</span><span class="badge">USER+SERVER KEYS</span><span class="badge">2FA + PASSWORD</span><span class="badge">CROSS-CHAIN</span><span class="badge">MULTI-ADMIN SIG</span></div>
+        <div class="availability-text">WEB VERSION ACTIVE — EACH TRADE VALIDATES USER HALF-KEY & PASSWORD</div>
       </div>
     </div>
 
-    <!-- WALLET PAGE (unchanged) -->
+    <!-- WALLET PAGE -->
     <div id="wallet-page" class="page-content content-page">
       <div class="content-card">
-        <div class="card-header">
-          <div class="page-title">FIXORIUM WALLET</div>
-          <div class="card-sub">FULLY ENCRYPTED | NON-CUSTODIAL | MULTI-CHAIN</div>
-        </div>
+        <div class="card-header"><div class="page-title">FIXORIUM WALLET</div><div class="card-sub">NON-CUSTODIAL | FULLY ENCRYPTED | MULTI-CHAIN</div></div>
         <div class="features-grid">
-          <div class="feature-column">
-            <div class="feature-title">SECURITY</div>
-            <ul class="feature-list">
-              <li><span class="tick">✓</span> Fully encrypted offline wallet system</li>
-              <li><span class="tick">✓</span> Never holds user wallet private keys</li>
-              <li><span class="tick">✓</span> Never asks users to provide private keys</li>
-              <li><span class="tick">✓</span> Password protected access</li>
-              <li><span class="tick">✓</span> Google 2FA authentication support</li>
-              <li><span class="tick">✓</span> Non-custodial - you own your keys</li>
-            </ul>
-          </div>
-          <div class="feature-column">
-            <div class="feature-title">MINTME BLOCKCHAIN</div>
-            <ul class="feature-list">
-              <li><span class="tick">✓</span> Create liquidity pools directly from wallet</li>
-              <li><span class="tick">✓</span> Add liquidity to any pool</li>
-              <li><span class="tick">✓</span> Withdraw LP tokens anytime</li>
-              <li><span class="tick">✓</span> Emergency call to reverse all tokens</li>
-              <li><span class="tick">✓</span> Trade MintMe network tokens seamlessly</li>
-              <li><span class="tick">✓</span> Smart contract deployed on MintMe blockchain</li>
-            </ul>
-          </div>
-          <div class="feature-column">
-            <div class="feature-title">SOLANA NETWORK</div>
-            <ul class="feature-list">
-              <li><span class="tick">✓</span> Program ID obtained on Solana network</li>
-              <li><span class="tick">✓</span> Create pools on Solana DEXes</li>
-              <li><span class="tick">✓</span> Add tokens and withdraw LP tokens</li>
-              <li><span class="tick">✓</span> Deploy new tokens directly from wallet</li>
-              <li><span class="tick">✓</span> Trade all Solana-based tokens</li>
-              <li><span class="tick">✓</span> 0% trading & withdrawal fee</li>
-            </ul>
-          </div>
+          <div class="feature-column"><div class="feature-title">SECURITY</div><ul class="feature-list"><li><span class="tick">✓</span> FULLY ENCRYPTED OFFLINE WALLET SYSTEM</li><li><span class="tick">✓</span> NEVER HOLDS USER WALLET PRIVATE KEYS</li><li><span class="tick">✓</span> PASSWORD PROTECTED ACCESS + GOOGLE 2FA</li><li><span class="tick">✓</span> NON-CUSTODIAL — YOU OWN YOUR KEYS</li></ul></div>
+          <div class="feature-column"><div class="feature-title">MINTME BLOCKCHAIN</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE LIQUIDITY POOLS DIRECTLY FROM WALLET</li><li><span class="tick">✓</span> ADD LIQUIDITY TO ANY POOL</li><li><span class="tick">✓</span> WITHDRAW LP TOKENS ANYTIME</li><li><span class="tick">✓</span> EMERGENCY CALL TO REVERSE ALL TOKENS</li><li><span class="tick">✓</span> TRADE MINTME NETWORK TOKENS SEAMLESSLY</li></ul></div>
+          <div class="feature-column"><div class="feature-title">SOLANA NETWORK</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE POOLS ON SOLANA DEXES</li><li><span class="tick">✓</span> ADD TOKENS AND WITHDRAW LP TOKENS</li><li><span class="tick">✓</span> DEPLOY NEW TOKENS DIRECTLY FROM WALLET</li><li><span class="tick">✓</span> TRADE ALL SOLANA-BASED TOKENS</li><li><span class="tick">✓</span> 0% TRADING & WITHDRAWAL FEE</li></ul></div>
         </div>
-        <div class="badge-container">
-          <span class="badge">NON-CUSTODIAL</span>
-          <span class="badge">FULLY ENCRYPTED</span>
-          <span class="badge">MULTI-CHAIN</span>
-          <span class="badge">0% TRADING FEE</span>
-          <span class="badge">0% WITHDRAWAL FEE</span>
-          <span class="badge">2FA + PASSWORD</span>
-        </div>
+        <div class="badge-container"><span class="badge">NON-CUSTODIAL</span><span class="badge">MULTI-CHAIN</span><span class="badge">0% FEES</span><span class="badge">2FA + PASSWORD</span></div>
         <div class="availability-text">WEB VERSION AVAILABLE | ANDROID APP COMING SOON ON PLAY STORE</div>
       </div>
     </div>
@@ -578,167 +489,122 @@
       <div class="hero-content">
         <div class="page-title">TEAM</div>
         <div class="border-line"></div>
-        <div class="page-description">Experienced team of blockchain developers, DeFi experts, and security researchers dedicated to building the most accessible decentralized finance platform on Solana.</div>
+        <div class="page-description">EXPERIENCED TEAM OF BLOCKCHAIN DEVELOPERS, DEFI EXPERTS, AND SECURITY RESEARCHERS DEDICATED TO BUILDING THE MOST ACCESSIBLE DECENTRALIZED FINANCE PLATFORM.</div>
       </div>
     </div>
 
-    <!-- DOCS PAGE -->
-    <div id="docs-page" class="page-content hero-page">
-      <div class="hero-content">
-        <div class="page-title">DOCS</div>
-        <div class="border-line"></div>
-        <div class="page-description">Comprehensive documentation for developers and users. API references, SDK integration guides, smart contract addresses, and technical specifications for the Fixorium platform.</div>
+    <!-- DOCS PAGE WITH TOKEN LISTING DETAILS (FIXERCOIN, LOCKER, PINGX, FXM) -->
+    <div id="docs-page" class="page-content content-page">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="page-title">DOCUMENTATION</div>
+          <div class="card-sub">COMPREHENSIVE TECHNICAL SPECIFICATIONS & TOKEN LISTING</div>
+        </div>
+
+        <!-- TOKEN LISTING SECTION -->
+        <div class="feature-title" style="margin-top:0;">FIXORIUM PLATFORM TOKENS</div>
+        <div class="token-grid">
+          <div class="token-card"><div class="token-name">FIXERCOIN</div><div class="token-symbol">$FIXER</div><div class="token-desc">UTILITY TOKEN FOR DEX FEES & STAKING</div></div>
+          <div class="token-card"><div class="token-name">LOCKER</div><div class="token-symbol">$LCKR</div><div class="token-desc">GOVERNANCE & LIQUIDITY LOCKER INCENTIVES</div></div>
+          <div class="token-card"><div class="token-name">PINGX</div><div class="token-symbol">$PINGX</div><div class="token-desc">CROSS-CHAIN BRIDGE GAS & REWARD TOKEN</div></div>
+          <div class="token-card"><div class="token-name">FXM</div><div class="token-symbol">$FXM</div><div class="token-desc">FIXORIUM NATIVE MINTME ECOSYSTEM TOKEN</div></div>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-column">
+            <div class="feature-title">TOKEN DETAILS</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> FIXERCOIN (FIXER) — TOTAL SUPPLY: 100,000,000 | LISTED ON RAYDIUM, ORCA, MINTME DEX</li>
+              <li><span class="tick">✓</span> LOCKER (LCKR) — TOTAL SUPPLY: 50,000,000 | USED FOR LIQUIDITY LOCKING REWARDS</li>
+              <li><span class="tick">✓</span> PINGX (PINGX) — TOTAL SUPPLY: 1,000,000,000 | BRIDGE OPERATIONS & GAS FEE DISCOUNTS</li>
+              <li><span class="tick">✓</span> FXM (FXM) — TOTAL SUPPLY: 10,000,000 | MINTME ECOSYSTEM GOVERNANCE</li>
+            </ul>
+          </div>
+          <div class="feature-column">
+            <div class="feature-title">SMART CONTRACT ADDRESSES</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> FIXERCOIN (SOLANA): FIXER...SOLANA_PROGRAM_ID</li>
+              <li><span class="tick">✓</span> LOCKER (MINTME): 0xLOCKER...MINTME_ADDRESS</li>
+              <li><span class="tick">✓</span> PINGX (BSC): 0xPINGX...BSC_CHAIN</li>
+              <li><span class="tick">✓</span> FXM (MINTME): 0x33C60168F237146647891BAAE4CA4DF8AC58D03E (REFERENCE)</li>
+            </ul>
+          </div>
+          <div class="feature-column">
+            <div class="feature-title">INTEGRATION GUIDES</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> API REFERENCES FOR DEX AGGREGATOR</li>
+              <li><span class="tick">✓</span> SDK INTEGRATION (JAVASCRIPT / PYTHON)</li>
+              <li><span class="tick">✓</span> MINTME PROGRAM ID: 0x33C60168F237146647891BAAE4CA4DF8AC58D03E</li>
+              <li><span class="tick">✓</span> SOLANA PROGRAM ID: EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</li>
+              <li><span class="tick">✓</span> CREATE POOLS, ADD LIQUIDITY, DEPLOY TOKENS — FULL TUTORIAL</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="features-grid" style="margin-top: 0.5rem;">
+          <div class="feature-column">
+            <div class="feature-title">TECHNICAL SPECIFICATIONS</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> DEX SERVICE: 100% ONCHAIN — NO OFFLINE MECHANISM</li>
+              <li><span class="tick">✓</span> MPC EXCHANGE: HYBRID SERVER+USER KEY SYSTEM</li>
+              <li><span class="tick">✓</span> WALLET: NON-CUSTODIAL, FULLY ENCRYPTED, 2FA SUPPORT</li>
+              <li><span class="tick">✓</span> SUPPORTED NETWORKS: SOLANA, MINTME, ETHEREUM, BSC, POLYGON</li>
+              <li><span class="tick">✓</span> MAX AGGREGATOR V2: CROSS-CHAIN LIQUIDITY (COMING SOON)</li>
+            </ul>
+          </div>
+          <div class="feature-column">
+            <div class="feature-title">AUDITS & SECURITY</div>
+            <ul class="feature-list">
+              <li><span class="tick">✓</span> SMART CONTRACT AUDITS BY CERTIK (IN PROGRESS)</li>
+              <li><span class="tick">✓</span> MPC MODULE THIRD-PARTY VERIFIED</li>
+              <li><span class="tick">✓</span> REGULAR PENETRATION TESTING</li>
+              <li><span class="tick">✓</span> BUG BOUNTY PROGRAM ACTIVE</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="badge-container">
+          <span class="badge">FIXERCOIN</span><span class="badge">LOCKER</span><span class="badge">PINGX</span><span class="badge">FXM</span>
+          <span class="badge">MINTME PROGRAM</span><span class="badge">SOLANA PROGRAM</span><span class="badge">ONCHAIN DEX</span>
+        </div>
+        <div class="availability-text">FULL DOCUMENTATION AVAILABLE AT DOCS.FIXORIUM.IO | DEVELOPER PORTAL COMING Q3 2026</div>
       </div>
     </div>
   </div>
 
   <script>
-    // animated particles (same as original)
+    // particle animation
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let width = window.innerWidth, height = window.innerHeight, particles = [];
-    
-    function resizeCanvas() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    
+    function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
     const PARTICLE_COUNT = 100;
     const colors = ['rgba(255,255,255,0.2)','rgba(255,255,255,0.12)','rgba(0,212,255,0.15)','rgba(200,200,220,0.12)'];
-    
-    class Particle {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.radius = Math.random() * 1.5 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.5;
-        this.speedY = (Math.random() - 0.5) * 0.5;
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x < 0) this.x = width;
-        if (this.x > width) this.x = 0;
-        if (this.y < 0) this.y = height;
-        if (this.y > height) this.y = 0;
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-      }
-    }
-    
-    function drawConnections() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 100) {
-            const opacity = (1 - distance / 100) * 0.06;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0,212,255,${opacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-    }
-    
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push(new Particle());
-    }
-    
+    class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.radius = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.5; this.speedY = (Math.random() - 0.5) * 0.5; this.color = colors[Math.floor(Math.random() * colors.length)]; } update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0) this.x = width; if (this.x > width) this.x = 0; if (this.y < 0) this.y = height; if (this.y > height) this.y = 0; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); } }
+    function drawConnections() { for (let i = 0; i < particles.length; i++) for (let j = i + 1; j < particles.length; j++) { const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, distance = Math.sqrt(dx * dx + dy * dy); if (distance < 100) { const opacity = (1 - distance / 100) * 0.06; ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(0,212,255,${opacity})`; ctx.lineWidth = 0.5; ctx.stroke(); } } }
+    for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
     let mouseX = null, mouseY = null;
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      for (let p of particles) {
-        const dx = p.x - mouseX;
-        const dy = p.y - mouseY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 100) {
-          const angle = Math.atan2(dy, dx);
-          const force = (100 - distance) / 100 * 1;
-          p.x += Math.cos(angle) * force;
-          p.y += Math.sin(angle) * force;
-        }
-      }
-      setTimeout(() => {
-        mouseX = null;
-        mouseY = null;
-      }, 50);
-    });
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; for (let p of particles) { const dx = p.x - mouseX, dy = p.y - mouseY, distance = Math.sqrt(dx*dx+dy*dy); if (distance < 100) { const angle = Math.atan2(dy, dx), force = (100 - distance) / 100 * 1; p.x += Math.cos(angle) * force; p.y += Math.sin(angle) * force; } } setTimeout(() => { mouseX = null; mouseY = null; }, 50); });
+    function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); drawConnections(); requestAnimationFrame(animate); } animate();
     
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      drawConnections();
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    // ROUTING (identical)
+    // routing
     const pages = ['home', 'dex-service', 'exchange', 'wallet', 'team', 'docs'];
-    
     function showPage(pageId) {
-      pages.forEach(p => {
-        const pageElement = document.getElementById(`${p}-page`);
-        if (pageElement) pageElement.classList.remove('active');
-      });
-      const activePage = document.getElementById(`${pageId}-page`);
-      if (activePage) activePage.classList.add('active');
-      
-      document.querySelectorAll('#desktopMenu .header-link').forEach(link => {
-        if (link.getAttribute('data-page') === pageId) link.classList.add('active');
-        else link.classList.remove('active');
-      });
-      document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => {
-        if (item.getAttribute('data-page') === pageId) item.classList.add('active');
-        else item.classList.remove('active');
-      });
-      window.history.pushState({ page: pageId }, `${pageId} - FIXORIUM`, `?page=${pageId}`);
+      pages.forEach(p => { const el = document.getElementById(`${p}-page`); if(el) el.classList.remove('active'); });
+      document.getElementById(`${pageId}-page`).classList.add('active');
+      document.querySelectorAll('#desktopMenu .header-link').forEach(link => { if(link.getAttribute('data-page') === pageId) link.classList.add('active'); else link.classList.remove('active'); });
+      document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => { if(item.getAttribute('data-page') === pageId) item.classList.add('active'); else item.classList.remove('active'); });
+      window.history.pushState({ page: pageId }, '', `?page=${pageId}`);
     }
-    
-    document.querySelectorAll('#desktopMenu .header-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        showPage(link.getAttribute('data-page'));
-        document.getElementById('mobileDropdown').classList.remove('open');
-      });
-    });
-    document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        showPage(item.getAttribute('data-page'));
-        document.getElementById('mobileDropdown').classList.remove('open');
-      });
-    });
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileDropdown = document.getElementById('mobileDropdown');
-    const closeDropdownBtn = document.getElementById('closeDropdownBtn');
-    mobileMenuBtn.addEventListener('click', () => mobileDropdown.classList.add('open'));
-    closeDropdownBtn.addEventListener('click', () => mobileDropdown.classList.remove('open'));
-    mobileDropdown.addEventListener('click', (e) => { if (e.target === mobileDropdown) mobileDropdown.classList.remove('open'); });
-    document.getElementById('brand').addEventListener('click', () => { showPage('home'); mobileDropdown.classList.remove('open'); });
-    window.addEventListener('load', () => {
-      const params = new URLSearchParams(window.location.search);
-      const pageId = params.get('page') || 'home';
-      showPage(pageId);
-    });
-    window.addEventListener('popstate', (e) => { const pageId = e.state?.page || 'home'; showPage(pageId); });
+    document.querySelectorAll('#desktopMenu .header-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
+    document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => item.addEventListener('click', (e) => { e.preventDefault(); showPage(item.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => document.getElementById('mobileDropdown').classList.add('open'));
+    document.getElementById('closeDropdownBtn').addEventListener('click', () => document.getElementById('mobileDropdown').classList.remove('open'));
+    document.getElementById('mobileDropdown').addEventListener('click', (e) => { if(e.target === document.getElementById('mobileDropdown')) document.getElementById('mobileDropdown').classList.remove('open'); });
+    document.getElementById('brand').addEventListener('click', () => { showPage('home'); document.getElementById('mobileDropdown').classList.remove('open'); });
+    window.addEventListener('load', () => { const params = new URLSearchParams(window.location.search); const pageId = params.get('page') || 'docs'; showPage(pageId); });
+    window.addEventListener('popstate', (e) => { const pageId = e.state?.page || 'docs'; showPage(pageId); });
   </script>
 </body>
 </html>
