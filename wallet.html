@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>WALLET | FIXORIUM</title>
+  <title>FIXORIUM WALLET</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -105,50 +105,111 @@
       border-radius: 44px;
       cursor: pointer;
     }
-    .center-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      z-index: 10;
-      width: 100%;
-      padding: 2rem;
-    }
-    .fixorium-header {
-      font-size: clamp(2rem, 8vw, 4rem);
+    .page-title {
+      font-size: clamp(1.8rem, 6vw, 3rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
       background: linear-gradient(135deg, #FFFFFF 0%, #B8B8C8 50%, #FFFFFF 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       text-transform: uppercase;
       margin-bottom: 1rem;
+      letter-spacing: -0.02em;
     }
-    .border-line {
-      width: 80px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), rgba(0, 212, 255, 0.6), transparent);
-      margin: 1.5rem auto;
-      border-radius: 2px;
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      min-height: 100vh;
+      padding: 100px 1rem 2rem 1rem;
     }
-    .page-description {
+    .wallet-card {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(20, 20, 30, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 2rem;
+    }
+    .card-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .card-sub {
       font-size: 14px;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+    }
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+    .feature-column {
+      flex: 1;
+      min-width: 250px;
+    }
+    .feature-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #00D4FF;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .feature-list {
+      list-style: none;
+    }
+    .feature-list li {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 0.6rem 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .tick {
+      color: #00D4FF;
+      font-weight: bold;
+    }
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .badge {
+      background: transparent;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      font-size: 12px;
       color: rgba(255, 255, 255, 0.5);
       text-transform: uppercase;
-      letter-spacing: 0.2em;
-      max-width: 600px;
-      margin: 1rem auto 0;
-      line-height: 1.6;
+      letter-spacing: 1px;
     }
     @media (max-width: 768px) {
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
       .header-bar { padding: 1rem 1.5rem; }
-      .page-description { font-size: 12px; padding: 0 1rem; }
+      .content-wrapper { padding: 90px 1rem 2rem 1rem; }
+      .wallet-card { padding: 1.5rem; }
+      .feature-column { min-width: 100%; }
+      .feature-list li { font-size: 12px; }
+      .badge { font-size: 10px; }
     }
-    @media (min-width: 769px) { .mobile-dropdown { display: none !important; } }
+    @media (min-width: 769px) { 
+      .mobile-dropdown { display: none !important; }
+      .content-wrapper { padding: 100px 2rem 2rem 2rem; }
+    }
   </style>
 </head>
 <body>
@@ -172,11 +233,72 @@
     <a href="team.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> TEAM</a>
     <a href="docs.html" class="mobile-dropdown-item"><span class="dropdown-icon">★</span> DOCS</a>
   </div>
-  <div class="center-text">
-    <div class="fixorium-header">WALLET</div>
-    <div class="border-line"></div>
-    <div class="page-description">Non-custodial multi-chain wallet with BIP-39 seed phrase, multi-signature support, hardware wallet integration, and biometric authentication. Full control over your digital assets.</div>
+
+  <div class="content-wrapper">
+    <div class="wallet-card">
+      <div class="card-header">
+        <div class="page-title">FIXORIUM WALLET</div>
+        <div class="card-sub">FULLY ENCRYPTED | NON-CUSTODIAL | MULTI-CHAIN</div>
+      </div>
+
+      <div class="features-grid">
+        <!-- SECURITY FEATURES -->
+        <div class="feature-column">
+          <div class="feature-title">SECURITY</div>
+          <ul class="feature-list">
+            <li><span class="tick">✓</span> Fully encrypted offline wallet system</li>
+            <li><span class="tick">✓</span> Never holds user wallet private keys</li>
+            <li><span class="tick">✓</span> Never asks users to provide private keys</li>
+            <li><span class="tick">✓</span> Password protected access</li>
+            <li><span class="tick">✓</span> Google 2FA authentication support</li>
+            <li><span class="tick">✓</span> Non-custodial - you own your keys</li>
+          </ul>
+        </div>
+
+        <!-- MINTME BLOCKCHAIN FEATURES -->
+        <div class="feature-column">
+          <div class="feature-title">MINTME BLOCKCHAIN</div>
+          <ul class="feature-list">
+            <li><span class="tick">✓</span> Create liquidity pools directly from wallet</li>
+            <li><span class="tick">✓</span> Add liquidity to any pool</li>
+            <li><span class="tick">✓</span> Withdraw LP tokens anytime</li>
+            <li><span class="tick">✓</span> Emergency call to reverse all tokens</li>
+            <li><span class="tick">✓</span> Trade MintMe network tokens seamlessly</li>
+            <li><span class="tick">✓</span> Smart contract deployed on MintMe blockchain</li>
+          </ul>
+        </div>
+
+        <!-- SOLANA FEATURES -->
+        <div class="feature-column">
+          <div class="feature-title">SOLANA NETWORK</div>
+          <ul class="feature-list">
+            <li><span class="tick">✓</span> Program ID obtained on Solana network</li>
+            <li><span class="tick">✓</span> Create pools on Solana DEXes</li>
+            <li><span class="tick">✓</span> Add tokens and withdraw LP tokens</li>
+            <li><span class="tick">✓</span> Deploy new tokens directly from wallet</li>
+            <li><span class="tick">✓</span> Trade all Solana-based tokens</li>
+            <li><span class="tick">✓</span> 0% trading & withdrawal fee</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SIMPLE TEXT BADGES - NO BUTTONS, NO ICONS -->
+      <div class="badge-container">
+        <span class="badge">NON-CUSTODIAL</span>
+        <span class="badge">FULLY ENCRYPTED</span>
+        <span class="badge">MULTI-CHAIN</span>
+        <span class="badge">0% TRADING FEE</span>
+        <span class="badge">0% WITHDRAWAL FEE</span>
+        <span class="badge">2FA + PASSWORD</span>
+      </div>
+
+      <!-- AVAILABILITY TEXT -->
+      <div style="text-align: center; margin-top: 2rem; font-size: 12px; color: rgba(255,255,255,0.3);">
+        WEB VERSION AVAILABLE | ANDROID APP COMING SOON ON PLAY STORE
+      </div>
+    </div>
   </div>
+
   <script>
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
