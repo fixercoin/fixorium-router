@@ -32,7 +32,7 @@
       pointer-events: none;
     }
 
-    /* HEADER BAR - INCREASED SMALL HEIGHT (was 0.5rem padding, now 0.85rem) */
+    /* HEADER BAR - INCREASED HEIGHT */
     .header-bar {
       position: fixed;
       top: 0;
@@ -164,9 +164,9 @@
       display: flex;
     }
 
-    /* MAIN PAGE (HOME) - NO ANIMATION, REPLACED WITH FUNCTION CARDS */
+    /* MAIN PAGE (HOME) - NO ANIMATION, FUNCTION CARDS */
     .hero-page {
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 0 1rem;
       background: transparent;
@@ -176,31 +176,20 @@
       width: 100%;
       max-width: 1300px;
       margin: 0 auto;
-      padding-top: 30px;
+      /* TOP SPACE: PUSH CONTENT DOWN BELOW FIXED HEADER */
+      padding-top: 85px;
     }
 
-    /* REMOVED galaxy-container, pulsar, crypto-avatars, orbit keyframes — completely gone */
-    
     /* NEW CARDS CONTAINER: PROPER FUNCTION CARDS WITH BORDERS ONLY, NO BACKGROUND */
     .functions-dashboard {
       width: 100%;
-      margin-top: 1.2rem;
+      margin-top: 0.5rem;
       display: flex;
       flex-direction: column;
-      gap: 1.8rem;
+      gap: 1.5rem;
     }
 
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #00D4FF;
-      margin-bottom: 1rem;
-      border-left: 3px solid #00D4FF;
-      padding-left: 12px;
-    }
-
+    /* REMOVED section-title styles — no "CORE PLATFORMS" or "GOVERNANCE" texts anymore */
     .cards-grid {
       display: flex;
       flex-wrap: wrap;
@@ -218,7 +207,6 @@
       padding: 1.2rem 1rem;
       transition: all 0.25s ease;
       cursor: pointer;
-      /* NO background-color */
       background: transparent;
       backdrop-filter: blur(2px);
     }
@@ -229,7 +217,6 @@
       transform: translateY(-4px);
     }
 
-    /* Darker border variation for secondary visual, but still transparent bg */
     .function-card.special {
       border: 1px solid rgba(0, 212, 255, 0.5);
     }
@@ -293,7 +280,7 @@
 
     .main-tagline {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.8rem;
     }
 
     .main-tagline h1 {
@@ -315,9 +302,9 @@
       letter-spacing: 1px;
     }
 
-    /* OTHER CONTENT PAGES (unchanged, keep original style) */
+    /* OTHER CONTENT PAGES (unchanged, but adjust top spacing) */
     .content-page {
-      padding: 60px 0.5rem 1.5rem 0.5rem;
+      padding: 85px 0.5rem 1.5rem 0.5rem;
       flex-direction: column;
       align-items: center;
       width: 100%;
@@ -519,16 +506,25 @@
       border-bottom: 1px dotted #88ddff;
     }
 
+    /* For Team page special alignment */
+    #team-page.hero-page .hero-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+    }
+
     @media (max-width: 768px) {
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
       .header-bar { padding: 0.7rem 1rem; }
       .brand { font-size: 1.1rem; }
-      .hero-content { padding-top: 15px; }
+      .hero-content { padding-top: 75px; }
       .function-card { min-width: 100%; max-width: 100%; }
       .cards-grid { gap: 0.9rem; }
-      .section-title { font-size: 0.95rem; }
-      .content-page { padding: 60px 0.3rem 1rem 0.3rem; }
+      .content-page { padding: 75px 0.3rem 1rem 0.3rem; }
       .feature-column { min-width: 100%; }
     }
 
@@ -561,7 +557,7 @@
   </div>
 
   <div id="pagesContainer">
-    <!-- HOME PAGE - ANIMATION FULLY REMOVED, REPLACED WITH PROPER FUNCTION CARDS, BORDERS ONLY, CAPITAL TEXT -->
+    <!-- HOME PAGE - ANIMATION REMOVED, FUNCTION CARDS, NO SECTION TITLES -->
     <div id="home-page" class="page-content hero-page active">
       <div class="hero-content">
         <div class="main-tagline">
@@ -570,11 +566,10 @@
         </div>
         
         <div class="functions-dashboard">
-          <!-- DEX SERVICE CARD -->
-          <div class="section-title">⚡ CORE PLATFORMS</div>
+          <!-- FIRST ROW OF CARDS (no extra heading) -->
           <div class="cards-grid">
             <div class="function-card" data-nav="dex-service">
-              <div class="card-icon">🔄</div>
+              <div class="card-icon"></div>
               <div class="card-title">DEX SERVICE</div>
               <div class="card-desc">100% ONCHAIN AGGREGATOR | MINTME + SOLANA</div>
               <ul class="card-feature-list">
@@ -586,9 +581,8 @@
               <div class="badge-light">ACTIVE PROGRAM IDS</div>
             </div>
 
-            <!-- EXCHANGE MPC CARD -->
             <div class="function-card special" data-nav="exchange">
-              <div class="card-icon">⚙️</div>
+              <div class="card-icon"></div>
               <div class="card-title">HYBRID MPC EXCHANGE</div>
               <div class="card-desc">SERVER+USER MPC | MULTI-PARTY CONTROL</div>
               <ul class="card-feature-list">
@@ -600,9 +594,8 @@
               <div class="badge-light">MPC HYBRID RULE</div>
             </div>
 
-            <!-- WALLET CARD -->
             <div class="function-card" data-nav="wallet">
-              <div class="card-icon">🔐</div>
+              <div class="card-icon"></div>
               <div class="card-title">FIXORIUM WALLET</div>
               <div class="card-desc">NON-CUSTODIAL | FULLY ENCRYPTED | MULTI-CHAIN</div>
               <ul class="card-feature-list">
@@ -615,11 +608,10 @@
             </div>
           </div>
 
-          <!-- SECOND ROW: TEAM + DOCS + ECOSYSTEM HIGHLIGHTS -->
-          <div class="section-title">🏛️ GOVERNANCE & RESOURCES</div>
+          <!-- SECOND ROW OF CARDS (no extra heading) -->
           <div class="cards-grid">
             <div class="function-card" data-nav="team">
-              <div class="card-icon">👥</div>
+              <div class="card-icon"></div>
               <div class="card-title">TEAM</div>
               <div class="card-desc">BLOCKCHAIN DEVELOPERS & DEFI EXPERTS</div>
               <ul class="card-feature-list">
@@ -631,7 +623,7 @@
             </div>
 
             <div class="function-card special" data-nav="docs">
-              <div class="card-icon">📘</div>
+              <div class="card-icon"></div>
               <div class="card-title">DOCUMENTATION</div>
               <div class="card-desc">TOKENOMICS & TECHNICAL SPECS</div>
               <ul class="card-feature-list">
@@ -642,9 +634,8 @@
               <div class="badge-light">TOKEN SPECS</div>
             </div>
 
-            <!-- ADDITIONAL DEX INTEGRATION CARD (extra function detail) -->
             <div class="function-card" data-nav="dex-service">
-              <div class="card-icon">🌐</div>
+              <div class="card-icon"></div>
               <div class="card-title">CROSS-CHAIN AGGREGATOR</div>
               <div class="card-desc">MINTME ↔ SOLANA BRIDGE INTEGRATION</div>
               <ul class="card-feature-list">
@@ -666,7 +657,7 @@
       </div>
     </div>
 
-    <!-- DEX SERVICE PAGE (unchanged structure) -->
+    <!-- DEX SERVICE PAGE (unchanged structure, top spacing via content-page) -->
     <div id="dex-service-page" class="page-content content-page">
       <div class="content-full">
         <div class="page-header">
@@ -767,7 +758,6 @@
       window.history.pushState({ page: pageId }, '', `?page=${pageId}`);
     }
     
-    // card click navigation
     document.querySelectorAll('.function-card[data-nav]').forEach(card => {
       card.addEventListener('click', (e) => {
         const targetPage = card.getAttribute('data-nav');
