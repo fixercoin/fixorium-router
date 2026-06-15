@@ -32,7 +32,7 @@
       pointer-events: none;
     }
 
-    /* HEADER BAR - VERY SMALL HEIGHT */
+    /* HEADER BAR - INCREASED SMALL HEIGHT (was 0.5rem padding, now 0.85rem) */
     .header-bar {
       position: fixed;
       top: 0;
@@ -41,7 +41,7 @@
       background: rgba(10, 10, 15, 0.92);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 0.5rem 1.2rem;
+      padding: 0.85rem 1.2rem;
       z-index: 100;
       display: flex;
       justify-content: space-between;
@@ -49,42 +49,47 @@
     }
 
     .brand {
-      font-size: 1.2rem;
-      font-weight: 700;
+      font-size: 1.3rem;
+      font-weight: 800;
       color: #FFFFFF;
       text-decoration: none;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       cursor: pointer;
       transition: opacity 0.2s ease;
       flex-shrink: 0;
+      background: linear-gradient(135deg, #fff, #00D4FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .brand:hover {
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     .desktop-menu {
       display: flex;
-      gap: 1.5rem;
+      gap: 1.8rem;
       align-items: center;
       margin-left: 1.5rem;
     }
 
     .header-link {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
       text-decoration: none;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       transition: all 0.2s ease;
       white-space: nowrap;
       cursor: pointer;
     }
 
     .header-link:hover, .header-link.active {
-      color: rgba(255, 255, 255, 1);
+      color: #00D4FF;
+      text-shadow: 0 0 6px rgba(0,212,255,0.3);
     }
 
     .mobile-menu-btn {
@@ -92,17 +97,17 @@
       background: transparent;
       border: none;
       color: white;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       cursor: pointer;
       padding: 0.3rem 0.5rem;
       margin-left: auto;
     }
 
-    /* SMARTER MOBILE DROPDOWN */
+    /* MOBILE DROPDOWN */
     .mobile-dropdown {
       display: none;
       position: fixed;
-      top: 52px;
+      top: 62px;
       right: 1rem;
       left: auto;
       bottom: auto;
@@ -131,7 +136,7 @@
 
     .mobile-dropdown-item {
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: 600;
       color: rgba(255, 255, 255, 0.8);
       text-decoration: none;
       text-transform: uppercase;
@@ -143,12 +148,8 @@
     }
 
     .mobile-dropdown-item:hover, .mobile-dropdown-item.active {
-      background: rgba(0, 212, 255, 0.15);
+      background: rgba(0, 212, 255, 0.12);
       color: #00D4FF;
-    }
-
-    .close-dropdown {
-      display: none;
     }
 
     .page-content {
@@ -163,272 +164,158 @@
       display: flex;
     }
 
-    /* MAIN PAGE - ANIMATION */
+    /* MAIN PAGE (HOME) - NO ANIMATION, REPLACED WITH FUNCTION CARDS */
     .hero-page {
       align-items: center;
       justify-content: center;
-      padding: 0;
-      text-align: center;
+      padding: 0 1rem;
       background: transparent;
     }
 
     .hero-content {
       width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
       padding-top: 30px;
     }
 
-    /* ECOSYSTEM ANIMATION - WITH CRYPTO ICON AVATARS */
-    .ecosystem-container {
+    /* REMOVED galaxy-container, pulsar, crypto-avatars, orbit keyframes — completely gone */
+    
+    /* NEW CARDS CONTAINER: PROPER FUNCTION CARDS WITH BORDERS ONLY, NO BACKGROUND */
+    .functions-dashboard {
       width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-      min-height: 55vh;
+      margin-top: 1.2rem;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      gap: 1.8rem;
     }
 
-    .galaxy-container {
-      position: relative;
-      width: 400px;
-      height: 400px;
-      margin: 0 auto;
-    }
-
-    .orbit-ring-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 280px;
-      height: 280px;
-      transform: translate(-50%, -50%);
-      border: 1px solid rgba(0, 212, 255, 0.15);
-      border-radius: 50%;
-      box-shadow: 0 0 30px rgba(0, 212, 255, 0.1), inset 0 0 30px rgba(0, 212, 255, 0.05);
-    }
-
-    .orbit-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border: 1px solid rgba(0, 212, 255, 0.08);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.03);
-    }
-
-    .orbit-glow:nth-child(2) {
-      width: 350px;
-      height: 350px;
-    }
-
-    .orbit-glow:nth-child(3) {
-      width: 320px;
-      height: 320px;
-    }
-
-    .orbit-glow:nth-child(4) {
-      width: 380px;
-      height: 380px;
-    }
-
-    .pulsar-core {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 80px;
-      height: 80px;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(0, 212, 255, 0.4), rgba(0, 212, 255, 0.1));
-      border: 2px solid rgba(0, 212, 255, 0.6);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      box-shadow: 0 0 40px rgba(0, 212, 255, 0.3), 0 0 80px rgba(0, 212, 255, 0.15);
-      animation: pulse-glow 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.3), 0 0 80px rgba(0, 212, 255, 0.15); }
-      50% { box-shadow: 0 0 60px rgba(0, 212, 255, 0.5), 0 0 100px rgba(0, 212, 255, 0.25); }
-    }
-
-    .core-icon {
-      font-size: 2rem;
-      color: #00D4FF;
+    .section-title {
+      font-size: 1.1rem;
       font-weight: 700;
-    }
-
-    .crypto-avatars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      perspective: 1000px;
-    }
-
-    .crypto-avatar {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      border: 2px solid rgba(0, 212, 255, 0.7);
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), inset 0 0 20px rgba(0, 212, 255, 0.1);
-    }
-
-    .crypto-avatar:nth-child(1) {
-      top: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      animation: cube-float-1 4s ease-in-out infinite;
-    }
-
-    .crypto-avatar:nth-child(2) {
-      top: 25%;
-      right: 12%;
-      animation: cube-float-2 5s ease-in-out infinite;
-    }
-
-    .crypto-avatar:nth-child(3) {
-      bottom: 25%;
-      right: 12%;
-      animation: cube-float-3 6s ease-in-out infinite;
-    }
-
-    .crypto-avatar:nth-child(4) {
-      bottom: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      animation: cube-float-4 4.5s ease-in-out infinite;
-    }
-
-    .crypto-avatar:nth-child(5) {
-      bottom: 25%;
-      left: 12%;
-      animation: cube-float-5 5.5s ease-in-out infinite;
-    }
-
-    .crypto-avatar:nth-child(6) {
-      top: 25%;
-      left: 12%;
-      animation: cube-float-6 6.5s ease-in-out infinite;
-    }
-
-    @keyframes cube-float-1 {
-      0%, 100% { transform: translateX(-50%) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      25% { transform: translateX(-50%) translateY(-15px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
-      50% { transform: translateX(-50%) translateY(0) rotateX(90deg) rotateY(90deg) rotateZ(90deg); }
-      75% { transform: translateX(-50%) translateY(-15px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
-    }
-
-    @keyframes cube-float-2 {
-      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      25% { transform: translateX(10px) translateY(-12px) rotateX(45deg) rotateY(-45deg) rotateZ(45deg); }
-      50% { transform: translateX(0) translateY(0) rotateX(90deg) rotateY(-90deg) rotateZ(90deg); }
-      75% { transform: translateX(10px) translateY(-12px) rotateX(45deg) rotateY(-45deg) rotateZ(45deg); }
-    }
-
-    @keyframes cube-float-3 {
-      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      25% { transform: translateX(10px) translateY(12px) rotateX(-45deg) rotateY(-45deg) rotateZ(45deg); }
-      50% { transform: translateX(0) translateY(0) rotateX(-90deg) rotateY(-90deg) rotateZ(90deg); }
-      75% { transform: translateX(10px) translateY(12px) rotateX(-45deg) rotateY(-45deg) rotateZ(45deg); }
-    }
-
-    @keyframes cube-float-4 {
-      0%, 100% { transform: translateX(-50%) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      25% { transform: translateX(-50%) translateY(15px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
-      50% { transform: translateX(-50%) translateY(0) rotateX(-90deg) rotateY(90deg) rotateZ(90deg); }
-      75% { transform: translateX(-50%) translateY(15px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
-    }
-
-    @keyframes cube-float-5 {
-      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      25% { transform: translateX(-10px) translateY(12px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
-      50% { transform: translateX(0) translateY(0) rotateX(-90deg) rotateY(90deg) rotateZ(90deg); }
-      75% { transform: translateX(-10px) translateY(12px) rotateX(-45deg) rotateY(45deg) rotateZ(45deg); }
-    }
-
-    @keyframes cube-float-6 {
-      0%, 100% { transform: translateX(0) translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      25% { transform: translateX(-10px) translateY(-12px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
-      50% { transform: translateX(0) translateY(0) rotateX(90deg) rotateY(90deg) rotateZ(90deg); }
-      75% { transform: translateX(-10px) translateY(-12px) rotateX(45deg) rotateY(45deg) rotateZ(45deg); }
-    }
-
-    .tagline {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.7);
-      margin-top: 1.5rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      font-weight: 500;
-      animation: slideUpFade 0.8s ease-out 0.4s both;
+      color: #00D4FF;
+      margin-bottom: 1rem;
+      border-left: 3px solid #00D4FF;
+      padding-left: 12px;
     }
 
-    .feature-highlights {
+    .cards-grid {
       display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 1.5rem;
       flex-wrap: wrap;
+      gap: 1.2rem;
+      justify-content: center;
     }
 
-    .highlight-item {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.6);
-      padding: 0.4rem 1rem;
-      border: 1px solid rgba(0, 212, 255, 0.3);
+    /* CARD STYLES: ONLY LIGHT/DARK BORDERS, NO BACKGROUND COLOR */
+    .function-card {
+      flex: 1;
+      min-width: 260px;
+      max-width: 320px;
+      border: 1px solid rgba(255, 255, 255, 0.25);   /* light border */
       border-radius: 20px;
+      padding: 1.2rem 1rem;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      /* NO background-color */
+      background: transparent;
+      backdrop-filter: blur(2px);
+    }
+
+    .function-card:hover {
+      border-color: #00D4FF;
+      box-shadow: 0 8px 20px rgba(0,212,255,0.12);
+      transform: translateY(-4px);
+    }
+
+    /* Darker border variation for secondary visual, but still transparent bg */
+    .function-card.special {
+      border: 1px solid rgba(0, 212, 255, 0.5);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+      display: inline-block;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.55);
+      line-height: 1.4;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .card-feature-list {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+
+    .card-feature-list li {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 0.3rem 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+
+    .card-feature-list li span:first-child {
+      color: #00D4FF;
+      font-weight: bold;
+    }
+
+    .badge-light {
+      display: inline-block;
+      font-size: 0.6rem;
+      border: 1px solid rgba(0,212,255,0.4);
+      border-radius: 30px;
+      padding: 0.2rem 0.7rem;
+      margin-top: 0.6rem;
+      color: #00D4FF;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      transition: all 0.3s ease;
-      animation: slideUpFade 0.8s ease-out both;
+      background: transparent;
     }
 
-    .highlight-item:nth-child(1) {
-      animation-delay: 0.6s;
+    .main-tagline {
+      text-align: center;
+      margin-bottom: 1rem;
     }
 
-    .highlight-item:nth-child(2) {
-      animation-delay: 0.8s;
+    .main-tagline h1 {
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #FFFFFF, #00D4FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 2px;
     }
 
-    .highlight-item:nth-child(3) {
-      animation-delay: 1s;
+    .main-tagline p {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+      letter-spacing: 1px;
     }
 
-    .highlight-item:hover {
-      color: #00D4FF;
-      border-color: rgba(0, 212, 255, 0.6);
-      box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
-    }
-
-    @keyframes slideUpFade {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* NO TEXT ABOVE ANIMATION - REMOVED */
-
-    
-
-    /* CONTENT PAGES */
+    /* OTHER CONTENT PAGES (unchanged, keep original style) */
     .content-page {
       padding: 60px 0.5rem 1.5rem 0.5rem;
       flex-direction: column;
@@ -439,6 +326,8 @@
     .content-full {
       width: 100%;
       padding: 0.5rem;
+      max-width: 1300px;
+      margin: 0 auto;
     }
 
     .page-header {
@@ -448,6 +337,12 @@
 
     .page-header .page-title {
       font-size: clamp(1.6rem, 4vw, 2.5rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fff, #00D4FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .page-sub {
@@ -463,13 +358,6 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), transparent);
       margin: 1rem auto;
-    }
-
-    .page-description {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.5);
-      max-width: 500px;
-      margin: 0 auto;
     }
 
     .features-grid {
@@ -516,52 +404,10 @@
     }
 
     .tick {
-      color: #FFFFFF;
+      color: #00D4FF;
       font-weight: 700;
       font-size: 0.9rem;
       min-width: 18px;
-    }
-
-    .address-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      width: 100%;
-    }
-    .address-label {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.85);
-      font-weight: 500;
-      text-transform: uppercase;
-    }
-    .address-value {
-      font-size: 0.65rem;
-      font-family: monospace;
-      color: #88ddff;
-      word-break: break-all;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.2rem 0.4rem;
-      border-radius: 5px;
-    }
-
-    .badge-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      justify-content: center;
-      margin-top: 1.2rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .badge {
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.25rem 0.8rem;
-      border-radius: 30px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: #DDDDFF;
-      text-transform: uppercase;
     }
 
     .program-row {
@@ -593,11 +439,23 @@
       word-break: break-all;
     }
 
-    .availability-text {
-      text-align: center;
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
       margin-top: 1.2rem;
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.35);
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .badge {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.25rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #DDDDFF;
       text-transform: uppercase;
     }
 
@@ -627,32 +485,51 @@
       color: #00D4FF;
       margin-top: 0.2rem;
     }
-    .token-desc {
+    .address-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      width: 100%;
+    }
+    .address-label {
       font-size: 0.7rem;
-      color: rgba(255,255,255,0.55);
-      margin-top: 0.4rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .address-value {
+      font-size: 0.65rem;
+      font-family: monospace;
+      color: #88ddff;
+      word-break: break-all;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.2rem 0.4rem;
+      border-radius: 5px;
+    }
+    .availability-text {
+      text-align: center;
+      margin-top: 1.2rem;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.35);
+      text-transform: uppercase;
+    }
+    .availability-text a {
+      color: #88ddff;
+      text-decoration: none;
+      border-bottom: 1px dotted #88ddff;
     }
 
     @media (max-width: 768px) {
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
-      .header-bar { padding: 0.4rem 1rem; }
-      .brand { font-size: 1rem; }
-      .hero-content { padding-top: 8px; }
-      .ecosystem-container { min-height: 35vh; margin-top: 0; }
-      .galaxy-container { width: 220px; height: 220px; margin: 0 auto; }
-      .pulsar-core { width: 45px; height: 45px; }
-      .core-icon { font-size: 1.4rem; }
-      .crypto-avatar { width: 40px; height: 40px; font-size: 1.2rem; }
-      .tagline { font-size: 0.65rem; margin-top: 0.8rem; letter-spacing: 2px; animation: slideUpFade 0.8s ease-out 0.4s both; }
-      .feature-highlights { gap: 0.6rem; margin-top: 1rem; }
-      .highlight-item { font-size: 0.55rem; padding: 0.25rem 0.8rem; animation: slideUpFade 0.8s ease-out both; }
-      .highlight-item:nth-child(1) { animation-delay: 0.6s; }
-      .highlight-item:nth-child(2) { animation-delay: 0.8s; }
-      .highlight-item:nth-child(3) { animation-delay: 1s; }
-      .content-page { padding: 55px 0.3rem 1rem 0.3rem; }
+      .header-bar { padding: 0.7rem 1rem; }
+      .brand { font-size: 1.1rem; }
+      .hero-content { padding-top: 15px; }
+      .function-card { min-width: 100%; max-width: 100%; }
+      .cards-grid { gap: 0.9rem; }
+      .section-title { font-size: 0.95rem; }
+      .content-page { padding: 60px 0.3rem 1rem 0.3rem; }
       .feature-column { min-width: 100%; }
-      .float-particle { width: 3px; height: 3px; }
     }
 
     @media (min-width: 769px) {
@@ -684,37 +561,112 @@
   </div>
 
   <div id="pagesContainer">
-    <!-- HOME PAGE - ANIMATION WITH CRYPTO ICON AVATARS -->
+    <!-- HOME PAGE - ANIMATION FULLY REMOVED, REPLACED WITH PROPER FUNCTION CARDS, BORDERS ONLY, CAPITAL TEXT -->
     <div id="home-page" class="page-content hero-page active">
       <div class="hero-content">
-        <div class="ecosystem-container">
-          <div class="galaxy-container">
-            <div class="orbit-ring-glow"></div>
-            <div class="orbit-glow"></div>
-            <div class="orbit-glow"></div>
-            <div class="orbit-glow"></div>
-            <div class="pulsar-core">
-              <span class="core-icon"></span>
+        <div class="main-tagline">
+          <h1>FIXORIUM ECOSYSTEM</h1>
+          <p>DECENTRALIZED FINANCE INFRASTRUCTURE</p>
+        </div>
+        
+        <div class="functions-dashboard">
+          <!-- DEX SERVICE CARD -->
+          <div class="section-title">⚡ CORE PLATFORMS</div>
+          <div class="cards-grid">
+            <div class="function-card" data-nav="dex-service">
+              <div class="card-icon">🔄</div>
+              <div class="card-title">DEX SERVICE</div>
+              <div class="card-desc">100% ONCHAIN AGGREGATOR | MINTME + SOLANA</div>
+              <ul class="card-feature-list">
+                <li><span>✓</span> MINTME PROGRAM INTEGRATION</li>
+                <li><span>✓</span> SOLANA DEX MAX AGGREGATOR</li>
+                <li><span>✓</span> CREATE LIQUIDITY POOLS & DEPLOY TOKENS</li>
+                <li><span>✓</span> FULL ONCHAIN NON-CUSTODIAL SWAPS</li>
+              </ul>
+              <div class="badge-light">ACTIVE PROGRAM IDS</div>
             </div>
-            <!-- CRYPTO ICON AVATARS -->
-            <div class="crypto-avatars">
+
+            <!-- EXCHANGE MPC CARD -->
+            <div class="function-card special" data-nav="exchange">
+              <div class="card-icon">⚙️</div>
+              <div class="card-title">HYBRID MPC EXCHANGE</div>
+              <div class="card-desc">SERVER+USER MPC | MULTI-PARTY CONTROL</div>
+              <ul class="card-feature-list">
+                <li><span>✓</span> HALF KEY SERVER / HALF KEY USER</li>
+                <li><span>✓</span> EVERY TRADE REQUIRES USER PASSWORD</li>
+                <li><span>✓</span> MULTI-PARTY SIGNING + 2FA</li>
+                <li><span>✓</span> CROSS-CHAIN SWAP & MEV PROTECTION</li>
+              </ul>
+              <div class="badge-light">MPC HYBRID RULE</div>
+            </div>
+
+            <!-- WALLET CARD -->
+            <div class="function-card" data-nav="wallet">
+              <div class="card-icon">🔐</div>
+              <div class="card-title">FIXORIUM WALLET</div>
+              <div class="card-desc">NON-CUSTODIAL | FULLY ENCRYPTED | MULTI-CHAIN</div>
+              <ul class="card-feature-list">
+                <li><span>✓</span> PASSWORD + GOOGLE 2FA SECURITY</li>
+                <li><span>✓</span> CREATE LIQUIDITY POOLS ON MINTME/SOLANA</li>
+                <li><span>✓</span> DEPLOY CUSTOM TOKENS</li>
+                <li><span>✓</span> 0% TRADING & WITHDRAWAL FEES</li>
+              </ul>
+              <div class="badge-light">NON-CUSTODIAL</div>
             </div>
           </div>
-          <P></P>
-          <div></div>
-          <div></div>
-          <div class="tagline">DECENTRALIZED ECOSYSTEM</div>
-          <div class="feature-highlights">
+
+          <!-- SECOND ROW: TEAM + DOCS + ECOSYSTEM HIGHLIGHTS -->
+          <div class="section-title">🏛️ GOVERNANCE & RESOURCES</div>
+          <div class="cards-grid">
+            <div class="function-card" data-nav="team">
+              <div class="card-icon">👥</div>
+              <div class="card-title">TEAM</div>
+              <div class="card-desc">BLOCKCHAIN DEVELOPERS & DEFI EXPERTS</div>
+              <ul class="card-feature-list">
+                <li><span>✓</span> EXPERIENCED SECURITY RESEARCHERS</li>
+                <li><span>✓</span> PROTOCOL ARCHITECTS</li>
+                <li><span>✓</span> TRANSPARENT ROADMAP</li>
+              </ul>
+              <div class="badge-light">CORE CONTRIBUTORS</div>
+            </div>
+
+            <div class="function-card special" data-nav="docs">
+              <div class="card-icon">📘</div>
+              <div class="card-title">DOCUMENTATION</div>
+              <div class="card-desc">TOKENOMICS & TECHNICAL SPECS</div>
+              <ul class="card-feature-list">
+                <li><span>✓</span> FIXERCOIN | LOCKER | PINGX | FXM</li>
+                <li><span>✓</span> CONTRACT ADDRESSES & PROGRAM IDS</li>
+                <li><span>✓</span> FULL ECOSYSTEM DETAILS</li>
+              </ul>
+              <div class="badge-light">TOKEN SPECS</div>
+            </div>
+
+            <!-- ADDITIONAL DEX INTEGRATION CARD (extra function detail) -->
+            <div class="function-card" data-nav="dex-service">
+              <div class="card-icon">🌐</div>
+              <div class="card-title">CROSS-CHAIN AGGREGATOR</div>
+              <div class="card-desc">MINTME ↔ SOLANA BRIDGE INTEGRATION</div>
+              <ul class="card-feature-list">
+                <li><span>✓</span> LIQUIDITY LOCKED COMPLETELY</li>
+                <li><span>✓</span> DEPLOY NON-MINTABLE TOKENS</li>
+                <li><span>✓</span> MAX AGGREGATOR ACTIVE</li>
+              </ul>
+              <div class="badge-light">COMING AGGREGATOR UPDATE</div>
+            </div>
+          </div>
           
-            <span class="highlight-item">EXCHANGE</span>
-            <span class="highlight-item">WALLET</span>
-            <span class="highlight-item">INTEGRATION</span>
+          <div class="badge-container" style="margin-top: 0.8rem;">
+            <span class="badge">ONCHAIN NATIVE</span>
+            <span class="badge">ZERO TRUST</span>
+            <span class="badge">MULTICHAIN SUPPORT</span>
+            <span class="badge">COMMUNITY DRIVEN</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- DEX SERVICE PAGE -->
+    <!-- DEX SERVICE PAGE (unchanged structure) -->
     <div id="dex-service-page" class="page-content content-page">
       <div class="content-full">
         <div class="page-header">
@@ -765,8 +717,8 @@
 
     <!-- TEAM PAGE -->
     <div id="team-page" class="page-content hero-page">
-      <div class="hero-content">
-        <div class="page-title">TEAM</div>
+      <div class="hero-content" style="text-align:center;">
+        <div class="page-title" style="font-size:2rem;">TEAM</div>
         <div class="border-line"></div>
         <div class="page-description">EXPERIENCED TEAM OF BLOCKCHAIN DEVELOPERS, DEFI EXPERTS, AND SECURITY RESEARCHERS.</div>
       </div>
@@ -814,21 +766,23 @@
       document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => { if(item.getAttribute('data-page') === pageId) item.classList.add('active'); else item.classList.remove('active'); });
       window.history.pushState({ page: pageId }, '', `?page=${pageId}`);
     }
+    
+    // card click navigation
+    document.querySelectorAll('.function-card[data-nav]').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const targetPage = card.getAttribute('data-nav');
+        showPage(targetPage);
+        document.getElementById('mobileDropdown').classList.remove('open');
+      });
+    });
+    
     document.querySelectorAll('#desktopMenu .header-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
     document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => item.addEventListener('click', (e) => { e.preventDefault(); showPage(item.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
     
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileDropdown = document.getElementById('mobileDropdown');
-    mobileMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mobileDropdown.classList.toggle('open');
-    });
-    document.addEventListener('click', (e) => {
-      if (!mobileDropdown.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-        mobileDropdown.classList.remove('open');
-      }
-    });
-    
+    mobileMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); mobileDropdown.classList.toggle('open'); });
+    document.addEventListener('click', (e) => { if (!mobileDropdown.contains(e.target) && !mobileMenuBtn.contains(e.target)) { mobileDropdown.classList.remove('open'); } });
     document.getElementById('brand').addEventListener('click', () => { showPage('home'); mobileDropdown.classList.remove('open'); });
     window.addEventListener('load', () => { const params = new URLSearchParams(window.location.search); const pageId = params.get('page') || 'home'; showPage(pageId); });
     window.addEventListener('popstate', (e) => { const pageId = e.state?.page || 'home'; showPage(pageId); });
