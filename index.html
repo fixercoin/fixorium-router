@@ -11,74 +11,53 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       min-height: 100vh;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0A0A0F 0%, #13131F 100%);
+      background: #f0f4f8;
       position: relative;
       overflow-x: hidden;
       font-size: 10px;
       line-height: 1.5;
     }
-
-    #particleCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* HEADER BAR - INCREASED HEIGHT */
     .header-bar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(10, 10, 15, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(10, 10, 15, 0.08);
       padding: 0.85rem 1.2rem;
       z-index: 100;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-
     .brand {
       font-size: 1.3rem;
       font-weight: 800;
-      color: #FFFFFF;
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       cursor: pointer;
-      transition: opacity 0.2s ease;
       flex-shrink: 0;
-      background: linear-gradient(135deg, #fff, #00D4FF);
+      background: linear-gradient(135deg, #0A0A0F, #00D4FF);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-
-    .brand:hover {
-      opacity: 0.85;
-    }
-
+    .brand:hover { opacity: 0.85; }
     .desktop-menu {
       display: flex;
       gap: 1.8rem;
       align-items: center;
       margin-left: 1.5rem;
     }
-
     .header-link {
       font-size: 0.85rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(10, 10, 15, 0.6);
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 0.8px;
@@ -86,24 +65,17 @@
       white-space: nowrap;
       cursor: pointer;
     }
-
-    .header-link:hover, .header-link.active {
-      color: #00D4FF;
-      text-shadow: 0 0 6px rgba(0,212,255,0.3);
-    }
-
+    .header-link:hover, .header-link.active { color: #00D4FF; }
     .mobile-menu-btn {
       display: none;
       background: transparent;
       border: none;
-      color: white;
+      color: #0A0A0F;
       font-size: 1.8rem;
       cursor: pointer;
       padding: 0.3rem 0.5rem;
       margin-left: auto;
     }
-
-    /* MOBILE DROPDOWN */
     .mobile-dropdown {
       display: none;
       position: fixed;
@@ -111,33 +83,28 @@
       right: 1rem;
       left: auto;
       bottom: auto;
-      background: rgba(15, 15, 25, 0.98);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(10, 10, 15, 0.08);
       border-radius: 20px;
       z-index: 200;
       flex-direction: column;
       padding: 0.8rem;
       gap: 0.3rem;
       min-width: 220px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       transform-origin: top right;
       animation: dropdownSlide 0.2s ease-out;
     }
-
     @keyframes dropdownSlide {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .mobile-dropdown.open {
-      display: flex;
-    }
-
+    .mobile-dropdown.open { display: flex; }
     .mobile-dropdown-item {
       font-size: 0.85rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(10, 10, 15, 0.8);
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -146,12 +113,10 @@
       transition: all 0.2s ease;
       cursor: pointer;
     }
-
     .mobile-dropdown-item:hover, .mobile-dropdown-item.active {
-      background: rgba(0, 212, 255, 0.12);
+      background: rgba(0, 212, 255, 0.08);
       color: #00D4FF;
     }
-
     .page-content {
       position: relative;
       z-index: 10;
@@ -159,293 +124,543 @@
       min-height: 100vh;
       display: none;
     }
-
-    .page-content.active {
-      display: flex;
-    }
-
-    /* MAIN PAGE (HOME) - NO ANIMATION, FUNCTION CARDS */
+    .page-content.active { display: flex; }
+    /* HERO */
     .hero-page {
       align-items: flex-start;
       justify-content: center;
       padding: 0 1rem;
-      background: transparent;
+      background: #f0f4f8;
     }
-
     .hero-content {
       width: 100%;
       max-width: 1300px;
       margin: 0 auto;
-      /* TOP SPACE: PUSH CONTENT DOWN BELOW FIXED HEADER */
       padding-top: 85px;
     }
-
-    /* NEW CARDS CONTAINER: PROPER FUNCTION CARDS WITH BORDERS ONLY, NO BACKGROUND */
-    .functions-dashboard {
-      width: 100%;
-      margin-top: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    /* REMOVED section-title styles — no "CORE PLATFORMS" or "GOVERNANCE" texts anymore */
-    .cards-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.2rem;
-      justify-content: center;
-    }
-
-    /* CARD STYLES: ONLY LIGHT/DARK BORDERS, NO BACKGROUND COLOR */
-    .function-card {
-      flex: 1;
-      min-width: 260px;
-      max-width: 320px;
-      border: 1px solid rgba(255, 255, 255, 0.25);   /* light border */
-      border-radius: 20px;
-      padding: 1.2rem 1rem;
-      transition: all 0.25s ease;
-      cursor: pointer;
-      background: transparent;
-      backdrop-filter: blur(2px);
-    }
-
-    .function-card:hover {
-      border-color: #00D4FF;
-      box-shadow: 0 8px 20px rgba(0,212,255,0.12);
-      transform: translateY(-4px);
-    }
-
-    .function-card.special {
-      border: 1px solid rgba(0, 212, 255, 0.5);
-    }
-
-    .card-icon {
-      font-size: 2rem;
-      margin-bottom: 0.8rem;
-      display: inline-block;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #FFFFFF;
-      letter-spacing: 1px;
-      margin-bottom: 0.5rem;
-    }
-
-    .card-desc {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.55);
-      line-height: 1.4;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-
-    .card-feature-list {
-      list-style: none;
-      margin-top: 0.5rem;
-    }
-
-    .card-feature-list li {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.7);
-      padding: 0.3rem 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-    }
-
-    .card-feature-list li span:first-child {
-      color: #00D4FF;
-      font-weight: bold;
-    }
-
-    .badge-light {
-      display: inline-block;
-      font-size: 0.6rem;
-      border: 1px solid rgba(0,212,255,0.4);
-      border-radius: 30px;
-      padding: 0.2rem 0.7rem;
-      margin-top: 0.6rem;
-      color: #00D4FF;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      background: transparent;
-    }
-
     .main-tagline {
       text-align: center;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem 0;
     }
-
     .main-tagline h1 {
-      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-size: clamp(2rem, 6vw, 3.5rem);
       font-weight: 800;
       text-transform: uppercase;
-      background: linear-gradient(135deg, #FFFFFF, #00D4FF);
+      background: linear-gradient(135deg, #0A0A0F, #00D4FF);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       letter-spacing: 2px;
+      animation: fadeInUp 1s ease-out;
     }
-
     .main-tagline p {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      color: rgba(10, 10, 15, 0.6);
       text-transform: uppercase;
-      margin-top: 0.4rem;
+      margin-top: 0.5rem;
+      letter-spacing: 2px;
+      animation: fadeInUp 1.2s ease-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .crypto-animation-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 0;
+      animation: fadeInUp 1.5s ease-out;
+    }
+    .ring-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+    }
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      animation: spin 8s linear infinite;
+    }
+    .ring-1 {
+      width: 100%;
+      height: 100%;
+      border-top: 2px solid #00D4FF;
+      border-right: 2px solid rgba(0, 212, 255, 0.3);
+    }
+    .ring-2 {
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      border-bottom: 2px solid #9945FF;
+      border-left: 2px solid rgba(153, 69, 255, 0.3);
+      animation-direction: reverse;
+      animation-duration: 6s;
+    }
+    .ring-3 {
+      width: 60%;
+      height: 60%;
+      top: 20%;
+      left: 20%;
+      border-top: 2px solid #F3BA2F;
+      border-right: 2px solid rgba(243, 186, 47, 0.3);
+      animation-duration: 10s;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .center-logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s ease-in-out infinite;
+      overflow: hidden;
+    }
+    .center-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.05); }
+    }
+    .stats-container {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+      padding: 1.5rem 0;
+      animation: fadeInUp 2s ease-out;
+    }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 800; color: #0A0A0F; }
+    .stat-label {
+      font-size: 0.6rem;
+      color: rgba(10, 10, 15, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0.2rem;
+    }
+    /* BUTTONS: plain text, same dark style */
+    .download-section-main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      padding: 1rem 0;
+      animation: fadeInUp 2.2s ease-out;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 2rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      background: #0A0A0F;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(10, 10, 15, 0.2);
+      min-width: 200px;
+    }
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(10, 10, 15, 0.3);
+      background: #1a1a2e;
+    }
+    /* INTEGRATION SECTION */
+    .integration-section-main {
+      width: 100%;
+      max-width: 900px;
+      margin: 1rem auto 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      animation: fadeInUp 2.4s ease-out;
+    }
+    .integration-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      user-select: none;
+      padding: 0.2rem 0;
+    }
+    .integration-header .icon { font-size: 1.3rem; }
+    .integration-header h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #0A0A0F, #00D4FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .integration-header .chevron {
+      font-size: 1.2rem;
+      color: #0A0A0F;
+      transition: transform 0.25s ease;
+      margin-left: auto;
+    }
+    .integration-header .chevron.open { transform: rotate(180deg); }
+    .integration-detail {
+      margin-top: 1.2rem;
+      display: none;
+    }
+    .integration-detail.open { display: block; }
+    .integration-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+    .integration-card {
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      padding: 1rem;
+      background: #f8fafc;
+    }
+    .integration-card .method-name {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #0A0A0F;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.2rem;
+    }
+    .integration-card .method-desc {
+      font-size: 0.6rem;
+      color: rgba(10, 10, 15, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    .integration-code-block-main {
+      background: #0A0A0F;
+      border-radius: 12px;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      overflow-x: auto;
+    }
+    .integration-code-block-main pre {
+      font-family: monospace;
+      font-size: 0.6rem;
+      color: #88ddff;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+    .integration-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0;
+    }
+    .integration-steps li {
+      font-size: 0.7rem;
+      color: rgba(10, 10, 15, 0.7);
+      padding: 0.3rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      line-height: 1.4;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    .integration-steps li:last-child { border-bottom: none; }
+    .integration-steps li .step-num {
+      color: #00D4FF;
+      font-weight: 700;
+      font-size: 0.7rem;
+      min-width: 20px;
+    }
+    .integration-support {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .integration-support .support-text {
+      font-size: 0.6rem;
+      color: rgba(10, 10, 15, 0.4);
+    }
+    .integration-support .support-text span { color: #00D4FF; }
+    .integration-support .support-link {
+      font-size: 0.6rem;
+      color: #00D4FF;
+      text-decoration: none;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+    .integration-support .support-link:hover { background: rgba(0, 212, 255, 0.08); }
+    .footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      margin-top: 1rem;
+    }
+    .footer-text {
+      font-size: 0.6rem;
+      color: rgba(10, 10, 15, 0.3);
+      text-transform: uppercase;
       letter-spacing: 1px;
     }
-
-    /* OTHER CONTENT PAGES (unchanged, but adjust top spacing) */
+    .footer-text a {
+      color: rgba(10, 10, 15, 0.4);
+      text-decoration: none;
+      margin: 0 0.5rem;
+      transition: color 0.2s ease;
+    }
+    .footer-text a:hover { color: #00D4FF; }
+    /* WALLET PAGE (complete detail) */
     .content-page {
-      padding: 85px 0.5rem 1.5rem 0.5rem;
+      padding: 100px 0.5rem 1.5rem 0.5rem;
       flex-direction: column;
       align-items: center;
       width: 100%;
+      background: #f0f4f8;
     }
-
     .content-full {
       width: 100%;
       padding: 0.5rem;
       max-width: 1300px;
       margin: 0 auto;
     }
-
     .page-header {
       text-align: center;
       margin-bottom: 1.2rem;
     }
-
     .page-header .page-title {
       font-size: clamp(1.6rem, 4vw, 2.5rem);
       font-weight: 800;
       text-transform: uppercase;
-      background: linear-gradient(135deg, #fff, #00D4FF);
+      background: linear-gradient(135deg, #0A0A0F, #00D4FF);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-
     .page-sub {
       font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(10, 10, 15, 0.5);
       text-transform: uppercase;
       letter-spacing: 0.15em;
       margin-top: 0.3rem;
     }
-
-    .border-line {
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), transparent);
-      margin: 1rem auto;
-    }
-
-    .features-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
+    .wallet-security-container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
       margin-top: 1rem;
-      width: 100%;
     }
-
-    .feature-column {
-      flex: 1;
-      min-width: 260px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 0.8rem;
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    .feature-title {
-      font-size: 0.9rem;
+    .wallet-security-container .badge-top {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 0.65rem;
       font-weight: 700;
-      color: #00D4FF;
-      margin-bottom: 0.6rem;
-      padding-bottom: 0.3rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
       text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
     }
-
-    .feature-list {
-      list-style: none;
+    .wallet-security-container h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #0A0A0F, #00D4FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-
-    .feature-list li {
+    .wallet-security-container .subtitle {
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
       font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.7);
-      padding: 0.45rem 0;
+      letter-spacing: 0.5px;
+    }
+    .score-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e9ecef;
+    }
+    .score-number { font-size: 2.8rem; font-weight: 800; color: #2e7d32; }
+    .score-label { color: #6c757d; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .security-grid-simple {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .security-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      line-height: 1.4;
-      text-transform: uppercase;
-    }
-
-    .tick {
-      color: #00D4FF;
-      font-weight: 700;
-      font-size: 0.9rem;
-      min-width: 18px;
-    }
-
-    .program-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    .program-id-box {
-      border: 1px solid rgba(0, 212, 255, 0.3);
-      border-radius: 12px;
-      padding: 0.5rem 0.8rem;
-      background: rgba(0, 0, 0, 0.3);
-      flex: 1;
-      min-width: 220px;
-    }
-    .program-label {
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.7);
-      text-transform: uppercase;
-      margin-bottom: 0.2rem;
-    }
-    .program-value {
-      font-family: monospace;
-      font-size: 0.65rem;
-      color: #88ddff;
-      word-break: break-all;
-    }
-
-    .badge-container {
-      display: flex;
-      flex-wrap: wrap;
       gap: 0.6rem;
-      justify-content: center;
-      margin-top: 1.2rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #e9ecef;
     }
-
-    .badge {
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.25rem 0.8rem;
-      border-radius: 30px;
+    .security-item .icon { font-size: 1.1rem; }
+    .security-item .info { flex: 1; }
+    .security-item .info .label {
       font-size: 0.65rem;
-      font-weight: 600;
-      color: #DDDDFF;
+      font-weight: 700;
+      color: #0A0A0F;
       text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
-
+    .security-item .info .desc {
+      font-size: 0.55rem;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    .security-item .status-badge {
+      font-size: 0.55rem;
+      color: #2e7d32;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #e8f5e9;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+    }
+    .divider { border: none; border-top: 1px solid #e9ecef; margin: 1.2rem 0; }
+    .code-block {
+      background: #f1f3f5;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      overflow-x: auto;
+      border: 1px solid #e9ecef;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 0.5rem 0;
+    }
+    .code-block .hl { color: #1a73e8; }
+    .code-block .cm { color: #6c757d; }
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #0A0A0F;
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 1rem 0;
+    }
+    .checklist li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #f1f3f5;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      color: #1a1a2e;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check { color: #2e7d32; font-weight: 700; font-size: 0.8rem; }
+    .attacker-box { margin: 0.8rem 0 1.2rem 0; }
+    .attacker-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      border: 1px solid #c8e6c9;
+    }
+    .attacker-card h4 {
+      font-size: 0.75rem;
+      margin-bottom: 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #2e7d32;
+    }
+    .attacker-card ul {
+      list-style: none;
+      padding: 0;
+      font-size: 0.7rem;
+      color: #495057;
+    }
+    .attacker-card ul li {
+      padding: 0.1rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    .note-box {
+      background: #e8f5e9;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      margin: 0.8rem 0;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      color: #1a1a2e;
+    }
+    .center-text { text-align: center; padding: 0.3rem 0; }
+    .center-text .badge-center {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.3rem 1.2rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    .center-text p {
+      font-size: 0.75rem;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    /* DOCS */
     .token-grid {
       display: flex;
       flex-wrap: wrap;
@@ -459,323 +674,364 @@
       flex: 1;
       min-width: 150px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.6);
     }
-    .token-name {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      text-transform: uppercase;
-    }
-    .token-symbol {
-      font-size: 0.6rem;
-      color: #00D4FF;
-      margin-top: 0.2rem;
-    }
-    .address-item {
+    .token-name { font-size: 1rem; font-weight: 700; color: #0A0A0F; text-transform: uppercase; }
+    .token-symbol { font-size: 0.6rem; color: #00D4FF; margin-top: 0.2rem; }
+    .features-grid {
       display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
       width: 100%;
     }
+    .feature-column {
+      flex: 1;
+      min-width: 260px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .feature-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #00D4FF;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      text-transform: uppercase;
+    }
+    .feature-list { list-style: none; }
+    .feature-list li {
+      font-size: 0.8rem;
+      color: rgba(10, 10, 15, 0.7);
+      padding: 0.45rem 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+    .tick { color: #00D4FF; font-weight: 700; font-size: 0.9rem; min-width: 18px; }
+    .address-item { display: flex; flex-direction: column; gap: 0.2rem; width: 100%; }
     .address-label {
       font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(10, 10, 15, 0.85);
       font-weight: 500;
       text-transform: uppercase;
     }
     .address-value {
       font-size: 0.65rem;
       font-family: monospace;
-      color: #88ddff;
+      color: #00D4FF;
       word-break: break-all;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.04);
       padding: 0.2rem 0.4rem;
       border-radius: 5px;
     }
-    .availability-text {
-      text-align: center;
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
       margin-top: 1.2rem;
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.35);
+      padding-top: 1rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .badge {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 0.25rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(10, 10, 15, 0.6);
       text-transform: uppercase;
     }
-    .availability-text a {
-      color: #88ddff;
-      text-decoration: none;
-      border-bottom: 1px dotted #88ddff;
-    }
-
-    /* For Team page special alignment */
-    #team-page.hero-page .hero-content {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 70vh;
-    }
-
     @media (max-width: 768px) {
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
       .header-bar { padding: 0.7rem 1rem; }
       .brand { font-size: 1.1rem; }
-      .hero-content { padding-top: 75px; }
-      .function-card { min-width: 100%; max-width: 100%; }
-      .cards-grid { gap: 0.9rem; }
-      .content-page { padding: 75px 0.3rem 1rem 0.3rem; }
-      .feature-column { min-width: 100%; }
+      .hero-content { padding-top: 75px; padding-left: 0.5rem; padding-right: 0.5rem; }
+      .ring-container { width: 150px; height: 150px; }
+      .center-logo { width: 65px; height: 65px; }
+      .stats-container { gap: 1.5rem; padding: 1rem 0; }
+      .stat-number { font-size: 1.5rem; }
+      .download-section-main { flex-direction: column; align-items: stretch; padding: 0.5rem 0; width: 100%; }
+      .download-btn { width: 100%; justify-content: center; padding: 0.8rem 1.2rem; min-width: unset; }
+      .integration-section-main { padding: 1rem; margin: 0.5rem 0; border-radius: 16px; }
+      .integration-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+      .integration-card { padding: 0.7rem; }
+      .integration-header h2 { font-size: 0.9rem; }
+      .integration-steps li { font-size: 0.65rem; }
+      .integration-support { flex-direction: column; text-align: center; }
+      .content-page { padding: 85px 0.3rem 1rem 0.3rem; }
+      .main-tagline { padding: 1rem 0; margin-bottom: 0.5rem; }
+      .main-tagline h1 { font-size: clamp(1.5rem, 8vw, 2.2rem); }
+      .main-tagline p { font-size: 0.7rem; }
+      .wallet-security-container { padding: 1rem; margin: 0 0.5rem; }
+      .wallet-security-container h1 { font-size: 1.4rem; }
+      .security-grid-simple { grid-template-columns: 1fr; }
+      .score-box { flex-direction: column; text-align: center; gap: 0.3rem; }
     }
-
-    @media (min-width: 769px) {
-      .mobile-dropdown { display: none !important; }
+    @media (max-width: 480px) {
+      .download-btn { font-size: 0.7rem; padding: 0.7rem 1rem; }
+      .integration-section-main { padding: 0.8rem; }
+      .integration-code-block-main pre { font-size: 0.5rem; }
     }
+    @media (min-width: 769px) { .mobile-dropdown { display: none !important; } }
   </style>
 </head>
 <body>
-  <canvas id="particleCanvas"></canvas>
 
   <div class="header-bar">
     <div class="brand" id="brand">FIXORIUM</div>
     <div class="desktop-menu" id="desktopMenu">
-      <a class="header-link" data-page="dex-service">DEX SERVICE</a>
-      <a class="header-link" data-page="exchange">EXCHANGE</a>
+      <a class="header-link active" data-page="home">HOME</a>
       <a class="header-link" data-page="wallet">WALLET</a>
-      <a class="header-link" data-page="team">TEAM</a>
       <a class="header-link" data-page="docs">DOCS</a>
     </div>
     <div class="mobile-menu-btn" id="mobileMenuBtn">☰</div>
   </div>
 
   <div class="mobile-dropdown" id="mobileDropdown">
-    <a class="mobile-dropdown-item" data-page="dex-service">DEX SERVICE</a>
-    <a class="mobile-dropdown-item" data-page="exchange">EXCHANGE</a>
+    <a class="mobile-dropdown-item active" data-page="home">HOME</a>
     <a class="mobile-dropdown-item" data-page="wallet">WALLET</a>
-    <a class="mobile-dropdown-item" data-page="team">TEAM</a>
     <a class="mobile-dropdown-item" data-page="docs">DOCS</a>
   </div>
 
   <div id="pagesContainer">
-    <!-- HOME PAGE - ANIMATION REMOVED, FUNCTION CARDS, NO SECTION TITLES -->
+
+    <!-- HOME -->
     <div id="home-page" class="page-content hero-page active">
       <div class="hero-content">
         <div class="main-tagline">
           <h1>FIXORIUM ECOSYSTEM</h1>
           <p>DECENTRALIZED FINANCE INFRASTRUCTURE</p>
         </div>
-        
-        <div class="functions-dashboard">
-          <!-- FIRST ROW OF CARDS (no extra heading) -->
-          <div class="cards-grid">
-            <div class="function-card" data-nav="dex-service">
-              <div class="card-icon"></div>
-              <div class="card-title">DEX SERVICE</div>
-              <div class="card-desc">ONCHAIN | MINTME + SOLANA</div>
-              <ul class="card-feature-list">
-                <li><span>✓</span> MINTME PROGRAM INTEGRATION</li>
-                <li><span>✓</span> SOLANA DEX MAX AGGREGATOR</li>
-                <li><span>✓</span> CREATE LIQUIDITY POOLS & DEPLOY TOKENS</li>
-                <li><span>✓</span> FULL ONCHAIN NON-CUSTODIAL SWAPS</li>
-              </ul>
-              <div class="badge-light">ACTIVE PROGRAM IDS</div>
-            </div>
-
-            <div class="function-card special" data-nav="exchange">
-              <div class="card-icon"></div>
-              <div class="card-title">HYBRID MPC EXCHANGE</div>
-              <div class="card-desc">SERVER+USER MPC | MULTI-PARTY CONTROL</div>
-              <ul class="card-feature-list">
-                <li><span>✓</span> HALF KEY SERVER / HALF KEY USER</li>
-                <li><span>✓</span> EVERY TRADE REQUIRES USER PASSWORD</li>
-                <li><span>✓</span> MULTI-PARTY SIGNING + 2FA</li>
-                <li><span>✓</span> CROSS-CHAIN SWAP & MEV PROTECTION</li>
-              </ul>
-              <div class="badge-light">MPC HYBRID RULE</div>
-            </div>
-
-            <div class="function-card" data-nav="wallet">
-              <div class="card-icon"></div>
-              <div class="card-title">FIXORIUM WALLET</div>
-              <div class="card-desc">NON-CUSTODIAL | ENCRYPTED | ALL-CHAIN</div>
-              <ul class="card-feature-list">
-                <li><span>✓</span> PASSWORD + GOOGLE 2FA SECURITY</li>
-                <li><span>✓</span> CREATE LIQUIDITY POOLS ON MINTME/SOLANA</li>
-                <li><span>✓</span> DEPLOY CUSTOM TOKENS</li>
-                <li><span>✓</span> 0% TRADING & WITHDRAWAL FEES</li>
-              </ul>
-              <div class="badge-light">NON-CUSTODIAL</div>
+        <div class="crypto-animation-container">
+          <div class="ring-container">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+            <div class="center-logo">
+              <img src="https://i.postimg.cc/nhLMdyVM/favicon.png" alt="Fixorium Logo" />
             </div>
           </div>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item"><div class="stat-number">6</div><div class="stat-label">Blockchains</div></div>
+          <div class="stat-item"><div class="stat-number">0%</div><div class="stat-label">Trading Fees</div></div>
+          <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">Non-Custodial</div></div>
+          <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">Possibilities</div></div>
+        </div>
 
-          <!-- SECOND ROW OF CARDS (no extra heading) -->
-          <div class="cards-grid">
-            <div class="function-card" data-nav="team">
-              <div class="card-icon"></div>
-              <div class="card-title">TEAM</div>
-              <div class="card-desc">BLOCKCHAIN DEVELOPERS & DEFI EXPERTS</div>
-              <ul class="card-feature-list">
-                <li><span>✓</span> EXPERIENCED SECURITY RESEARCHERS</li>
-                <li><span>✓</span> PROTOCOL ARCHITECTS</li>
-                <li><span>✓</span> TRANSPARENT ROADMAP</li>
-              </ul>
-              <div class="badge-light">CORE CONTRIBUTORS</div>
+        <!-- Buttons: only text, same dark style -->
+        <div class="download-section-main">
+          <a href="#" class="download-btn">Fixorium Wallet</a>
+          <a href="#" class="download-btn">Fixorium Exchange</a>
+        </div>
+
+        <!-- Developer Integration with chevron -->
+        <div class="integration-section-main">
+          <div class="integration-header" id="integrationToggle">
+            <span class="icon">🔌</span>
+            <h2>Developer Integration</h2>
+            <span class="chevron" id="chevronIcon">▼</span>
+          </div>
+
+          <div class="integration-detail" id="integrationDetail">
+            <div class="section-sub" style="font-size:0.7rem;color:rgba(10,10,15,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;">
+              Connect your platform with Fixorium Wallet for secure token swapping
             </div>
-
-            <div class="function-card special" data-nav="docs">
-              <div class="card-icon"></div>
-              <div class="card-title">DOCUMENTATION</div>
-              <div class="card-desc">TOKENOMICS & TECHNICAL SPECS</div>
-              <ul class="card-feature-list">
-                <li><span>✓</span> FIXERCOIN | LOCKER | PINGX | FXM</li>
-                <li><span>✓</span> CONTRACT ADDRESSES & PROGRAM IDS</li>
-                <li><span>✓</span> FULL ECOSYSTEM DETAILS</li>
-              </ul>
-              <div class="badge-light">TOKEN SPECS</div>
+            <div class="integration-grid">
+              <div class="integration-card"><div class="method-name">📦 SDK</div><div class="method-desc">Full TypeScript SDK with all features</div></div>
+              <div class="integration-card"><div class="method-name">📡 PostMessage</div><div class="method-desc">Iframe communication for web apps</div></div>
+              <div class="integration-card"><div class="method-name">🔗 Deep Link</div><div class="method-desc">fixorium:// protocol for mobile</div></div>
+              <div class="integration-card"><div class="method-name">🧩 Extension</div><div class="method-desc">Browser extension API</div></div>
             </div>
+            <div class="integration-code-block-main">
+              <pre>npm install @fixorium/wallet-sdk
 
-            <div class="function-card" data-nav="dex-service">
-              <div class="card-icon"></div>
-              <div class="card-title">CROSS-CHAIN AGGREGATOR</div>
-              <div class="card-desc">MINTME ↔ SOLANA BRIDGE INTEGRATION</div>
-              <ul class="card-feature-list">
-                <li><span>✓</span> LIQUIDITY LOCKED COMPLETELY</li>
-                <li><span>✓</span> DEPLOY NON-MINTABLE TOKENS</li>
-                <li><span>✓</span> MAX AGGREGATOR ACTIVE</li>
-              </ul>
-              <div class="badge-light">COMING AGGREGATOR UPDATE</div>
+import { FixoriumWallet } from '@fixorium/wallet-sdk';
+
+const wallet = new FixoriumWallet({
+  appName: 'Your Platform Name'
+});
+
+const connection = await wallet.connect();
+console.log('Connected:', connection.publicKey);
+
+const tx = await wallet.requestTransaction({
+  transaction: transactionData,
+  message: 'Sign this transaction'
+});</pre>
+            </div>
+            <ul class="integration-steps">
+              <li><span class="step-num">1.</span> Your platform requests connection to Fixorium Wallet</li>
+              <li><span class="step-num">2.</span> User approves connection in their wallet</li>
+              <li><span class="step-num">3.</span> Your platform creates a transaction request</li>
+              <li><span class="step-num">4.</span> User reviews and approves in wallet</li>
+              <li><span class="step-num">5.</span> Wallet signs and returns transaction signature</li>
+            </ul>
+            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.5rem 0;">
+              <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Solana</span>
+              <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Ethereum</span>
+              <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">BNB Chain</span>
+              <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Polygon</span>
+              <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">MintMe</span>
+              <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Fixorium</span>
+            </div>
+            <div class="integration-support">
+              <span class="support-text">Need help? <span>integrations@fixorium.com</span></span>
+              <a href="#" class="support-link">Contact Support</a>
             </div>
           </div>
-          
-          <div class="badge-container" style="margin-top: 0.8rem;">
-            <span class="badge">ONCHAIN NATIVE</span>
-            <span class="badge">ZERO TRUST</span>
-            <span class="badge">MULTICHAIN SUPPORT</span>
-            <span class="badge">COMMUNITY DRIVEN</span>
+        </div>
+
+        <div class="footer">
+          <div class="footer-text">
+            <a href="#">Fixorium</a> · <a href="#">GitHub</a> · <a href="#">Twitter</a> · <a href="#">Discord</a>
           </div>
+          <div class="footer-text" style="margin-top:0.5rem;">© 2024 Fixorium. All rights reserved.</div>
         </div>
       </div>
     </div>
 
-    <!-- DEX SERVICE PAGE (unchanged structure, top spacing via content-page) -->
-    <div id="dex-service-page" class="page-content content-page">
-      <div class="content-full">
-        <div class="page-header">
-          <div class="page-title">DEX SERVICE</div>
-          <div class="page-sub">100% ONCHAIN AGGREGATOR | MINTME + SOLANA</div>
-        </div>
-        <div class="program-row">
-          <div class="program-id-box"><div class="program-label">MINTME PROGRAM ID</div><div class="program-value">0x33C60168F237146647891BAAE4CA4DF8AC58D03E</div></div>
-          <div class="program-id-box"><div class="program-label">SOLANA PROGRAM ID</div><div class="program-value">EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</div></div>
-        </div>
-        <div class="features-grid">
-          <div class="feature-column"><div class="feature-title">MINTME BLOCKCHAIN</div><ul class="feature-list"><li><span class="tick">✓</span> OFFICIAL PROGRAM ID INTEGRATION</li><li><span class="tick">✓</span> CREATE TOKEN POOLS VIA WALLET</li><li><span class="tick">✓</span> ADD/WITHDRAW LIQUIDITY (ONCHAIN)</li><li><span class="tick">✓</span> EMERGENCY TOKENS WITHDRAWAL</li><li><span class="tick">✓</span> SWAP MINTME NATIVE TOKENS</li></ul></div>
-          <div class="feature-column"><div class="feature-title">SOLANA DEX MAX</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE LIQUIDITY POOLS</li><li><span class="tick">✓</span> DEPLOY TOKENS (NON-MINTABLE, NON-TRANSFERABLE)</li><li><span class="tick">✓</span> LIQUIDITY LOCKED COMPLETELY</li><li><span class="tick">✓</span> SWAP ANY SOLANA TOKEN</li><li><span class="tick">✓</span> MAX STANDALONE AGGREGATOR ACTIVE</li></ul></div>
-          <div class="feature-column"><div class="feature-title">FIXORIUM WALLET</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE MINTME POOLS</li><li><span class="tick">✓</span> SOLANA POOLS & LP TOKENS</li><li><span class="tick">✓</span> DEPLOY CUSTOM TOKENS</li><li><span class="tick">✓</span> FULL ONCHAIN NON-CUSTODIAL</li></ul></div>
-        </div>
-        <div class="badge-container"><span class="badge">ONCHAIN NATIVE</span><span class="badge">MINTME PROGRAM</span><span class="badge">SOLANA PROGRAM</span><span class="badge">MAX AGGREGATOR</span></div>
-        <div class="availability-text">NEXT MAJOR AGGREGATOR UPDATE COMING SOON</div>
-      </div>
-    </div>
-
-    <!-- EXCHANGE PAGE -->
-    <div id="exchange-page" class="page-content content-page">
-      <div class="content-full">
-        <div class="page-header"><div class="page-title">HYBRID MPC EXCHANGE</div><div class="page-sub">SERVER+USER MPC | MULTI-PARTY CONTROL</div></div>
-        <div class="features-grid">
-          <div class="feature-column"><div class="feature-title">MPC HYBRID RULE</div><ul class="feature-list"><li><span class="tick">✓</span> SERVER+USER MULTI-PARTY CONTROL</li><li><span class="tick">✓</span> HALF KEY SERVER / HALF KEY USER</li><li><span class="tick">✓</span> NO OPERATION WITHOUT USER KEY</li><li><span class="tick">✓</span> EVERY TRADE REQUIRES PASSWORD</li></ul></div>
-          <div class="feature-column"><div class="feature-title">WITHDRAWAL PROTOCOL</div><ul class="feature-list"><li><span class="tick">✓</span> MULTI-PARTY SIGNING (2-ADMIN)</li><li><span class="tick">✓</span> RATE LIMITING + 2FA + PASSWORD</li><li><span class="tick">✓</span> HALF-USER KEY REQUIRED</li><li><span class="tick">✓</span> ADMIN MULTI-SIG CO-SIGN</li></ul></div>
-          <div class="feature-column"><div class="feature-title">CROSS-CHAIN SWAP</div><ul class="feature-list"><li><span class="tick">✓</span> USER KEY FOR EVERY TRADE</li><li><span class="tick">✓</span> CROSS-CHAIN CONVERSION SYSTEM</li><li><span class="tick">✓</span> ALL MAJOR DEX TOKENS LISTED</li><li><span class="tick">✓</span> 0.01% BASE FEE, MEV PROTECTION</li></ul></div>
-        </div>
-        <div class="badge-container"><span class="badge">MPC HYBRID</span><span class="badge">USER+SERVER KEYS</span><span class="badge">2FA + PASSWORD</span><span class="badge">CROSS-CHAIN</span></div>
-        <div class="availability-text"><a href="https://docs.google.com/uc?export=download&id=1rTOh-2_QoONF67JZLTXSYdljXREtfneT">DOWNLOAD FIXORIUM APK VERSION</a></div>
-      </div>
-    </div>
-
-    <!-- WALLET PAGE -->
+    <!-- WALLET PAGE (complete detail) -->
     <div id="wallet-page" class="page-content content-page">
       <div class="content-full">
-        <div class="page-header"><div class="page-title">FIXORIUM WALLET</div><div class="page-sub">NON-CUSTODIAL | FULLY ENCRYPTED | MULTI-CHAIN</div></div>
-        <div class="features-grid">
-          <div class="feature-column"><div class="feature-title">SECURITY</div><ul class="feature-list"><li><span class="tick">✓</span> FULLY ENCRYPTED OFFLINE SYSTEM</li><li><span class="tick">✓</span> NEVER HOLDS PRIVATE KEYS</li><li><span class="tick">✓</span> PASSWORD + GOOGLE 2FA</li><li><span class="tick">✓</span> NON-CUSTODIAL</li></ul></div>
-          <div class="feature-column"><div class="feature-title">MINTME BLOCKCHAIN</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE LIQUIDITY POOLS</li><li><span class="tick">✓</span> ADD/WITHDRAW LIQUIDITY</li><li><span class="tick">✓</span> EMERGENCY REVERSE TOKENS</li><li><span class="tick">✓</span> TRADE MINTME TOKENS</li></ul></div>
-          <div class="feature-column"><div class="feature-title">SOLANA NETWORK</div><ul class="feature-list"><li><span class="tick">✓</span> CREATE POOLS ON DEXES</li><li><span class="tick">✓</span> DEPLOY NEW TOKENS</li><li><span class="tick">✓</span> TRADE ALL SOLANA TOKENS</li><li><span class="tick">✓</span> 0% TRADING & WITHDRAWAL FEE</li></ul></div>
+        <div class="wallet-security-container">
+          <span class="badge-top">🔒 NON-CUSTODIAL</span>
+          <h1>FIXORIUM WALLET</h1>
+          <p class="subtitle">SECURITY OVERVIEW</p>
+          <div class="score-box">
+            <div><span class="score-number">100/100</span><div class="score-label">SECURITY SCORE</div></div>
+            <div><span class="badge-top" style="font-size:0.7rem;background:#e8f5e9;color:#2e7d32;">✅ PRODUCTION READY</span>
+            <div style="font-size:0.65rem;color:#6c757d;margin-top:0.2rem;text-transform:uppercase;letter-spacing:0.3px;">SAME AS PHANTOM &amp; SOLFLARE</div></div>
+          </div>
+          <div class="security-grid-simple">
+            <div class="security-item"><span class="icon">🔐</span><div class="info"><div class="label">Wallet Encryption</div><div class="desc">NACL.SECRETBOX + PBKDF2</div></div><span class="status-badge">✅ Secure</span></div>
+            <div class="security-item"><span class="icon">🔑</span><div class="info"><div class="label">Password Storage</div><div class="desc">AES-GCM Encrypted</div></div><span class="status-badge">✅ Secure</span></div>
+            <div class="security-item"><span class="icon">🛡️</span><div class="info"><div class="label">Private Keys</div><div class="desc">Never in Plaintext</div></div><span class="status-badge">✅ Secure</span></div>
+            <div class="security-item"><span class="icon">⏱️</span><div class="info"><div class="label">Auto-Lock</div><div class="desc">5 Minutes Inactivity</div></div><span class="status-badge">✅ Secure</span></div>
+          </div>
+          <h3 class="section-title">🔐 HOW IT WORKS</h3>
+          <div class="code-block"><span class="cm">// ENCRYPTION CHAIN</span> PASSWORD → PBKDF2 (100K) → 32‑BYTE KEY ↓ NACL.SECRETBOX → ENCRYPTED WALLET ↓ STORED IN LOCALSTORAGE (ENCRYPTED) ↓ <span class="hl">✅ EVEN IF STOLEN, DATA CANNOT BE DECRYPTED WITHOUT THE PASSWORD.</span></div>
+          <div class="code-block">{ "VERSION": <span class="hl">"2"</span>, "ALGORITHM": <span class="hl">"NACL.SECRETBOX"</span>, "KDFVERSION": <span class="hl">"PBKDF2"</span>, "ENCRYPTEDDATA": <span class="cm">// ENCRYPTED CONTENT</span>, "NONCE": <span class="cm">// RANDOM PER WALLET</span>, "SALT": <span class="cm">// UNIQUE PER WALLET</span> }</div>
+          <div class="note-box">✅ <strong>PUBLIC KEYS</strong> (SOLANA &amp; EVM ADDRESSES) ARE SAFE TO SHARE — THEY'RE MEANT TO BE PUBLIC.</div>
+          <hr class="divider" />
+          <h3 class="section-title">✅ SECURITY CHECKLIST</h3>
+          <ul class="checklist">
+            <li><span class="check">✅</span> ENCRYPTED WITH <strong>NACL.SECRETBOX</strong> (INDUSTRY STANDARD)</li>
+            <li><span class="check">✅</span> PBKDF2 WITH 100,000 ITERATIONS</li>
+            <li><span class="check">✅</span> UNIQUE SALT + NONCE PER WALLET</li>
+            <li><span class="check">✅</span> PASSWORD STORED WITH <strong>AES-GCM</strong></li>
+            <li><span class="check">✅</span> PRIVATE KEYS <strong>NEVER</strong> IN PLAINTEXT</li>
+            <li><span class="check">✅</span> NO SESSION TOKENS</li>
+            <li><span class="check">✅</span> AUTO-LOCK AFTER 5 MINUTES</li>
+            <li><span class="check">✅</span> SAME AS PHANTOM &amp; SOLFLARE</li>
+          </ul>
+          <hr class="divider" />
+          <h3 class="section-title">🛡️ WHAT AN ATTACKER CANNOT DO</h3>
+          <div class="attacker-box"><div class="attacker-card"><h4>❌ CANNOT</h4><ul><li>• DECRYPT WALLETS WITHOUT THE PASSWORD</li><li>• STEAL PRIVATE KEYS (THEY'RE ENCRYPTED)</li><li>• CRACK THE ENCRYPTION</li><li>• BRUTE-FORCE THE PASSWORD (PBKDF2 MAKES IT SLOW)</li></ul></div></div>
+          <hr class="divider" />
+          <div class="center-text"><span class="badge-center">🔒 YOUR KEYS, YOUR CRYPTO</span><p>100% SECURE FOR PRODUCTION. STORE REAL CRYPTO WITH CONFIDENCE.</p></div>
+          <div style="text-align:center;font-size:0.65rem;color:#6c757d;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e9ecef;text-transform:uppercase;letter-spacing:0.5px;">BUILT WITH ❤️ BY FIXORIUM &bull; <a href="#" style="color:#1a1a2e;text-decoration:none;">FIXORIUM.COM</a></div>
         </div>
-        <div class="badge-container"><span class="badge">NON-CUSTODIAL</span><span class="badge">MULTI-CHAIN</span><span class="badge">0% FEES</span><span class="badge">2FA + PASSWORD</span></div>
-        <div class="availability-text"><a href="https://docs.google.com/uc?export=download&id=1rJyhbXrsMDTvBsXRkul4Oq8KkEkRYW6_">DOWNLOAD WALLET APP VERSION</a></div>
-      </div>
-    </div>
-
-    <!-- TEAM PAGE -->
-    <div id="team-page" class="page-content hero-page">
-      <div class="hero-content" style="text-align:center;">
-        <div class="page-title" style="font-size:2rem;">TEAM</div>
-        <div class="border-line"></div>
-        <div class="page-description">EXPERIENCED TEAM OF BLOCKCHAIN DEVELOPERS, DEFI EXPERTS, AND SECURITY RESEARCHERS.</div>
       </div>
     </div>
 
     <!-- DOCS PAGE -->
     <div id="docs-page" class="page-content content-page">
       <div class="content-full">
-        <div class="page-header"><div class="page-title">DOCUMENTATION</div><div class="page-sub">TOKEN LISTING & TECHNICAL SPECS</div></div>
+        <div class="page-header"><div class="page-title">DOCUMENTATION</div><div class="page-sub">TOKEN LISTING &amp; TECHNICAL SPECS</div></div>
         <div class="token-grid">
-          <div class="token-card"><div class="token-name">FIXERCOIN</div><div class="token-symbol">FIXERCOIN</div><div class="token-desc">UTILITY TOKEN</div></div>
-          <div class="token-card"><div class="token-name">LOCKER</div><div class="token-symbol">LOCKER</div><div class="token-desc">GOVERNANCE</div></div>
-          <div class="token-card"><div class="token-name">PINGX</div><div class="token-symbol">PINGX</div><div class="token-desc">CROSS-CHAIN BRIDGE</div></div>
-          <div class="token-card"><div class="token-name">FXM</div><div class="token-symbol">FXM</div><div class="token-desc">ECOSYSTEM GOVERNANCE</div></div>
+          <div class="token-card"><div class="token-name">FIXERCOIN</div><div class="token-symbol">FIXERCOIN</div></div>
+          <div class="token-card"><div class="token-name">LOCKER</div><div class="token-symbol">LOCKER</div></div>
+          <div class="token-card"><div class="token-name">PINGX</div><div class="token-symbol">PINGX</div></div>
+          <div class="token-card"><div class="token-name">FXM</div><div class="token-symbol">FXM</div></div>
         </div>
         <div class="features-grid">
           <div class="feature-column"><div class="feature-title">TOKEN DETAILS</div><ul class="feature-list"><li><span class="tick">✓</span> FIXERCOIN: 970M SUPPLY</li><li><span class="tick">✓</span> LOCKER: 1B SUPPLY</li><li><span class="tick">✓</span> PINGX: 1B SUPPLY</li><li><span class="tick">✓</span> FXM: 1B SUPPLY</li></ul></div>
           <div class="feature-column"><div class="feature-title">CONTRACT ADDRESSES</div><ul class="feature-list"><li><div class="address-item"><span class="address-label">FIXERCOIN (SOL)</span><span class="address-value">H4qKn8FMFha8jJuj8xMryMqRhH3h7GjLuxw7TVixpump</span></div></li><li><div class="address-item"><span class="address-label">LOCKER (SOL)</span><span class="address-value">EN1nYrW6375zMPUkpkGyGSEXW8WmAqYu4yhf6xnGpump</span></div></li><li><div class="address-item"><span class="address-label">PINGX (SOL)</span><span class="address-value">7KS4DgKHmgSWYC4uGnSozLUon2bDEj6WKhRNSosmpump</span></div></li><li><div class="address-item"><span class="address-label">FXM (SOL)</span><span class="address-value">7Fnx57ztmhdpL1uAGmUY1ziwPG2UDKmG6poB4ibjpump</span></div></li></ul></div>
           <div class="feature-column"><div class="feature-title">PROGRAM IDS</div><ul class="feature-list"><li><div class="address-item"><span class="address-label">MINTME</span><span class="address-value">0x33C60168F237146647891BAAE4CA4DF8AC58D03E</span></div></li><li><div class="address-item"><span class="address-label">SOLANA</span><span class="address-value">EFKNU2EAPAQY53GHPR4T3WTUGYSRVSA26NJMO37E1UDM</span></div></li></ul></div>
         </div>
-        <div class="badge-container"><span class="badge">FIXERCOIN</span><span class="badge">LOCKER</span><span class="badge">PINGX</span><span class="badge">FXM</span><span class="badge">MINTME PROGRAM</span><span class="badge">SOLANA PROGRAM</span></div>
-        <div class="availability-text">FULL DOCS AT DOCS.FIXORIUM.IO</div>
+        <div class="badge-container"><span class="badge">FIXERCOIN</span><span class="badge">LOCKER</span><span class="badge">PINGX</span><span class="badge">FXM</span></div>
       </div>
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
-    function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
-    window.addEventListener('resize', resizeCanvas); resizeCanvas();
-    const PARTICLE_COUNT = 80;
-    const colors = ['rgba(255,255,255,0.15)','rgba(255,255,255,0.1)','rgba(0,212,255,0.12)'];
-    class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.radius = Math.random() * 1.2 + 0.3; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.color = colors[Math.floor(Math.random() * colors.length)]; } update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0) this.x = width; if (this.x > width) this.x = 0; if (this.y < 0) this.y = height; if (this.y > height) this.y = 0; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); } }
-    function drawConnections() { for (let i = 0; i < particles.length; i++) for (let j = i + 1; j < particles.length; j++) { const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, d = Math.hypot(dx, dy); if (d < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(0,212,255,${(1 - d / 80) * 0.05})`; ctx.lineWidth = 0.4; ctx.stroke(); } } }
-    for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-    function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); drawConnections(); requestAnimationFrame(animate); } animate();
-    
-    const pages = ['home', 'dex-service', 'exchange', 'wallet', 'team', 'docs'];
+    const pages = ['home', 'wallet', 'docs'];
+
     function showPage(pageId) {
-      pages.forEach(p => { const el = document.getElementById(`${p}-page`); if(el) el.classList.remove('active'); });
+      pages.forEach(p => {
+        const el = document.getElementById(`${p}-page`);
+        if (el) el.classList.remove('active');
+      });
       document.getElementById(`${pageId}-page`).classList.add('active');
-      document.querySelectorAll('#desktopMenu .header-link').forEach(link => { if(link.getAttribute('data-page') === pageId) link.classList.add('active'); else link.classList.remove('active'); });
-      document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => { if(item.getAttribute('data-page') === pageId) item.classList.add('active'); else item.classList.remove('active'); });
-      window.history.pushState({ page: pageId }, '', `?page=${pageId}`);
+
+      document.querySelectorAll('#desktopMenu .header-link').forEach(link => {
+        if (link.getAttribute('data-page') === pageId) link.classList.add('active');
+        else link.classList.remove('active');
+      });
+      document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => {
+        if (item.getAttribute('data-page') === pageId) item.classList.add('active');
+        else item.classList.remove('active');
+      });
     }
-    
-    document.querySelectorAll('.function-card[data-nav]').forEach(card => {
-      card.addEventListener('click', (e) => {
-        const targetPage = card.getAttribute('data-nav');
-        showPage(targetPage);
+
+    document.querySelectorAll('#desktopMenu .header-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPage(link.getAttribute('data-page'));
         document.getElementById('mobileDropdown').classList.remove('open');
       });
     });
-    
-    document.querySelectorAll('#desktopMenu .header-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
-    document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => item.addEventListener('click', (e) => { e.preventDefault(); showPage(item.getAttribute('data-page')); document.getElementById('mobileDropdown').classList.remove('open'); }));
-    
+
+    document.querySelectorAll('#mobileDropdown .mobile-dropdown-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPage(item.getAttribute('data-page'));
+        document.getElementById('mobileDropdown').classList.remove('open');
+      });
+    });
+
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileDropdown = document.getElementById('mobileDropdown');
-    mobileMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); mobileDropdown.classList.toggle('open'); });
-    document.addEventListener('click', (e) => { if (!mobileDropdown.contains(e.target) && !mobileMenuBtn.contains(e.target)) { mobileDropdown.classList.remove('open'); } });
-    document.getElementById('brand').addEventListener('click', () => { showPage('home'); mobileDropdown.classList.remove('open'); });
-    window.addEventListener('load', () => { const params = new URLSearchParams(window.location.search); const pageId = params.get('page') || 'home'; showPage(pageId); });
-    window.addEventListener('popstate', (e) => { const pageId = e.state?.page || 'home'; showPage(pageId); });
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileDropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!mobileDropdown.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        mobileDropdown.classList.remove('open');
+      }
+    });
+
+    document.getElementById('brand').addEventListener('click', () => {
+      showPage('home');
+      mobileDropdown.classList.remove('open');
+    });
+
+    // Toggle integration detail with chevron
+    const toggle = document.getElementById('integrationToggle');
+    const detail = document.getElementById('integrationDetail');
+    const chevron = document.getElementById('chevronIcon');
+
+    if (toggle && detail && chevron) {
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = detail.classList.toggle('open');
+        chevron.classList.toggle('open');
+        chevron.textContent = isOpen ? '▲' : '▼';
+      });
+    }
+
+    showPage('home');
   </script>
 </body>
 </html>
