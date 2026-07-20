@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>FIXORIUM | DEFI ECOSYSTEM</title>
+  <link rel="icon" href="https://i.postimg.cc/xTJXZcb8/circle.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -46,6 +47,14 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand img {
+      height: 28px;
+      width: auto;
+      display: inline-block;
     }
     .brand:hover { opacity: 0.85; }
     .desktop-menu {
@@ -153,6 +162,7 @@
       color: transparent;
       letter-spacing: 2px;
       animation: fadeInUp 1s ease-out;
+      white-space: nowrap;
     }
     .main-tagline p {
       font-size: 0.9rem;
@@ -161,6 +171,7 @@
       margin-top: 0.5rem;
       letter-spacing: 2px;
       animation: fadeInUp 1.2s ease-out;
+      white-space: nowrap;
     }
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -753,7 +764,8 @@
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
       .header-bar { padding: 0.7rem 1rem; }
-      .brand { font-size: 1.1rem; }
+      .brand { font-size: 1rem; gap: 4px; }
+      .brand img { height: 22px; }
       .hero-content { padding-top: 75px; padding-left: 0.5rem; padding-right: 0.5rem; }
       .ring-container { width: 150px; height: 150px; }
       .center-logo { width: 65px; height: 65px; }
@@ -769,8 +781,14 @@
       .integration-support { flex-direction: column; text-align: center; }
       .content-page { padding: 85px 0.3rem 1rem 0.3rem; }
       .main-tagline { padding: 1rem 0; margin-bottom: 0.5rem; }
-      .main-tagline h1 { font-size: clamp(1.5rem, 8vw, 2.2rem); }
-      .main-tagline p { font-size: 0.7rem; }
+      .main-tagline h1 { 
+        font-size: clamp(1.2rem, 5vw, 1.8rem); 
+        white-space: nowrap;
+      }
+      .main-tagline p { 
+        font-size: clamp(0.55rem, 2.5vw, 0.75rem); 
+        white-space: nowrap;
+      }
       .wallet-security-container { padding: 1rem; margin: 0 0.5rem; }
       .wallet-security-container h1 { font-size: 1.4rem; }
       .security-grid-simple { grid-template-columns: 1fr; }
@@ -780,6 +798,10 @@
       .download-btn { font-size: 0.7rem; padding: 0.7rem 1rem; }
       .integration-section-main { padding: 0.8rem; }
       .integration-code-block-main pre { font-size: 0.5rem; }
+      .main-tagline h1 { font-size: clamp(0.9rem, 4vw, 1.3rem); }
+      .main-tagline p { font-size: clamp(0.45rem, 2vw, 0.6rem); }
+      .brand { font-size: 0.85rem; }
+      .brand img { height: 18px; }
     }
     @media (min-width: 769px) { .mobile-dropdown { display: none !important; } }
   </style>
@@ -787,7 +809,10 @@
 <body>
 
   <div class="header-bar">
-    <div class="brand" id="brand">FIXORIUM</div>
+    <div class="brand" id="brand">
+      <img src="https://i.postimg.cc/xTJXZcb8/circle.png" alt="Fixorium logo" />
+      FIXORIUM
+    </div>
     <div class="desktop-menu" id="desktopMenu">
       <a class="header-link active" data-page="home">HOME</a>
       <a class="header-link" data-page="wallet">WALLET</a>
