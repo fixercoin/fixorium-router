@@ -760,6 +760,85 @@
       color: rgba(10, 10, 15, 0.6);
       text-transform: uppercase;
     }
+    /* Integration Detail Sections */
+    .detail-section {
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .detail-section-header {
+      padding: 0.8rem 1rem;
+      background: #f8fafc;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #0A0A0F;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .detail-section-header:hover { background: #f1f3f5; }
+    .detail-section-header .section-chevron {
+      font-size: 0.8rem;
+      color: #00D4FF;
+      transition: transform 0.25s ease;
+    }
+    .detail-section-header .section-chevron.open { transform: rotate(180deg); }
+    .detail-section-body {
+      padding: 0 1rem 1rem 1rem;
+      display: none;
+      background: #ffffff;
+    }
+    .detail-section-body.open { display: block; }
+    .detail-section-body p {
+      font-size: 0.7rem;
+      color: rgba(10, 10, 15, 0.7);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+    .detail-section-body .code-block {
+      font-size: 0.6rem;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+    }
+    .param-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 0.3rem 0.8rem;
+      font-size: 0.65rem;
+      margin: 0.5rem 0;
+    }
+    .param-grid .param-name {
+      font-weight: 700;
+      color: #0A0A0F;
+      text-transform: uppercase;
+      font-size: 0.6rem;
+    }
+    .param-grid .param-desc {
+      color: rgba(10, 10, 15, 0.6);
+      text-transform: uppercase;
+      font-size: 0.6rem;
+    }
+    .example-box {
+      background: #0A0A0F;
+      border-radius: 8px;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      overflow-x: auto;
+    }
+    .example-box pre {
+      font-family: monospace;
+      font-size: 0.55rem;
+      color: #88ddff;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
     @media (max-width: 768px) {
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
@@ -793,6 +872,8 @@
       .wallet-security-container h1 { font-size: 1.4rem; }
       .security-grid-simple { grid-template-columns: 1fr; }
       .score-box { flex-direction: column; text-align: center; gap: 0.3rem; }
+      .param-grid { grid-template-columns: 1fr; gap: 0.1rem; }
+      .detail-section-body { padding: 0 0.5rem 0.8rem 0.5rem; }
     }
     @media (max-width: 480px) {
       .download-btn { font-size: 0.7rem; padding: 0.7rem 1rem; }
@@ -853,13 +934,13 @@
           <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">Possibilities</div></div>
         </div>
 
-        <!-- Buttons: only text, same dark style -->
+        <!-- Buttons -->
         <div class="download-section-main">
           <a href="#" class="download-btn">Fixorium Wallet</a>
           <a href="#" class="download-btn">Fixorium Exchange</a>
         </div>
 
-        <!-- Developer Integration with chevron -->
+        <!-- Developer Integration -->
         <div class="integration-section-main">
           <div class="integration-header" id="integrationToggle">
             <span class="icon">🔌</span>
@@ -868,39 +949,188 @@
           </div>
 
           <div class="integration-detail" id="integrationDetail">
-            <div class="section-sub" style="font-size:0.7rem;color:rgba(10,10,15,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;">
-              Connect your platform with Fixorium Wallet for secure token swapping
+            <div style="font-size:0.7rem;color:rgba(10,10,15,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;">
+              CONNECT YOUR PLATFORM WITH FIXORIUM WALLET FOR SECURE TOKEN SWAPPING
             </div>
-            <div class="integration-grid">
-              <div class="integration-card"><div class="method-name">📦 SDK</div><div class="method-desc">Full TypeScript SDK with all features</div></div>
-              <div class="integration-card"><div class="method-name">📡 PostMessage</div><div class="method-desc">Iframe communication for web apps</div></div>
-              <div class="integration-card"><div class="method-name">🔗 Deep Link</div><div class="method-desc">fixorium:// protocol for mobile</div></div>
-              <div class="integration-card"><div class="method-name">🧩 Extension</div><div class="method-desc">Browser extension API</div></div>
+
+            <!-- QUICK START -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="quickstart">
+                <span>🚀 QUICK START</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-quickstart">
+                <p><strong>STEP 1:</strong> GENERATE A DEEP LINK</p>
+                <div class="example-box">
+                  <pre>const params = new URLSearchParams();
+params.append('requestId', 'conn_' + Date.now());
+params.append('message', 'Connect to My DApp');
+params.append('appName', 'My DApp');
+params.append('callbackUrl', 'https://mydapp.com/callback');
+
+const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
+                </div>
+                <p><strong>STEP 2:</strong> OPEN THE DEEP LINK</p>
+                <div class="example-box">
+                  <pre>window.open(url, '_blank');</pre>
+                </div>
+                <p><strong>STEP 3:</strong> HANDLE THE CALLBACK</p>
+                <div class="example-box">
+                  <pre>// Your callback endpoint receives:
+// ?requestId=123&signature=...&success=true</pre>
+                </div>
+              </div>
             </div>
-            <div class="integration-code-block-main">
-              <pre>npm install @fixorium/wallet-sdk
 
-import { FixoriumWallet } from '@fixorium/wallet-sdk';
-
-const wallet = new FixoriumWallet({
-  appName: 'Your Platform Name'
-});
-
-const connection = await wallet.connect();
-console.log('Connected:', connection.publicKey);
-
-const tx = await wallet.requestTransaction({
-  transaction: transactionData,
-  message: 'Sign this transaction'
-});</pre>
+            <!-- DEEP LINK PARAMETERS -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="params">
+                <span>📋 DEEP LINK PARAMETERS</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-params">
+                <div class="param-grid">
+                  <span class="param-name">requestId</span>
+                  <span class="param-desc">✅ REQUIRED - UNIQUE ID FOR THE REQUEST</span>
+                  <span class="param-name">transaction</span>
+                  <span class="param-desc">BASE64 ENCODED TRANSACTION (FOR TRANSACTION SIGNING)</span>
+                  <span class="param-name">message</span>
+                  <span class="param-desc">MESSAGE TO SIGN (FOR MESSAGE SIGNING OR CONNECTION)</span>
+                  <span class="param-name">appName</span>
+                  <span class="param-desc">✅ REQUIRED - NAME OF YOUR APP</span>
+                  <span class="param-name">appUrl</span>
+                  <span class="param-desc">URL OF YOUR APP</span>
+                  <span class="param-name">callbackUrl</span>
+                  <span class="param-desc">URL TO RECEIVE THE CALLBACK</span>
+                  <span class="param-name">callbackScheme</span>
+                  <span class="param-desc">CUSTOM URL SCHEME FOR MOBILE CALLBACKS</span>
+                </div>
+              </div>
             </div>
-            <ul class="integration-steps">
-              <li><span class="step-num">1.</span> Your platform requests connection to Fixorium Wallet</li>
-              <li><span class="step-num">2.</span> User approves connection in their wallet</li>
-              <li><span class="step-num">3.</span> Your platform creates a transaction request</li>
-              <li><span class="step-num">4.</span> User reviews and approves in wallet</li>
-              <li><span class="step-num">5.</span> Wallet signs and returns transaction signature</li>
-            </ul>
+
+            <!-- REQUEST TYPES -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="types">
+                <span>📌 REQUEST TYPES</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-types">
+                <div class="integration-grid">
+                  <div class="integration-card">
+                    <div class="method-name">🔗 CONNECTION</div>
+                    <div class="method-desc">REQUEST WALLET CONNECTION</div>
+                    <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
+                      ?message=Connect+to+MyApp
+                    </div>
+                  </div>
+                  <div class="integration-card">
+                    <div class="method-name">💸 TRANSACTION</div>
+                    <div class="method-desc">SIGN &amp; SEND TRANSACTION</div>
+                    <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
+                      ?transaction=BASE64_ENCODED_TX
+                    </div>
+                  </div>
+                  <div class="integration-card">
+                    <div class="method-name">✍️ MESSAGE</div>
+                    <div class="method-desc">SIGN A MESSAGE</div>
+                    <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
+                      ?message=Hello+World
+                    </div>
+                  </div>
+                  <div class="integration-card">
+                    <div class="method-name">📱 MOBILE</div>
+                    <div class="method-desc">DEEP LINK WITH CUSTOM SCHEME</div>
+                    <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
+                      fixorium://sign?...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CALLBACK RESPONSE -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="callback">
+                <span>📤 CALLBACK RESPONSE</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-callback">
+                <p><strong>CONNECTION RESPONSE:</strong></p>
+                <div class="example-box">
+                  <pre>https://mydapp.com/callback?requestId=123&connected=true&publicKey=F9RJSJ4...&success=true</pre>
+                </div>
+                <p><strong>TRANSACTION RESPONSE:</strong></p>
+                <div class="example-box">
+                  <pre>https://mydapp.com/callback?requestId=123&signedTransaction=BASE64...&success=true</pre>
+                </div>
+                <p><strong>MESSAGE RESPONSE:</strong></p>
+                <div class="example-box">
+                  <pre>https://mydapp.com/callback?requestId=123&signature=BASE64...&success=true</pre>
+                </div>
+                <p><strong>REJECTION RESPONSE:</strong></p>
+                <div class="example-box">
+                  <pre>https://mydapp.com/callback?requestId=123&success=false&error=USER_REJECTED</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- CODE EXAMPLES -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="examples">
+                <span>💻 FULL CODE EXAMPLES</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-examples">
+                <p><strong>JAVASCRIPT - CONNECT WALLET:</strong></p>
+                <div class="example-box">
+                  <pre>async function connectWallet() {
+  const requestId = 'conn_' + Date.now();
+  const params = new URLSearchParams();
+  params.append('requestId', requestId);
+  params.append('message', 'Connect to My DApp');
+  params.append('appName', 'My DApp');
+  params.append('callbackUrl', window.location.origin + '/callback');
+
+  const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();
+  window.open(url, '_blank');
+
+  // Handle callback at /callback endpoint
+}</pre>
+                </div>
+                <p><strong>JAVASCRIPT - SIGN TRANSACTION:</strong></p>
+                <div class="example-box">
+                  <pre>async function signTransaction(tx) {
+  const requestId = 'tx_' + Date.now();
+  const txBase64 = btoa(JSON.stringify(tx));
+  const params = new URLSearchParams();
+  params.append('requestId', requestId);
+  params.append('transaction', txBase64);
+  params.append('appName', 'My DApp');
+  params.append('callbackUrl', window.location.origin + '/callback');
+
+  const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();
+  window.open(url, '_blank');
+}</pre>
+                </div>
+                <p><strong>REACT COMPONENT:</strong></p>
+                <div class="example-box">
+                  <pre>const ConnectWallet = () => {
+  const connect = () => {
+    const id = 'conn_' + Date.now();
+    const url = 'https://wallet.fixorium.com.pk/sign?' +
+      'requestId=' + id +
+      '&message=Connect+to+MyApp' +
+      '&appName=MyApp' +
+      '&callbackUrl=' + encodeURIComponent(window.location.origin + '/callback');
+    window.open(url, '_blank');
+  };
+  return &lt;button onClick={connect}&gt;Connect Wallet&lt;/button&gt;;
+};</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- BLOCKCHAINS SUPPORTED -->
             <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.5rem 0;">
               <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Solana</span>
               <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Ethereum</span>
@@ -909,8 +1139,10 @@ const tx = await wallet.requestTransaction({
               <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">MintMe</span>
               <span style="border:1px solid rgba(0,0,0,0.06);padding:0.2rem 0.6rem;border-radius:12px;font-size:0.6rem;color:rgba(10,10,15,0.7);">Fixorium</span>
             </div>
+
             <div class="integration-support">
-              <span class="support-text">Need help? <span>https://t.me/fixorium</span></span>
+              <span class="support-text">📚 FULL DOCS: <span>https://docs.fixorium.com</span></span>
+              <span class="support-text">💬 TELEGRAM: <span>https://t.me/fixorium</span></span>
               <a href="#" class="support-link">Contact Support</a>
             </div>
           </div>
@@ -925,7 +1157,7 @@ const tx = await wallet.requestTransaction({
       </div>
     </div>
 
-    <!-- WALLET PAGE (complete detail) -->
+    <!-- WALLET PAGE -->
     <div id="wallet-page" class="page-content content-page">
       <div class="content-full">
         <div class="wallet-security-container">
@@ -1042,7 +1274,7 @@ const tx = await wallet.requestTransaction({
       mobileDropdown.classList.remove('open');
     });
 
-    // Toggle integration detail with chevron
+    // Toggle integration detail
     const toggle = document.getElementById('integrationToggle');
     const detail = document.getElementById('integrationDetail');
     const chevron = document.getElementById('chevronIcon');
@@ -1055,6 +1287,19 @@ const tx = await wallet.requestTransaction({
         chevron.textContent = isOpen ? '▲' : '▼';
       });
     }
+
+    // Toggle detail sections
+    document.querySelectorAll('.detail-section-header').forEach(header => {
+      header.addEventListener('click', function() {
+        const sectionId = this.getAttribute('data-section');
+        const body = document.getElementById('section-' + sectionId);
+        const chevron = this.querySelector('.section-chevron');
+        if (body) {
+          body.classList.toggle('open');
+          if (chevron) chevron.classList.toggle('open');
+        }
+      });
+    });
 
     showPage('home');
   </script>
