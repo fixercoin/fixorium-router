@@ -839,6 +839,15 @@
       word-break: break-all;
       line-height: 1.6;
     }
+    .note-highlight {
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+      padding: 0.5rem 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      color: #78350f;
+    }
     @media (max-width: 768px) {
       .desktop-menu { display: none; }
       .mobile-menu-btn { display: block; }
@@ -972,7 +981,11 @@ const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
                 </div>
                 <p><strong>STEP 2:</strong> OPEN THE DEEP LINK</p>
                 <div class="example-box">
-                  <pre>window.open(url, '_blank');</pre>
+                  <pre>// Open in popup
+window.open(url, '_blank');
+
+// OR redirect (fallback if popup blocked)
+window.location.href = url;</pre>
                 </div>
                 <p><strong>STEP 3:</strong> HANDLE THE CALLBACK</p>
                 <div class="example-box">
@@ -1074,6 +1087,55 @@ const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
               </div>
             </div>
 
+            <!-- ⭐ NEW: POSTMESSAGE COMMUNICATION -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="postmessage">
+                <span>📡 POSTMESSAGE COMMUNICATION</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-postmessage">
+                <p><strong>LISTEN FOR WALLET RESPONSE VIA POSTMESSAGE:</strong></p>
+                <div class="example-box">
+                  <pre>// Add this to your app to listen for wallet responses
+window.addEventListener('message', function(event) {
+  // Only accept messages from Fixorium Wallet
+  if (event.origin !== 'https://wallet.fixorium.com.pk') return;
+  
+  try {
+    const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+    
+    if (data.type === 'CONNECTION_APPROVED') {
+      console.log('✅ Wallet connected:', data.payload.publicKey);
+      // Update your UI with the connection
+    }
+    
+    if (data.type === 'CONNECTION_REJECTED') {
+      console.log('❌ Connection rejected');
+    }
+  } catch (error) {
+    // Not a wallet message
+  }
+});</pre>
+                </div>
+
+                <p><strong>SEND MESSAGE TO WALLET (IF NEEDED):</strong></p>
+                <div class="example-box">
+                  <pre>// Send a message to the wallet popup
+if (window.walletWindow && !window.walletWindow.closed) {
+  window.walletWindow.postMessage({
+    type: 'PING',
+    payload: { timestamp: Date.now() }
+  }, 'https://wallet.fixorium.com.pk');
+}</pre>
+                </div>
+
+                <div class="note-highlight">
+                  <strong>💡 TIP:</strong> Use postMessage for real-time communication without page redirects. 
+                  The wallet will send messages to the <code>window.opener</code> when in popup mode.
+                </div>
+              </div>
+            </div>
+
             <!-- CODE EXAMPLES -->
             <div class="detail-section">
               <div class="detail-section-header" data-section="examples">
@@ -1095,6 +1157,15 @@ const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
   window.open(url, '_blank');
 
   // Handle callback at /callback endpoint
+  // Also listen for postMessage
+  window.addEventListener('message', function(event) {
+    if (event.origin === 'https://wallet.fixorium.com.pk') {
+      const data = JSON.parse(event.data);
+      if (data.type === 'CONNECTION_APPROVED') {
+        console.log('Connected:', data.payload.publicKey);
+      }
+    }
+  });
 }</pre>
                 </div>
                 <p><strong>JAVASCRIPT - SIGN TRANSACTION:</strong></p>
@@ -1115,6 +1186,23 @@ const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
                 <p><strong>REACT COMPONENT:</strong></p>
                 <div class="example-box">
                   <pre>const ConnectWallet = () => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [publicKey, setPublicKey] = useState(null);
+
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.origin === 'https://wallet.fixorium.com.pk') {
+        const data = JSON.parse(event.data);
+        if (data.type === 'CONNECTION_APPROVED') {
+          setPublicKey(data.payload.publicKey);
+          setIsConnected(true);
+        }
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
   const connect = () => {
     const id = 'conn_' + Date.now();
     const url = 'https://wallet.fixorium.com.pk/sign?' +
@@ -1124,7 +1212,12 @@ const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
       '&callbackUrl=' + encodeURIComponent(window.location.origin + '/callback');
     window.open(url, '_blank');
   };
-  return &lt;button onClick={connect}&gt;Connect Wallet&lt;/button&gt;;
+
+  return (
+    &lt;button onClick={connect}&gt;
+      {isConnected ? 'Connected: ' + publicKey.slice(0, 8) : 'Connect Wallet'}
+    &lt;/button&gt;
+  );
 };</pre>
                 </div>
               </div>
