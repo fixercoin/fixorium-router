@@ -959,64 +959,168 @@
 
           <div class="integration-detail" id="integrationDetail">
             <div style="font-size:0.7rem;color:rgba(10,10,15,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;">
-              CONNECT YOUR PLATFORM WITH FIXORIUM WALLET FOR SECURE TOKEN SWAPPING
+              INTEGRATE FIXORIUM WALLET INTO YOUR APPLICATION
             </div>
 
-            <!-- QUICK START -->
+            <!-- HOW IT WORKS -->
             <div class="detail-section">
-              <div class="detail-section-header" data-section="quickstart">
-                <span> QUICK START</span>
+              <div class="detail-section-header" data-section="howitworks">
+                <span> HOW IT WORKS</span>
                 <span class="section-chevron">▼</span>
               </div>
-              <div class="detail-section-body" id="section-quickstart">
-                <p><strong>STEP 1:</strong> GENERATE A DEEP LINK</p>
+              <div class="detail-section-body" id="section-howitworks">
+                <p><strong>COMPLETE FLOW:</strong></p>
                 <div class="example-box">
-                  <pre>const params = new URLSearchParams();
-params.append('requestId', 'conn_' + Date.now());
-params.append('message', 'Connect to My DApp');
-params.append('appName', 'My DApp');
-params.append('callbackUrl', 'https://mydapp.com/callback');
-
-const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();</pre>
+                  <pre>1. YOUR APP GENERATES A REQUEST → OPENS FIXORIUM WALLET POPUP
+2. USER CONNECTS WALLET (APPROVES CONNECTION)
+3. YOUR APP RECEIVES CONNECTION CONFIRMATION VIA POSTMESSAGE
+4. YOUR APP GENERATES TRANSACTION → OPENS FIXORIUM WALLET POPUP
+5. USER APPROVES TRANSACTION
+6. YOUR APP RECEIVES SIGNED TRANSACTION VIA POSTMESSAGE</pre>
                 </div>
-                <p><strong>STEP 2:</strong> OPEN THE DEEP LINK</p>
-                <div class="example-box">
-                  <pre>// Open in popup
-window.open(url, '_blank');
-
-// OR redirect (fallback if popup blocked)
-window.location.href = url;</pre>
-                </div>
-                <p><strong>STEP 3:</strong> HANDLE THE CALLBACK</p>
-                <div class="example-box">
-                  <pre>// Your callback endpoint receives:
-// ?requestId=123&signature=...&success=true</pre>
+                <div class="note-highlight">
+                  <strong>💡 TWO-STEP FLOW:</strong> Connection first, then transaction signing. 
+                  The wallet must be connected before signing transactions.
                 </div>
               </div>
             </div>
 
-            <!-- DEEP LINK PARAMETERS -->
+            <!-- CONNECTION FLOW -->
             <div class="detail-section">
-              <div class="detail-section-header" data-section="params">
-                <span> DEEP LINK PARAMETERS</span>
+              <div class="detail-section-header" data-section="connection">
+                <span> STEP 1: CONNECT WALLET</span>
                 <span class="section-chevron">▼</span>
               </div>
-              <div class="detail-section-body" id="section-params">
+              <div class="detail-section-body" id="section-connection">
+                <p><strong>JAVASCRIPT:</strong></p>
+                <div class="example-box">
+                  <pre>class FixoriumWalletConnector {
+  async connect() {
+    const requestId = 'conn_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+    
+    const params = new URLSearchParams();
+    params.append('requestId', requestId);
+    params.append('appName', 'YOUR APP NAME');
+    params.append('appUrl', window.location.origin);
+    params.append('callbackUrl', window.location.origin + '/callback');
+    params.append('action', 'connect');
+
+    const url = 'https://wallet.fixorium.com.pk/approve?' + params.toString();
+    
+    // Open popup
+    this.popup = window.open(url, 'FixoriumWallet', 'width=420,height=750');
+    
+    // Listen for response
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'https://wallet.fixorium.com.pk') return;
+      
+      const data = JSON.parse(event.data);
+      if (data.type === 'CONNECTION_APPROVED') {
+        console.log('✅ Connected:', data.payload.publicKey);
+        // Save connection status
+        localStorage.setItem('fixorium_connection', JSON.stringify({
+          publicKey: data.payload.publicKey,
+          connected: true
+        }));
+      }
+    });
+  }
+}</pre>
+                </div>
+
+                <p><strong>PARAMETERS:</strong></p>
                 <div class="param-grid">
                   <span class="param-name">requestId</span>
-                  <span class="param-desc">✅ REQUIRED - UNIQUE ID FOR THE REQUEST</span>
-                  <span class="param-name">transaction</span>
-                  <span class="param-desc">BASE64 ENCODED TRANSACTION (FOR TRANSACTION SIGNING)</span>
-                  <span class="param-name">message</span>
-                  <span class="param-desc">MESSAGE TO SIGN (FOR MESSAGE SIGNING OR CONNECTION)</span>
+                  <span class="param-desc">✅ REQUIRED - UNIQUE ID (e.g., conn_1234567890_abc123)</span>
                   <span class="param-name">appName</span>
                   <span class="param-desc">✅ REQUIRED - NAME OF YOUR APP</span>
                   <span class="param-name">appUrl</span>
-                  <span class="param-desc">URL OF YOUR APP</span>
+                  <span class="param-desc">✅ REQUIRED - YOUR APP'S URL</span>
+                  <span class="param-name">action</span>
+                  <span class="param-desc">✅ REQUIRED - 'connect' for connection flow</span>
                   <span class="param-name">callbackUrl</span>
-                  <span class="param-desc">URL TO RECEIVE THE CALLBACK</span>
-                  <span class="param-name">callbackScheme</span>
-                  <span class="param-desc">CUSTOM URL SCHEME FOR MOBILE CALLBACKS</span>
+                  <span class="param-desc">OPTIONAL - URL for callback response</span>
+                </div>
+
+                <div class="note-highlight">
+                  <strong>📌 CONNECTION RESPONSE:</strong> The wallet sends <code>CONNECTION_APPROVED</code> 
+                  with <code>payload.publicKey</code> via postMessage.
+                </div>
+              </div>
+            </div>
+
+            <!-- TRANSACTION FLOW -->
+            <div class="detail-section">
+              <div class="detail-section-header" data-section="transaction">
+                <span> STEP 2: SIGN TRANSACTION</span>
+                <span class="section-chevron">▼</span>
+              </div>
+              <div class="detail-section-body" id="section-transaction">
+                <p><strong>JAVASCRIPT:</strong></p>
+                <div class="example-box">
+                  <pre>async function signTransaction(transactionData) {
+  // Check if wallet is connected
+  const connection = localStorage.getItem('fixorium_connection');
+  if (!connection) {
+    console.error('Wallet not connected. Please connect first.');
+    return;
+  }
+
+  const requestId = 'tx_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+  
+  const params = new URLSearchParams();
+  params.append('requestId', requestId);
+  params.append('appName', 'YOUR APP NAME');
+  params.append('appUrl', window.location.origin);
+  params.append('callbackUrl', window.location.origin + '/callback');
+  params.append('action', 'sign');
+  
+  // Include transaction data (base64 encoded)
+  const txBase64 = btoa(JSON.stringify(transactionData));
+  params.append('transaction', txBase64);
+
+  const url = 'https://wallet.fixorium.com.pk/approve?' + params.toString();
+  
+  // Open popup
+  this.popup = window.open(url, 'FixoriumWallet', 'width=420,height=750');
+  
+  // Listen for response
+  window.addEventListener('message', (event) => {
+    if (event.origin !== 'https://wallet.fixorium.com.pk') return;
+    
+    const data = JSON.parse(event.data);
+    if (data.type === 'TRANSACTION_RESULT') {
+      if (data.payload.success) {
+        console.log('✅ Transaction signed:', data.payload.signature);
+      } else {
+        console.error('❌ Transaction failed:', data.payload.error);
+      }
+    }
+  });
+}</pre>
+                </div>
+
+                <p><strong>PARAMETERS:</strong></p>
+                <div class="param-grid">
+                  <span class="param-name">requestId</span>
+                  <span class="param-desc">✅ REQUIRED - UNIQUE ID (e.g., tx_1234567890_abc123)</span>
+                  <span class="param-name">appName</span>
+                  <span class="param-desc">✅ REQUIRED - NAME OF YOUR APP</span>
+                  <span class="param-name">appUrl</span>
+                  <span class="param-desc">✅ REQUIRED - YOUR APP'S URL</span>
+                  <span class="param-name">action</span>
+                  <span class="param-desc">✅ REQUIRED - 'sign' for transaction flow</span>
+                  <span class="param-name">transaction</span>
+                  <span class="param-desc">✅ REQUIRED - BASE64 ENCODED TRANSACTION DATA</span>
+                  <span class="param-name">message</span>
+                  <span class="param-desc">OPTIONAL - Message to sign (for message signing)</span>
+                  <span class="param-name">callbackUrl</span>
+                  <span class="param-desc">OPTIONAL - URL for callback response</span>
+                </div>
+
+                <div class="note-highlight">
+                  <strong>📌 TRANSACTION RESPONSE:</strong> The wallet sends <code>TRANSACTION_RESULT</code> 
+                  with <code>payload.signature</code> and <code>payload.success</code> via postMessage.
                 </div>
               </div>
             </div>
@@ -1031,70 +1135,44 @@ window.location.href = url;</pre>
                 <div class="integration-grid">
                   <div class="integration-card">
                     <div class="method-name"> CONNECTION</div>
-                    <div class="method-desc">REQUEST WALLET CONNECTION</div>
+                    <div class="method-desc">CONNECT WALLET TO YOUR APP</div>
                     <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
-                      ?message=Connect+to+MyApp
+                      ?action=connect&appName=MyApp
                     </div>
                   </div>
                   <div class="integration-card">
                     <div class="method-name"> TRANSACTION</div>
                     <div class="method-desc">SIGN &amp; SEND TRANSACTION</div>
                     <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
-                      ?transaction=BASE64_ENCODED_TX
+                      ?action=sign&transaction=BASE64_ENCODED_TX
                     </div>
                   </div>
                   <div class="integration-card">
                     <div class="method-name"> MESSAGE</div>
                     <div class="method-desc">SIGN A MESSAGE</div>
                     <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
-                      ?message=Hello+World
+                      ?action=sign&message=Hello+World
                     </div>
                   </div>
                   <div class="integration-card">
-                    <div class="method-name"> MOBILE</div>
-                    <div class="method-desc">DEEP LINK WITH CUSTOM SCHEME</div>
+                    <div class="method-name"> POSTMESSAGE</div>
+                    <div class="method-desc">REAL-TIME COMMUNICATION</div>
                     <div style="font-size:0.55rem;color:rgba(10,10,15,0.4);margin-top:0.3rem;word-break:break-all;">
-                      fixorium://sign?...
+                      window.opener.postMessage()
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- CALLBACK RESPONSE -->
-            <div class="detail-section">
-              <div class="detail-section-header" data-section="callback">
-                <span> CALLBACK RESPONSE</span>
-                <span class="section-chevron">▼</span>
-              </div>
-              <div class="detail-section-body" id="section-callback">
-                <p><strong>CONNECTION RESPONSE:</strong></p>
-                <div class="example-box">
-                  <pre>https://mydapp.com/callback?requestId=123&connected=true&publicKey=F9RJSJ4...&success=true</pre>
-                </div>
-                <p><strong>TRANSACTION RESPONSE:</strong></p>
-                <div class="example-box">
-                  <pre>https://mydapp.com/callback?requestId=123&signedTransaction=BASE64...&success=true</pre>
-                </div>
-                <p><strong>MESSAGE RESPONSE:</strong></p>
-                <div class="example-box">
-                  <pre>https://mydapp.com/callback?requestId=123&signature=BASE64...&success=true</pre>
-                </div>
-                <p><strong>REJECTION RESPONSE:</strong></p>
-                <div class="example-box">
-                  <pre>https://mydapp.com/callback?requestId=123&success=false&error=USER_REJECTED</pre>
-                </div>
-              </div>
-            </div>
-
-            <!--  NEW: POSTMESSAGE COMMUNICATION -->
+            <!-- POSTMESSAGE COMMUNICATION -->
             <div class="detail-section">
               <div class="detail-section-header" data-section="postmessage">
                 <span> POSTMESSAGE COMMUNICATION</span>
                 <span class="section-chevron">▼</span>
               </div>
               <div class="detail-section-body" id="section-postmessage">
-                <p><strong>LISTEN FOR WALLET RESPONSE VIA POSTMESSAGE:</strong></p>
+                <p><strong>LISTEN FOR WALLET RESPONSES:</strong></p>
                 <div class="example-box">
                   <pre>// Add this to your app to listen for wallet responses
 window.addEventListener('message', function(event) {
@@ -1104,121 +1182,158 @@ window.addEventListener('message', function(event) {
   try {
     const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
     
+    // CONNECTION APPROVED
     if (data.type === 'CONNECTION_APPROVED') {
       console.log('✅ Wallet connected:', data.payload.publicKey);
-      // Update your UI with the connection
+      // Save connection and update UI
+      localStorage.setItem('fixorium_connection', JSON.stringify({
+        publicKey: data.payload.publicKey,
+        connected: true
+      }));
     }
     
+    // TRANSACTION RESULT
+    if (data.type === 'TRANSACTION_RESULT') {
+      if (data.payload.success) {
+        console.log('✅ Transaction signed:', data.payload.signature);
+        // Handle successful transaction
+      } else {
+        console.log('❌ Transaction rejected');
+      }
+    }
+    
+    // CONNECTION REJECTED
     if (data.type === 'CONNECTION_REJECTED') {
-      console.log('❌ Connection rejected');
+      console.log('❌ Connection rejected by user');
     }
   } catch (error) {
-    // Not a wallet message
+    // Not a wallet message - ignore
   }
 });</pre>
                 </div>
 
-                <p><strong>SEND MESSAGE TO WALLET (IF NEEDED):</strong></p>
-                <div class="example-box">
-                  <pre>// Send a message to the wallet popup
-if (window.walletWindow && !window.walletWindow.closed) {
-  window.walletWindow.postMessage({
-    type: 'PING',
-    payload: { timestamp: Date.now() }
-  }, 'https://wallet.fixorium.com.pk');
-}</pre>
-                </div>
-
                 <div class="note-highlight">
                   <strong>💡 TIP:</strong> Use postMessage for real-time communication without page redirects. 
-                  The wallet will send messages to the <code>window.opener</code> when in popup mode.
+                  The wallet sends messages to <code>window.opener</code> when in popup mode.
                 </div>
               </div>
             </div>
 
-            <!-- CODE EXAMPLES -->
+            <!-- FULL EXAMPLE -->
             <div class="detail-section">
-              <div class="detail-section-header" data-section="examples">
-                <span> FULL CODE EXAMPLES</span>
+              <div class="detail-section-header" data-section="fullexample">
+                <span> COMPLETE EXAMPLE</span>
                 <span class="section-chevron">▼</span>
               </div>
-              <div class="detail-section-body" id="section-examples">
-                <p><strong>JAVASCRIPT - CONNECT WALLET:</strong></p>
+              <div class="detail-section-body" id="section-fullexample">
+                <p><strong>REACT COMPONENT - FULL INTEGRATION:</strong></p>
                 <div class="example-box">
-                  <pre>async function connectWallet() {
-  const requestId = 'conn_' + Date.now();
-  const params = new URLSearchParams();
-  params.append('requestId', requestId);
-  params.append('message', 'Connect to My DApp');
-  params.append('appName', 'My DApp');
-  params.append('callbackUrl', window.location.origin + '/callback');
+                  <pre>import React, { useState, useEffect } from 'react';
 
-  const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();
-  window.open(url, '_blank');
-
-  // Handle callback at /callback endpoint
-  // Also listen for postMessage
-  window.addEventListener('message', function(event) {
-    if (event.origin === 'https://wallet.fixorium.com.pk') {
-      const data = JSON.parse(event.data);
-      if (data.type === 'CONNECTION_APPROVED') {
-        console.log('Connected:', data.payload.publicKey);
-      }
-    }
-  });
-}</pre>
-                </div>
-                <p><strong>JAVASCRIPT - SIGN TRANSACTION:</strong></p>
-                <div class="example-box">
-                  <pre>async function signTransaction(tx) {
-  const requestId = 'tx_' + Date.now();
-  const txBase64 = btoa(JSON.stringify(tx));
-  const params = new URLSearchParams();
-  params.append('requestId', requestId);
-  params.append('transaction', txBase64);
-  params.append('appName', 'My DApp');
-  params.append('callbackUrl', window.location.origin + '/callback');
-
-  const url = 'https://wallet.fixorium.com.pk/sign?' + params.toString();
-  window.open(url, '_blank');
-}</pre>
-                </div>
-                <p><strong>REACT COMPONENT:</strong></p>
-                <div class="example-box">
-                  <pre>const ConnectWallet = () => {
+function FixoriumWalletConnect() {
   const [isConnected, setIsConnected] = useState(false);
   const [publicKey, setPublicKey] = useState(null);
 
+  // Listen for wallet responses
   useEffect(() => {
     const handler = (event) => {
-      if (event.origin === 'https://wallet.fixorium.com.pk') {
+      if (event.origin !== 'https://wallet.fixorium.com.pk') return;
+      
+      try {
         const data = JSON.parse(event.data);
+        
         if (data.type === 'CONNECTION_APPROVED') {
           setPublicKey(data.payload.publicKey);
           setIsConnected(true);
+          localStorage.setItem('fixorium_connection', JSON.stringify({
+            publicKey: data.payload.publicKey,
+            connected: true
+          }));
         }
+        
+        if (data.type === 'CONNECTION_REJECTED') {
+          console.log('Connection rejected');
+        }
+        
+        if (data.type === 'TRANSACTION_RESULT') {
+          if (data.payload.success) {
+            console.log('✅ Transaction signed!', data.payload.signature);
+          }
+        }
+      } catch (e) {
+        // Ignore
       }
     };
+    
     window.addEventListener('message', handler);
+    
+    // Check for existing connection
+    const stored = localStorage.getItem('fixorium_connection');
+    if (stored) {
+      const data = JSON.parse(stored);
+      if (data.connected && data.publicKey) {
+        setPublicKey(data.publicKey);
+        setIsConnected(true);
+      }
+    }
+    
     return () => window.removeEventListener('message', handler);
   }, []);
 
-  const connect = () => {
-    const id = 'conn_' + Date.now();
-    const url = 'https://wallet.fixorium.com.pk/sign?' +
-      'requestId=' + id +
-      '&message=Connect+to+MyApp' +
-      '&appName=MyApp' +
-      '&callbackUrl=' + encodeURIComponent(window.location.origin + '/callback');
-    window.open(url, '_blank');
+  const connectWallet = () => {
+    const requestId = 'conn_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+    const params = new URLSearchParams();
+    params.append('requestId', requestId);
+    params.append('appName', 'My DApp');
+    params.append('appUrl', window.location.origin);
+    params.append('callbackUrl', window.location.origin + '/callback');
+    params.append('action', 'connect');
+    
+    window.open(
+      'https://wallet.fixorium.com.pk/approve?' + params.toString(),
+      'FixoriumWallet',
+      'width=420,height=750'
+    );
+  };
+
+  const signTransaction = async (txData) => {
+    if (!isConnected) {
+      alert('Please connect wallet first');
+      return;
+    }
+    
+    const requestId = 'tx_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+    const txBase64 = btoa(JSON.stringify(txData));
+    const params = new URLSearchParams();
+    params.append('requestId', requestId);
+    params.append('appName', 'My DApp');
+    params.append('appUrl', window.location.origin);
+    params.append('callbackUrl', window.location.origin + '/callback');
+    params.append('action', 'sign');
+    params.append('transaction', txBase64);
+    
+    window.open(
+      'https://wallet.fixorium.com.pk/approve?' + params.toString(),
+      'FixoriumWallet',
+      'width=420,height=750'
+    );
   };
 
   return (
-    &lt;button onClick={connect}&gt;
-      {isConnected ? 'Connected: ' + publicKey.slice(0, 8) : 'Connect Wallet'}
-    &lt;/button&gt;
+    &lt;div&gt;
+      {isConnected ? (
+        &lt;div&gt;
+          &lt;p&gt;✅ Connected: {publicKey.slice(0, 8)}...&lt;/p&gt;
+          &lt;button onClick={() => signTransaction({ amount: 1 })}&gt;
+            Sign Transaction
+          &lt;/button&gt;
+        &lt;/div&gt;
+      ) : (
+        &lt;button onClick={connectWallet}&gt;Connect Wallet&lt;/button&gt;
+      )}
+    &lt;/div&gt;
   );
-};</pre>
+}</pre>
                 </div>
               </div>
             </div>
